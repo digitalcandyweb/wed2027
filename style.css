@@ -1,0 +1,53 @@
+body {
+  font-family: 'Cormorant Garamond', serif;
+  background-color: #fdfaf5;
+  color: #5a4a3f;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.hero {
+  padding: 80px 20px;
+  background: linear-gradient(to bottom, #fff8e7, #fdfaf5);
+}
+
+.monogram {
+  width: 120px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 2.8em;
+  margin: 0;
+}
+
+.subtitle {
+  font-style: italic;
+  color: #a58a6f;
+}
+
+.details {
+  margin: 60px 0;
+  font-size: 1.2em;
+}
+
+.button {
+  display: inline-block;
+  background-color: #a58a6f;
+  color: white;
+  padding: 12px 24px;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #8c735a;
+}
+
+footer {
+  margin-top: 80px;
+  font-size: 0.9em;
+  color: #a58a6f;
+}
