@@ -12,6 +12,11 @@ body {
   background: linear-gradient(to bottom, #fff8e7, #fdfaf5);
 }
 
+.mainimg {
+  width: 400px;
+  margin: 0;
+}
+
 .monogram {
   width: 120px;
   margin-bottom: 20px;
@@ -44,6 +49,35 @@ h1 {
 
 .button:hover {
   background-color: #8c735a;
+}
+
+.rsvp-form {
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.rsvp-form label {
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+.rsvp-form input,
+.rsvp-form select,
+.rsvp-form textarea {
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.contact-note {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.8;
 }
 
 footer {

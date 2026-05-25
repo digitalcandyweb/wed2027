@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSVP – Claire & Brad</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="hero small">
+    <h1>RSVP</h1>
+    <p class="subtitle">We can’t wait to celebrate with you</p>
+  </header>
+
+  <section class="details">
+    <h2>Your Response</h2>
+    <p>Please fill out the form below to let us know your plans.</p>
+
+    <form action="/__forms/submit" method="POST" class="rsvp-form">
+      <input type="hidden" name="form-name" value="wedding-rsvp">
+		
+      <label for="name">Full Name</label>
+      <input id="name" type="text" name="name" required>
+		
+      <label for="email">Email Address</label>
+      <input id="email" type="email" name="email" required>
+		
+	  <label for="Number">Number</label>
+      <input id="Number" type="Number" name="Number">
+		
+      <label for="event">Which celebration will you attend?</label>
+      <select id="event" name="event" required>
+	    <option value="London">London Wedding – 13 February 2027</option>
+        <option value="London">London Celebration – 18 September 2027</option>
+        <option value="Both">Both London Events</option>
+		<option value="Perth">Perth – 9 October 2027</option>
+        <option value="All">All Events</option>
+        <option value="No">Unable to attend</option>
+      </select>
+		
+      <label for="guests">Number of Guests (including you)</label>
+      <input id="guests" type="number" name="guests" min="1" max="10" required>
+		
+      <label for="message">Message (optional)</label>
+      <textarea id="message" name="message" rows="4"></textarea>
+		
+      <button type="submit" class="button">Submit RSVP</button>
+    </form>
+
+    <p class="contact-note">
+      If you have any questions, feel free to email us at  
+      <strong>rsvp@digitalcandy.win</strong>
+    </p>
+  </section>
+
+  <section class="cta">
+    <a href="index.html" class="button">Back to Home</a>
+  </section>
+
+  <footer>
+    <p>© 2027 Claire & Brad Wedding</p>
+  </footer>
+</body>
+</html>
