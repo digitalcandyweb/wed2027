@@ -1,219 +1,307 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <title>Wedding Admin Control Centre</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="/admin/admin.css">
+  <meta charset="UTF-8" />
+  <title>Wedding Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/admin.css">
 </head>
-
 <body>
-
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <h2>Wedding Admin</h2>
-    </div>
-
-    <nav class="sidebar-nav">
-      <button class="nav-item active" data-section="rsvp-section">RSVP Manager</button>
-      <button class="nav-item" data-section="events-section">Events</button>
-      <button class="nav-item" data-section="content-section">Edit Website Content</button>
-      <button class="nav-item" data-section="budget-section">Budget & Cost Tracker</button>
-      <button class="nav-item" data-section="planner-section">Planner & Timeline</button>
-      <a href="/" class="nav-item return">Return to Main Site</a>
-    </nav>
-  </aside>
-
-  <!-- Main Layout -->
-  <div class="main">
-
-    <!-- Top Header -->
-    <header class="top-header">
-      <h1>Wedding Admin Control Centre</h1>
-      <div class="status-indicator">
-        <span class="dot"></span>
-        Live data connected
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-circle">W</div>
+        <div class="sidebar-title">
+          <span class="sidebar-title-main">Wedding Admin</span>
+          <span class="sidebar-title-sub">Control centre</span>
+        </div>
       </div>
-    </header>
 
-    <!-- Content Wrapper -->
-    <div class="content">
+      <div>
+        <div class="sidebar-section-label">Overview</div>
+        <ul class="nav-list">
+          <li class="nav-item active" data-section="rsvp">
+            <div class="nav-icon">👥</div>
+            <span>RSVP Manager</span>
+          </li>
+          <li class="nav-item" data-section="events">
+            <div class="nav-icon">📍</div>
+            <span>Events</span>
+          </li>
+          <li class="nav-item" data-section="edit">
+            <div class="nav-icon">📝</div>
+            <span>Edit Website Content</span>
+          </li>
+        </ul>
+      </div>
 
-      <!-- RSVP Manager -->
-      <section id="rsvp-section" class="admin-section">
-        <h2>RSVP Manager</h2>
+      <div>
+        <div class="sidebar-section-label">Planning</div>
+        <ul class="nav-list">
+          <li class="nav-item" data-section="budget">
+            <div class="nav-icon">💸</div>
+            <span>Budget & Cost Tracker</span>
+          </li>
+          <li class="nav-item" data-section="planner">
+            <div class="nav-icon">📅</div>
+            <span>Planner & Timeline</span>
+          </li>
+        </ul>
+      </div>
 
-        <div class="toolbar">
-          <input id="rsvp-search" class="search" placeholder="Search by name or email…">
+      <div>
+        <div class="sidebar-section-label">Site</div>
+        <ul class="nav-list">
+          <li class="nav-item" data-section="return">
+            <div class="nav-icon">↩️</div>
+            <span>Return to Main Site</span>
+          </li>
+        </ul>
+      </div>
 
-          <select id="rsvp-event-filter" class="filter">
-            <option value="all">All events</option>
-          </select>
+      <div class="sidebar-footer">
+        <span class="pill">v0.3 admin</span>
+      </div>
+    </aside>
 
-          <select id="rsvp-status-filter" class="filter">
-            <option value="all">All statuses</option>
-            <option value="attending">Attending</option>
-            <option value="not-attending">Not attending</option>
-            <option value="no-response">No response</option>
-          </select>
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title">
+            <span id="topbar-title-text">RSVP Manager</span>
+            <span class="topbar-chip" id="topbar-chip-text">Guests & responses</span>
+          </div>
+          <div class="topbar-subtitle">
+            Central place to manage your wedding website, guests, budget and planning.
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="theme-toggle" id="theme-toggle" data-mode="light" aria-label="Toggle dark mode">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+            <div class="theme-toggle-thumb">●</div>
+          </div>
 
-          <button id="export-csv" class="btn secondary">Export CSV</button>
+          <div class="topbar-user" id="user-menu-toggle">
+            <div class="user-avatar">B</div>
+            <div>
+              <div style="font-size: 11px; font-weight: 500;">Brad</div>
+              <div style="font-size: 10px; color: var(--text-muted);">Admin</div>
+            </div>
+          </div>
+
+          <div class="user-menu" id="user-menu">
+            <a href="https://dash.cloudflare.com/?to=/:account/access/apps" target="_blank" rel="noreferrer">
+              Cloudflare Access Policies
+            </a>
+            <a href="/cdn-cgi/access/logout">
+              Logout
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <section class="content-card">
+        <div class="content-header">
+          <div class="content-header-left">
+            <div class="content-title" id="content-title">RSVP Manager</div>
+            <div class="content-subtitle" id="content-subtitle">
+              View, filter and export guest responses for all events.
+            </div>
+          </div>
+          <div class="content-header-right">
+            <div class="badge">
+              <span class="badge-dot"></span>
+              <span id="badge-text">Live data connected</span>
+            </div>
+          </div>
         </div>
 
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Guest</th>
-              <th>Email</th>
-              <th>Event</th>
-              <th>Guests</th>
-              <th>Submitted</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="rsvp-table-body">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
+        <div class="content-body">
+          <!-- HTML.RSVP-SECTION -->
+          <div class="section active" id="section-rsvp">
+            <h3>RSVP Manager</h3>
+            <p>Search, filter and manage guest responses across all events.</p>
 
-        <div class="api-tags">
-          <span>Backed by /admin/api/list</span>
-          <span>Events from /admin/api/events</span>
-          <span>Delete + CSV export ready</span>
+            <div class="rsvp-controls">
+              <input id="rsvp-search" type="text" placeholder="Search by name or email…" class="input" />
+              <select id="rsvp-event-filter" class="input">
+                <option value="">All events</option>
+              </select>
+              <select id="rsvp-attendance-filter" class="input">
+                <option value="">All statuses</option>
+                <option value="attending">Attending</option>
+                <option value="not_attending">Not attending</option>
+              </select>
+              <button id="rsvp-export" class="button secondary">
+                <span>Export CSV</span>
+              </button>
+            </div>
+
+            <div class="rsvp-table-wrapper">
+              <table class="rsvp-table">
+                <thead>
+                  <tr>
+                    <th>Guest</th>
+                    <th>Email</th>
+                    <th>Event</th>
+                    <th>Guests</th>
+                    <th>Submitted</th>
+                    <th style="text-align:right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="rsvp-table-body">
+                  <tr>
+                    <td colspan="6" class="rsvp-loading">Loading RSVPs…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pill-row" style="margin-top: 8px;">
+              <span class="pill-tag accent">Backed by /admin/api/list</span>
+              <span class="pill-tag">Events from /admin/api/events</span>
+              <span class="pill-tag">Delete + CSV export ready</span>
+            </div>
+          </div>
+
+          <!-- HTML.EVENTS-SECTION -->
+          <div class="section" id="section-events">
+            <h3>Events</h3>
+            <p>Manage event names, dates, locations and visibility. This will drive the RSVP form and filters.</p>
+            <ul>
+              <li>View all configured events</li>
+              <li>Add new events</li>
+              <li>Edit existing events</li>
+              <li>Hide/show events</li>
+            </ul>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: Event Manager UI</span>
+              <span class="pill-tag">KV-backed config</span>
+            </div>
+
+            <div class="events-list" id="events-list"></div>
+            <div class="pill-row" style="margin-top: 8px;">
+              <button class="button secondary" type="button" id="add-event-btn">Add event</button>
+            </div>
+          </div>
+
+          <!-- HTML.EDIT-SECTION -->
+          <div class="section" id="section-edit">
+            <h3>Edit Website Content</h3>
+            <p>This area will act like a lightweight CMS for your main wedding site.</p>
+            <ul>
+              <li>Hero text, event descriptions, schedule, venue details</li>
+              <li>Travel info, FAQ, footer content</li>
+              <li>Backed by JSON in KV or a config file</li>
+              <li>Simple forms → Worker updates → site reads dynamically</li>
+            </ul>
+            <p>You’ll be able to tweak copy without redeploying.</p>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: define content schema</span>
+              <span class="pill-tag">Create edit forms</span>
+              <span class="pill-tag">Wire to KV</span>
+            </div>
+          </div>
+
+          <!-- HTML.BUDGET-SECTION -->
+          <div class="section" id="section-budget">
+            <h3>Budget & Cost Tracker</h3>
+            <p>Track all wedding-related costs in one place:</p>
+            <ul>
+              <li>Expenses by category (venue, catering, travel, outfits, etc.)</li>
+              <li>Budget vs actual spend</li>
+              <li>Paid vs outstanding</li>
+              <li>Optional charts later</li>
+            </ul>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: design expense model</span>
+              <span class="pill-tag">Add add/edit/delete UI</span>
+              <span class="pill-tag">Store in KV</span>
+            </div>
+          </div>
+
+          <!-- HTML.PLANNER-SECTION -->
+          <div class="section" id="section-planner">
+            <h3>Planner & Timeline</h3>
+            <p>Use this as your project board for everything leading up to each event:</p>
+            <ul>
+              <li>Tasks with due dates and status (not started / in progress / done)</li>
+              <li>Assign tasks to you or Claire</li>
+              <li>Separate views for “overall planning” and “wedding week / day-of” timelines</li>
+              <li>Countdown to each event</li>
+            </ul>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: task structure</span>
+              <span class="pill-tag">List + board view (later)</span>
+              <span class="pill-tag">Reminders (optional)</span>
+            </div>
+          </div>
+
+          <!-- HTML.RETURN-SECTION -->
+          <div class="section" id="section-return">
+            <h3>Return to Main Site</h3>
+            <p>Quick link back to the public wedding site.</p>
+            <p>You can keep this simple, or later show a small status summary (uptime, last deploy, etc.).</p>
+            <a href="/" class="link-button">
+              <span>Go to main site</span>
+              <span>↗</span>
+            </a>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: maybe show site stats</span>
+              <span class="pill-tag">Add quick links</span>
+            </div>
+          </div>
         </div>
       </section>
-
-      <!-- Events Manager -->
-      <section id="events-section" class="admin-section hidden">
-        <h2>Events</h2>
-
-        <div class="toolbar">
-          <button id="add-event-btn" class="btn primary">Add Event</button>
-          <button id="reorder-events-btn" class="btn secondary">Reorder</button>
-        </div>
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Order</th>
-              <th>Name</th>
-              <th>Date</th>
-              <th>Location</th>
-              <th>Venue</th>
-              <th>Visible</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="events-table-body">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
-      </section>
-
-      <!-- Edit Website Content -->
-      <section id="content-section" class="admin-section hidden">
-        <h2>Edit Website Content</h2>
-        <p>Coming soon.</p>
-      </section>
-
-      <!-- Budget -->
-      <section id="budget-section" class="admin-section hidden">
-        <h2>Budget & Cost Tracker</h2>
-        <p>Coming soon.</p>
-      </section>
-
-      <!-- Planner -->
-      <section id="planner-section" class="admin-section hidden">
-        <h2>Planner & Timeline</h2>
-        <p>Coming soon.</p>
-      </section>
-
-    </div>
+    </main>
   </div>
 
-  <!-- Add/Edit Event Modal -->
+  <!-- HTML.EVENT-MODAL -->
   <div id="event-modal" class="modal hidden">
     <div class="modal-backdrop"></div>
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <h3 id="event-modal-title">Add Event</h3>
-        <button class="modal-close" data-close-event-modal>&times;</button>
-      </div>
+    <div class="modal-content">
+      <h3 id="event-modal-title">Add Event</h3>
 
-      <div class="modal-body">
-        <form id="event-form">
-          <input type="hidden" id="event-id">
+      <form id="event-form">
+        <label>
+          Event Name
+          <input type="text" name="name" class="input" required>
+        </label>
 
-          <label>Name</label>
-          <input type="text" id="event-name" required>
+        <label>
+          Date
+          <input type="date" name="date" class="input" required>
+        </label>
 
-          <label>Date</label>
-          <input type="date" id="event-date">
+        <label>
+          Location
+          <input type="text" name="location" class="input" required>
+        </label>
 
-          <label>Location</label>
-          <input type="text" id="event-location">
+        <label>
+          Venue
+          <input type="text" name="venue" class="input">
+        </label>
 
-          <label>Venue</label>
-          <input type="text" id="event-venue">
+        <label class="checkbox-row">
+          <input type="checkbox" name="visible" checked>
+          Visible on site
+        </label>
 
-          <label class="checkbox">
-            <input type="checkbox" id="event-visible" checked>
-            Visible on public site
-          </label>
-
-          <label>Internal Notes</label>
-          <textarea id="event-notes" rows="3"></textarea>
-        </form>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn secondary" data-close-event-modal>Cancel</button>
-        <button id="save-event-btn" class="btn primary">Save</button>
-      </div>
+        <div class="modal-actions">
+          <button type="button" class="button secondary" id="event-cancel">Cancel</button>
+          <button type="submit" class="button" id="event-save">Save</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- Delete Modal -->
-  <div id="delete-event-modal" class="modal hidden">
-    <div class="modal-backdrop"></div>
-    <div class="modal-dialog small">
-      <div class="modal-header">
-        <h3>Delete Event</h3>
-        <button class="modal-close" data-close-delete-event-modal>&times;</button>
-      </div>
-
-      <div class="modal-body">
-        <p id="delete-event-message"></p>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn secondary" data-close-delete-event-modal>Cancel</button>
-        <button id="confirm-delete-event-btn" class="btn danger">Delete</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Reorder Modal -->
-  <div id="reorder-events-modal" class="modal hidden">
-    <div class="modal-backdrop"></div>
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <h3>Reorder Events</h3>
-        <button class="modal-close" data-close-reorder-events-modal>&times;</button>
-      </div>
-
-      <div class="modal-body">
-        <ul id="reorder-events-list" class="reorder-list"></ul>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn secondary" data-close-reorder-events-modal>Cancel</button>
-        <button id="save-events-order-btn" class="btn primary">Save Order</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="/admin/admin.js"></script>
+  <script src="/admin.js"></script>
 </body>
 </html>

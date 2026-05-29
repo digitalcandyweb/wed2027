@@ -1,432 +1,516 @@
-/* --------------------------------------------------
-   SIDEBAR NAVIGATION
--------------------------------------------------- */
+// THEME
+(function () {
+  const root = document.documentElement;
+  const toggle = document.getElementById("theme-toggle");
 
-document.querySelectorAll(".nav-item").forEach(btn => {
-  btn.addEventListener("click", () => {
-    // Update active state
-    document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
+  function applyTheme(mode) {
+    root.setAttribute("data-theme", mode);
+    toggle.setAttribute("data-mode", mode);
+  }
 
-    // Show correct section
-    const target = btn.dataset.section;
-    document.querySelectorAll(".admin-section").forEach(sec => {
-      sec.classList.toggle("hidden", sec.id !== target);
+  const stored = localStorage.getItem("wedding-admin-theme");
+  if (stored === "light" || stored === "dark") {
+    applyTheme(stored);
+  } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    applyTheme("dark");
+  } else {
+    applyTheme("light");
+  }
+
+  toggle.addEventListener("click", () => {
+    const current = toggle.getAttribute("data-mode") === "dark" ? "dark" : "light";
+    const next = current === "dark" ? "light" : "dark";
+    applyTheme(next);
+    localStorage.setItem("wedding-admin-theme", next);
+  });
+})();
+
+// USER MENU
+(function () {
+  const toggle = document.getElementById("user-menu-toggle");
+  const menu = document.getElementById("user-menu");
+
+  toggle.addEventListener("click", () => {
+    const visible = menu.style.display === "flex";
+    menu.style.display = visible ? "none" : "flex";
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+      menu.style.display = "none";
+    }
+  });
+})();
+
+// NAV + SECTION SWITCHING
+(function () {
+  const navItems = document.querySelectorAll(".nav-item");
+  const sections = {
+    rsvp: document.getElementById("section-rsvp"),
+    events: document.getElementById("section-events"),
+    edit: document.getElementById("section-edit"),
+    budget: document.getElementById("section-budget"),
+    planner: document.getElementById("section-planner"),
+    return: document.getElementById("section-return"),
+  };
+
+  const topbarTitle = document.getElementById("topbar-title-text");
+  const topbarChip = document.getElementById("topbar-chip-text");
+  const contentTitle = document.getElementById("content-title");
+  const contentSubtitle = document.getElementById("content-subtitle");
+  const badgeText = document.getElementById("badge-text");
+
+  const meta = {
+    rsvp: {
+      topbarTitle: "RSVP Manager",
+      chip: "Guests & responses",
+      contentTitle: "RSVP Manager",
+      contentSubtitle: "View, filter and export guest responses for all events.",
+      badge: "Live data connected"
+    },
+    events: {
+      topbarTitle: "Events",
+      chip: "Event configuration",
+      contentTitle: "Events",
+      contentSubtitle: "Manage event names, dates, locations and visibility.",
+      badge: "Config-driven"
+    },
+    edit: {
+      topbarTitle: "Edit Website Content",
+      chip: "Copy & layout",
+      contentTitle: "Edit Website Content",
+      contentSubtitle: "Update hero text, event details, travel info and more without redeploying.",
+      badge: "Config-driven content"
+    },
+    budget: {
+      topbarTitle: "Budget & Cost Tracker",
+      chip: "Money & commitments",
+      contentTitle: "Budget & Cost Tracker",
+      contentSubtitle: "Track all wedding-related expenses and compare against your planned budget.",
+      badge: "Private to admin"
+    },
+    planner: {
+      topbarTitle: "Planner & Timeline",
+      chip: "Tasks & milestones",
+      contentTitle: "Planner & Timeline",
+      contentSubtitle: "Organise tasks, due dates and timelines for all events.",
+      badge: "Planning workspace"
+    },
+    return: {
+      topbarTitle: "Return to Main Site",
+      chip: "Public view",
+      contentTitle: "Return to Main Site",
+      contentSubtitle: "Jump back to the public wedding site or add quick status info here.",
+      badge: "Public site link"
+    }
+  };
+
+  function setActive(sectionKey) {
+    navItems.forEach(item => {
+      const key = item.getAttribute("data-section");
+      item.classList.toggle("active", key === sectionKey);
+    });
+
+    Object.entries(sections).forEach(([key, el]) => {
+      el.classList.toggle("active", key === sectionKey);
+    });
+
+    const m = meta[sectionKey];
+    if (m) {
+      topbarTitle.textContent = m.topbarTitle;
+      topbarChip.textContent = m.chip;
+      contentTitle.textContent = m.contentTitle;
+      contentSubtitle.textContent = m.contentSubtitle;
+      badgeText.textContent = m.badge;
+    }
+  }
+
+  navItems.forEach(item => {
+    item.addEventListener("click", () => {
+      const key = item.getAttribute("data-section");
+      setActive(key);
     });
   });
-});
 
-/* --------------------------------------------------
-   RSVP MANAGER
--------------------------------------------------- */
+  setActive("rsvp");
+})();
 
-let rsvpData = [];
-let eventsList = [];
+// RSVP MANAGER
+(function () {
+  const tableBody = document.getElementById("rsvp-table-body");
+  const searchInput = document.getElementById("rsvp-search");
+  const eventFilter = document.getElementById("rsvp-event-filter");
+  const attendanceFilter = document.getElementById("rsvp-attendance-filter");
+  const exportButton = document.getElementById("rsvp-export");
 
-async function loadRSVPs() {
-  try {
-    const res = await fetch("/admin/api/list");
-    rsvpData = await res.json();
-    renderRSVPTable();
-  } catch (err) {
-    console.error("Failed to load RSVPs", err);
+  let allEvents = [];
+  let allRsvps = [];
+  let filteredRsvps = [];
+
+  async function fetchEvents() {
+    try {
+      const res = await fetch("/admin/api/events", { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to load events");
+      const data = await res.json();
+      allEvents = Array.isArray(data) ? data : [];
+      populateEventFilter();
+    } catch (err) {
+      console.error(err);
+    }
   }
-}
 
-async function loadEventsForFilters() {
-  try {
-    const res = await fetch("/admin/api/events");
-    eventsList = await res.json();
+  function populateEventFilter() {
+    eventFilter.innerHTML = "";
+    const optAll = document.createElement("option");
+    optAll.value = "";
+    optAll.textContent = "All events";
+    eventFilter.appendChild(optAll);
 
-    const filter = document.getElementById("rsvp-event-filter");
-    filter.innerHTML = `<option value="all">All events</option>`;
-
-    eventsList.forEach(ev => {
+    allEvents.forEach(ev => {
       const opt = document.createElement("option");
       opt.value = ev.id;
-      opt.textContent = ev.name;
-      filter.appendChild(opt);
+      opt.textContent = ev.name || ev.id;
+      eventFilter.appendChild(opt);
     });
-  } catch (err) {
-    console.error("Failed to load events", err);
-  }
-}
-
-function renderRSVPTable() {
-  const tbody = document.getElementById("rsvp-table-body");
-  tbody.innerHTML = "";
-
-  const search = document.getElementById("rsvp-search").value.toLowerCase();
-  const eventFilter = document.getElementById("rsvp-event-filter").value;
-  const statusFilter = document.getElementById("rsvp-status-filter").value;
-
-  let filtered = rsvpData.filter(r => {
-    const matchesSearch =
-      r.name.toLowerCase().includes(search) ||
-      r.email.toLowerCase().includes(search);
-
-    const matchesEvent =
-      eventFilter === "all" || r.eventId === eventFilter;
-
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "attending" && r.attending === true) ||
-      (statusFilter === "not-attending" && r.attending === false) ||
-      (statusFilter === "no-response" && r.attending === null);
-
-    return matchesSearch && matchesEvent && matchesStatus;
-  });
-
-  if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="6">No results found.</td></tr>`;
-    return;
   }
 
-  filtered.forEach(r => {
-    const tr = document.createElement("tr");
-
-    const eventName = eventsList.find(e => e.id === r.eventId)?.name || "—";
-    const submitted = r.submitted ? new Date(r.submitted).toLocaleString() : "—";
-
-    tr.innerHTML = `
-      <td>${r.name}</td>
-      <td>${r.email}</td>
-      <td>${eventName}</td>
-      <td>${r.guests || 1}</td>
-      <td>${submitted}</td>
-      <td>
-        <button class="btn-link" data-view="${r.id}">View</button>
-        <button class="btn-link danger" data-delete="${r.id}">Delete</button>
-      </td>
-    `;
-
-    tbody.appendChild(tr);
-  });
-
-  // Delete handler
-  tbody.querySelectorAll("[data-delete]").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const id = btn.dataset.delete;
-      if (!confirm("Delete this RSVP?")) return;
-
-      await fetch(`/admin/api/list/${id}`, { method: "DELETE" });
-      loadRSVPs();
-    });
-  });
-}
-
-// Search + filters
-document.getElementById("rsvp-search").addEventListener("input", renderRSVPTable);
-document.getElementById("rsvp-event-filter").addEventListener("change", renderRSVPTable);
-document.getElementById("rsvp-status-filter").addEventListener("change", renderRSVPTable);
-
-// CSV Export
-document.getElementById("export-csv").addEventListener("click", () => {
-  const rows = [
-    ["Guest", "Email", "Event", "Guests", "Submitted"]
-  ];
-
-  rsvpData.forEach(r => {
-    const eventName = eventsList.find(e => e.id === r.eventId)?.name || "—";
-    rows.push([
-      r.name,
-      r.email,
-      eventName,
-      r.guests || 1,
-      r.submitted || ""
-    ]);
-  });
-
-  const csv = rows.map(r => r.join(",")).join("\n");
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "rsvps.csv";
-  a.click();
-});
-
-/* --------------------------------------------------
-   EVENTS MANAGER
--------------------------------------------------- */
-
-let events = [];
-let eventToDelete = null;
-
-async function loadEvents() {
-  try {
-    const res = await fetch("/admin/api/events");
-    events = await res.json();
-    renderEvents();
-  } catch (err) {
-    console.error("Failed to load events", err);
-  }
-}
-
-function renderEvents() {
-  const tbody = document.getElementById("events-table-body");
-  tbody.innerHTML = "";
-
-  if (!events.length) {
-    tbody.innerHTML = `<tr><td colspan="7">No events yet.</td></tr>`;
-    return;
+  async function fetchRsvps() {
+    try {
+      tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-loading">Loading RSVPs…</td></tr>';
+      const res = await fetch("/admin/api/list", { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to load RSVPs");
+      const data = await res.json();
+      allRsvps = Array.isArray(data) ? data : [];
+      applyFilters();
+    } catch (err) {
+      console.error(err);
+      tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-error">Error loading RSVPs.</td></tr>';
+    }
   }
 
-  events
-    .slice()
-    .sort((a, b) => a.order - b.order)
-    .forEach(ev => {
+  function getEventName(id) {
+    const ev = allEvents.find(e => e.id === id);
+    return ev ? (ev.name || ev.id) : (id || "—");
+  }
+
+  function formatDate(ts) {
+    if (!ts) return "—";
+    try {
+      return new Date(ts).toLocaleString();
+    } catch {
+      return ts;
+    }
+  }
+
+  function renderTable(rows) {
+    if (!rows.length) {
+      tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-empty">No RSVPs match your filters yet.</td></tr>';
+      return;
+    }
+
+    tableBody.innerHTML = "";
+    rows.forEach(r => {
       const tr = document.createElement("tr");
 
+      const attending = r.attending === true;
+      const statusLabel = attending ? "Attending" : "Not attending";
+
       tr.innerHTML = `
-        <td>${ev.order}</td>
-        <td>${ev.name}</td>
-        <td>${ev.date || ""}</td>
-        <td>${ev.location || ""}</td>
-        <td>${ev.venue || ""}</td>
-        <td>${ev.visible ? "Yes" : "No"}</td>
         <td>
-          <button class="btn-link" data-edit="${ev.id}">Edit</button>
-          <button class="btn-link" data-dup="${ev.id}">Duplicate</button>
-          <button class="btn-link danger" data-del="${ev.id}">Delete</button>
+          <div style="font-weight:500;">${r.name || "—"}</div>
+          <div style="margin-top:2px;">
+            <span class="rsvp-tag ${attending ? "attending" : "not-attending"}">${statusLabel}</span>
+          </div>
+        </td>
+        <td>${r.email || "—"}</td>
+        <td>${getEventName(r.event)}</td>
+        <td>${typeof r.guests === "number" ? r.guests : (r.guests || "—")}</td>
+        <td>${formatDate(r.timestamp)}</td>
+        <td>
+          <div class="rsvp-actions">
+            <button class="link-button" type="button" data-action="view" data-id="${r.id || ""}">View</button>
+            <button class="link-button" type="button" data-action="delete" data-id="${r.id || ""}" style="color:var(--danger);">Delete</button>
+          </div>
         </td>
       `;
 
-      tbody.appendChild(tr);
-    });
-
-  // Edit
-  tbody.querySelectorAll("[data-edit]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const ev = events.find(e => e.id === btn.dataset.edit);
-      openEventModal(ev);
-    });
-  });
-
-  // Delete
-  tbody.querySelectorAll("[data-del]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      eventToDelete = events.find(e => e.id === btn.dataset.del);
-      openDeleteModal(eventToDelete);
-    });
-  });
-
-  // Duplicate
-  tbody.querySelectorAll("[data-dup]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const ev = events.find(e => e.id === btn.dataset.dup);
-      duplicateEvent(ev);
-    });
-  });
-}
-
-/* --------------------------------------------------
-   EVENT MODAL
--------------------------------------------------- */
-
-function openEventModal(ev = null) {
-  const modal = document.getElementById("event-modal");
-  modal.classList.remove("hidden");
-
-  document.getElementById("event-modal-title").textContent = ev ? "Edit Event" : "Add Event";
-
-  document.getElementById("event-id").value = ev?.id || "";
-  document.getElementById("event-name").value = ev?.name || "";
-  document.getElementById("event-date").value = ev?.date || "";
-  document.getElementById("event-location").value = ev?.location || "";
-  document.getElementById("event-venue").value = ev?.venue || "";
-  document.getElementById("event-visible").checked = ev?.visible ?? true;
-  document.getElementById("event-notes").value = ev?.notes || "";
-}
-
-function closeEventModal() {
-  document.getElementById("event-modal").classList.add("hidden");
-}
-
-document.querySelectorAll("[data-close-event-modal]").forEach(btn =>
-  btn.addEventListener("click", closeEventModal)
-);
-
-/* --------------------------------------------------
-   SAVE EVENT
--------------------------------------------------- */
-
-async function saveEvent() {
-  const id = document.getElementById("event-id").value.trim();
-  const name = document.getElementById("event-name").value.trim();
-  if (!name) return;
-
-  const payload = {
-    name,
-    date: document.getElementById("event-date").value || "",
-    location: document.getElementById("event-location").value || "",
-    venue: document.getElementById("event-venue").value || "",
-    visible: document.getElementById("event-visible").checked,
-    notes: document.getElementById("event-notes").value || ""
-  };
-
-  if (id) {
-    await fetch(`/admin/api/events/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-  } else {
-    await fetch(`/admin/api/events`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      tableBody.appendChild(tr);
     });
   }
 
-  closeEventModal();
-  loadEvents();
-}
+  // JS.RSVP-SECTION
+  function applyFilters() {
+    const q = (searchInput.value || "").toLowerCase();
+    const ev = eventFilter.value;
+    const att = attendanceFilter.value;
 
-document.getElementById("save-event-btn").addEventListener("click", saveEvent);
+    filteredRsvps = allRsvps.filter(r => {
+      const matchesSearch =
+        !q ||
+        (r.name && r.name.toLowerCase().includes(q)) ||
+        (r.email && r.email.toLowerCase().includes(q));
 
-/* --------------------------------------------------
-   DELETE EVENT
--------------------------------------------------- */
+      const matchesEvent = !ev || r.event === ev;
 
-function openDeleteModal(ev) {
-  document.getElementById("delete-event-message").textContent =
-    `Are you sure you want to delete "${ev.name}"? This cannot be undone.`;
+      const status = r.attending === true ? "attending" : "not_attending";
+      const matchesAttendance = !att || status === att;
 
-  document.getElementById("delete-event-modal").classList.remove("hidden");
-}
-
-function closeDeleteModal() {
-  document.getElementById("delete-event-modal").classList.add("hidden");
-  eventToDelete = null;
-}
-
-document.querySelectorAll("[data-close-delete-event-modal]").forEach(btn =>
-  btn.addEventListener("click", closeDeleteModal)
-);
-
-document.getElementById("confirm-delete-event-btn").addEventListener("click", async () => {
-  if (!eventToDelete) return;
-
-  await fetch(`/admin/api/events/${eventToDelete.id}`, { method: "DELETE" });
-
-  closeDeleteModal();
-  loadEvents();
-});
-
-/* --------------------------------------------------
-   DUPLICATE EVENT
--------------------------------------------------- */
-
-async function duplicateEvent(ev) {
-  const copy = {
-    ...ev,
-    name: ev.name + " (copy)"
-  };
-
-  delete copy.id;
-
-  await fetch(`/admin/api/events`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(copy)
-  });
-
-  loadEvents();
-}
-
-/* --------------------------------------------------
-   REORDER EVENTS
--------------------------------------------------- */
-
-function openReorderModal() {
-  const modal = document.getElementById("reorder-events-modal");
-  const list = document.getElementById("reorder-events-list");
-
-  list.innerHTML = "";
-
-  events
-    .slice()
-    .sort((a, b) => a.order - b.order)
-    .forEach(ev => {
-      const li = document.createElement("li");
-      li.textContent = ev.name;
-      li.draggable = true;
-      li.dataset.id = ev.id;
-
-      li.addEventListener("dragstart", () => li.classList.add("dragging"));
-      li.addEventListener("dragend", () => li.classList.remove("dragging"));
-
-      list.appendChild(li);
+      return matchesSearch && matchesEvent && matchesAttendance;
     });
 
-  list.addEventListener("dragover", e => {
-    e.preventDefault();
-    const dragging = list.querySelector(".dragging");
-    const after = getDragAfterElement(list, e.clientY);
-    if (!after) list.appendChild(dragging);
-    else list.insertBefore(dragging, after);
+    renderTable(filteredRsvps);
+  }
+
+  async function deleteRsvp(id) {
+    if (!id) return;
+    const confirmDelete = window.confirm("Delete this RSVP? This cannot be undone.");
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`/admin/api/delete/${encodeURIComponent(id)}`, {
+        method: "POST",
+        credentials: "include"
+      });
+      if (!res.ok) throw new Error("Failed to delete RSVP");
+      allRsvps = allRsvps.filter(r => r.id !== id);
+      applyFilters();
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting RSVP.");
+    }
+  }
+
+  function exportCsv() {
+    const rows = filteredRsvps.length ? filteredRsvps : allRsvps;
+    if (!rows.length) {
+      alert("No RSVPs to export.");
+      return;
+    }
+
+    const header = ["id", "name", "email", "event", "guests", "attending", "timestamp"];
+    const lines = [header.join(",")];
+
+    rows.forEach(r => {
+      const attending = r.attending === true ? "attending" : "not_attending";
+      const line = [
+        r.id || "",
+        (r.name || "").replace(/"/g, '""'),
+        (r.email || "").replace(/"/g, '""'),
+        getEventName(r.event).replace(/"/g, '""'),
+        typeof r.guests === "number" ? r.guests : (r.guests || ""),
+        attending,
+        r.timestamp || ""
+      ].map(v => `"${v}"`).join(",");
+      lines.push(line);
+    });
+
+    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const now = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `wedding-rsvps-${now}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  tableBody.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    const action = btn.getAttribute("data-action");
+    const id = btn.getAttribute("data-id");
+    if (action === "delete") {
+      deleteRsvp(id);
+    } else if (action === "view") {
+      const r = allRsvps.find(x => x.id === id);
+      if (!r) return;
+      const attending = r.attending === true ? "Attending" : "Not attending";
+      alert(
+        `Name: ${r.name || "—"}\n` +
+        `Email: ${r.email || "—"}\n` +
+        `Event: ${getEventName(r.event)}\n` +
+        `Guests: ${r.guests || "—"}\n` +
+        `Attending: ${attending}\n` +
+        `Submitted: ${formatDate(r.timestamp)}\n\n` +
+        (r.notes ? `Notes: ${r.notes}` : "")
+      );
+    }
   });
 
-  modal.classList.remove("hidden");
-}
+  searchInput.addEventListener("input", applyFilters);
+  eventFilter.addEventListener("change", applyFilters);
+  attendanceFilter.addEventListener("change", applyFilters);
+  exportButton.addEventListener("click", exportCsv);
 
-function closeReorderModal() {
-  document.getElementById("reorder-events-modal").classList.add("hidden");
-}
+  (async function init() {
+    await fetchEvents();
+    await fetchRsvps();
+  })();
+})();
 
-document.querySelectorAll("[data-close-reorder-events-modal]").forEach(btn =>
-  btn.addEventListener("click", closeReorderModal)
-);
+// JS.EVENTS-MANAGER-MODEL
+(function () {
+  const eventsList = document.getElementById("events-list");
+  const addEventBtn = document.getElementById("add-event-btn");
 
-function getDragAfterElement(container, y) {
-  const items = [...container.querySelectorAll("li:not(.dragging)")];
+  const modal = document.getElementById("event-modal");
+  const modalTitle = document.getElementById("event-modal-title");
+  const form = document.getElementById("event-form");
+  const cancelBtn = document.getElementById("event-cancel");
 
-  return items.reduce(
-    (closest, child) => {
-      const box = child.getBoundingClientRect();
-      const offset = y - (box.top + box.height / 2);
-      if (offset < 0 && offset > closest.offset) {
-        return { offset, element: child };
+  let editingId = null;
+
+  function openModal(mode, eventData = null) {
+    modal.classList.remove("hidden");
+
+    if (mode === "add") {
+      editingId = null;
+      modalTitle.textContent = "Add Event";
+      form.reset();
+      form.visible.checked = true;
+    }
+
+    if (mode === "edit" && eventData) {
+      editingId = eventData.id;
+      modalTitle.textContent = "Edit Event";
+
+      form.name.value = eventData.name || "";
+      form.date.value = eventData.date || "";
+      form.location.value = eventData.location || "";
+      form.venue.value = eventData.venue || "";
+      form.visible.checked = eventData.visible !== false;
+    }
+  }
+
+  function closeModal() {
+    modal.classList.add("hidden");
+  }
+
+  cancelBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal || e.target.classList.contains("modal-backdrop")) {
+      closeModal();
+    }
+  });
+
+  async function loadEvents() {
+    eventsList.innerHTML = `<div class="rsvp-loading">Loading events…</div>`;
+
+    try {
+      const res = await fetch("/admin/api/events", { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to load events");
+      const events = await res.json();
+
+      if (!Array.isArray(events) || !events.length) {
+        eventsList.innerHTML = `<div class="rsvp-empty">No events configured yet.</div>`;
+        return;
       }
-      return closest;
-    },
-    { offset: Number.NEGATIVE_INFINITY, element: null }
-  ).element;
-}
 
-document.getElementById("reorder-events-btn").addEventListener("click", openReorderModal);
+      eventsList.innerHTML = "";
 
-document.getElementById("save-events-order-btn").addEventListener("click", async () => {
-  const list = document.querySelectorAll("#reorder-events-list li");
+      events.forEach(ev => {
+        const card = document.createElement("div");
+        card.className = "event-card";
 
-  const newOrder = [];
-  list.forEach((li, index) => {
-    newOrder.push({
-      id: li.dataset.id,
-      order: index + 1
-    });
+        card.innerHTML = `
+          <div class="event-info">
+            <div class="event-name">${ev.name}</div>
+            <div class="event-meta">${ev.date} — ${ev.location}</div>
+          </div>
+          <div class="event-actions">
+            <button class="link-button" data-action="edit" data-id="${ev.id}">Edit</button>
+            <button class="link-button" data-action="delete" data-id="${ev.id}" style="color:var(--danger);">Delete</button>
+          </div>
+        `;
+
+        eventsList.appendChild(card);
+      });
+    } catch (err) {
+      console.error(err);
+      eventsList.innerHTML = `<div class="rsvp-error">Error loading events.</div>`;
+    }
+  }
+
+  // Add Event
+  addEventBtn.addEventListener("click", () => openModal("add"));
+
+  // Edit/Delete actions
+  eventsList.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+
+    const action = btn.dataset.action;
+    const id = btn.dataset.id;
+
+    if (action === "edit") {
+      try {
+        const res = await fetch("/admin/api/events", { credentials: "include" });
+        if (!res.ok) throw new Error("Failed to load events");
+        const events = await res.json();
+        const ev = events.find(e => e.id === id);
+        if (!ev) return;
+        openModal("edit", ev);
+      } catch (err) {
+        console.error(err);
+        alert("Error loading event.");
+      }
+    }
+
+    if (action === "delete") {
+      if (!confirm("Delete this event?")) return;
+
+      try {
+        const res = await fetch(`/admin/api/events/delete/${encodeURIComponent(id)}`, {
+          method: "POST",
+          credentials: "include"
+        });
+        if (!res.ok) throw new Error("Failed to delete event");
+        loadEvents();
+      } catch (err) {
+        console.error(err);
+        alert("Error deleting event.");
+      }
+    }
   });
 
-  await fetch(`/admin/api/events/order`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(newOrder)
+  // Save Event
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+      id: editingId,
+      name: form.name.value,
+      date: form.date.value,
+      location: form.location.value,
+      venue: form.venue.value,
+      visible: form.visible.checked
+    };
+
+    try {
+      const res = await fetch("/admin/api/events/save", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error("Failed to save event");
+      closeModal();
+      loadEvents();
+    } catch (err) {
+      console.error(err);
+      alert("Error saving event.");
+    }
   });
 
-  closeReorderModal();
-  loadEvents();
-});
+  // Auto-load when Events section becomes active
+  const eventsSection = document.getElementById("section-events");
+  const observer = new MutationObserver(() => {
+    if (eventsSection.classList.contains("active")) {
+      loadEvents();
+    }
+  });
 
-/* --------------------------------------------------
-   INIT
--------------------------------------------------- */
-
-async function init() {
-  await loadEventsForFilters();
-  await loadRSVPs();
-  await loadEvents();
-}
-
-document.addEventListener("DOMContentLoaded", init);
+  observer.observe(eventsSection, { attributes: true, attributeFilter: ["class"] });
+})();
