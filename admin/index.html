@@ -9,8 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/admin.css">
+  <link rel="stylesheet" href="./admin.css">
 </head>
+
 <body>
   <div class="app-shell">
     <aside class="sidebar">
@@ -123,7 +124,7 @@
         </div>
 
         <div class="content-body">
-          <!-- HTML.RSVP-SECTION -->
+          <!-- RSVP SECTION -->
           <div class="section active" id="section-rsvp">
             <h3>RSVP Manager</h3>
             <p>Search, filter and manage guest responses across all events.</p>
@@ -170,25 +171,23 @@
             </div>
           </div>
 
-          <!-- HTML.EVENTS-SECTION -->
+          <!-- EVENTS SECTION -->
           <div class="section" id="section-events">
             <h3>Events</h3>
             <p>Manage event names, dates, locations and visibility. This will drive the RSVP form and filters.</p>
-
-            <div class="events-header">
-              <button class="button secondary" id="add-event-btn">Add event</button>
-            </div>
-
-            <div id="events-list" class="events-list"></div>
-
+            <ul>
+              <li>View all configured events</li>
+              <li>Add new events</li>
+              <li>Edit existing events</li>
+              <li>Hide/show events</li>
+            </ul>
             <div class="pill-row">
-              <span class="pill-tag accent">Full Events Manager</span>
-              <span class="pill-tag">Visibility toggle</span>
+              <span class="pill-tag accent">Next: Event Manager UI</span>
               <span class="pill-tag">KV-backed config</span>
             </div>
           </div>
 
-          <!-- HTML.EDIT-SECTION -->
+          <!-- EDIT WEBSITE SECTION -->
           <div class="section" id="section-edit">
             <h3>Edit Website Content</h3>
             <p>This area will act like a lightweight CMS for your main wedding site.</p>
@@ -206,7 +205,7 @@
             </div>
           </div>
 
-          <!-- HTML.BUDGET-SECTION -->
+          <!-- BUDGET SECTION -->
           <div class="section" id="section-budget">
             <h3>Budget & Cost Tracker</h3>
             <p>Track all wedding-related costs in one place:</p>
@@ -223,7 +222,7 @@
             </div>
           </div>
 
-          <!-- HTML.PLANNER-SECTION -->
+          <!-- PLANNER SECTION -->
           <div class="section" id="section-planner">
             <h3>Planner & Timeline</h3>
             <p>Use this as your project board for everything leading up to each event:</p>
@@ -240,7 +239,7 @@
             </div>
           </div>
 
-          <!-- HTML.RETURN-SECTION -->
+          <!-- RETURN SECTION -->
           <div class="section" id="section-return">
             <h3>Return to Main Site</h3>
             <p>Quick link back to the public wedding site.</p>
@@ -259,46 +258,48 @@
     </main>
   </div>
 
-  <!-- HTML.EVENT-MODAL -->
-  <div id="event-modal" class="modal hidden">
-    <div class="modal-backdrop"></div>
-    <div class="modal-content">
-      <h3 id="event-modal-title">Add Event</h3>
+   <script src="./admin.js" defer></script>
 
-      <form id="event-form">
-        <label>
-          Event Name
-          <input type="text" name="name" class="input" required>
-        </label>
+<!-- EVENT MODAL -->
+<div id="event-modal" class="modal hidden">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <h3 id="event-modal-title">Add Event</h3>
 
-        <label>
-          Date
-          <input type="date" name="date" class="input" required>
-        </label>
+    <form id="event-form">
+      <label>
+        Event Name
+        <input type="text" name="name" class="input" required>
+      </label>
 
-        <label>
-          Location
-          <input type="text" name="location" class="input" required>
-        </label>
+      <label>
+        Date
+        <input type="date" name="date" class="input" required>
+      </label>
 
-        <label>
-          Venue
-          <input type="text" name="venue" class="input">
-        </label>
+      <label>
+        Location
+        <input type="text" name="location" class="input" required>
+      </label>
 
-        <label class="checkbox-row">
-          <input type="checkbox" name="visible" checked>
-          Visible on site
-        </label>
+      <label>
+        Venue
+        <input type="text" name="venue" class="input">
+      </label>
 
-        <div class="modal-actions">
-          <button type="button" class="button secondary" id="event-cancel">Cancel</button>
-          <button type="submit" class="button" id="event-save">Save</button>
-        </div>
-      </form>
-    </div>
+      <label class="checkbox-row">
+        <input type="checkbox" name="visible" checked>
+        Visible on site
+      </label>
+
+      <div class="modal-actions">
+        <button type="button" class="button secondary" id="event-cancel">Cancel</button>
+        <button type="submit" class="button" id="event-save">Save</button>
+      </div>
+    </form>
   </div>
+</div>
 
-  <script src="/admin.js" defer></script>
+   
 </body>
 </html>
