@@ -1,31 +1,305 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Claire & Brad – Wedding 2027</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Wedding Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./admin.css">
 </head>
+
 <body>
-  <!-- <header class="hero">
-    <h1>Claire & Brad</h1>
-    <p class="subtitle">Save the Date · 2027</p>
-  </header> -->
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-circle">W</div>
+        <div class="sidebar-title">
+          <span class="sidebar-title-main">Wedding Admin</span>
+          <span class="sidebar-title-sub">Control centre</span>
+        </div>
+      </div>
 
-  <section class="details">
-	<img src="SavetheDate-wreath.png" alt="Save the Date" class="mainimg">
-    <h2>Our Celebrations</h2>
-  </section>
+      <div>
+        <div class="sidebar-section-label">Overview</div>
+        <ul class="nav-list">
+          <li class="nav-item active" data-section="rsvp">
+            <div class="nav-icon">👥</div>
+            <span>RSVP Manager</span>
+          </li>
+          <li class="nav-item" data-section="events">
+            <div class="nav-icon">📍</div>
+            <span>Events</span>
+          </li>
+          <li class="nav-item" data-section="edit">
+            <div class="nav-icon">📝</div>
+            <span>Edit Website Content</span>
+          </li>
+        </ul>
+      </div>
 
-  <section class="cta">
-    <a href="lodden.html" class="button">UK Wedding</a>
-	<a href="london.html" class="button">UK Celebration</a>
-    <a href="perth.html" class="button">Perth Celebration</a>
-  </section>
+      <div>
+        <div class="sidebar-section-label">Planning</div>
+        <ul class="nav-list">
+          <li class="nav-item" data-section="budget">
+            <div class="nav-icon">💸</div>
+            <span>Budget & Cost Tracker</span>
+          </li>
+          <li class="nav-item" data-section="planner">
+            <div class="nav-icon">📅</div>
+            <span>Planner & Timeline</span>
+          </li>
+        </ul>
+      </div>
 
-  <footer>
-	<img src="SavetheDate-cb.png" alt="C+B Monogram" class="monogram">
-    <p>© 2027 Claire & Brad Wedding · digitalcandy.win</p>
-  </footer>
+      <div>
+        <div class="sidebar-section-label">Site</div>
+        <ul class="nav-list">
+          <li class="nav-item" data-section="return">
+            <div class="nav-icon">↩️</div>
+            <span>Return to Main Site</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <span class="pill">v0.3 admin</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title">
+            <span id="topbar-title-text">RSVP Manager</span>
+            <span class="topbar-chip" id="topbar-chip-text">Guests & responses</span>
+          </div>
+          <div class="topbar-subtitle">
+            Central place to manage your wedding website, guests, budget and planning.
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="theme-toggle" id="theme-toggle" data-mode="light" aria-label="Toggle dark mode">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+            <div class="theme-toggle-thumb">●</div>
+          </div>
+
+          <div class="topbar-user" id="user-menu-toggle">
+            <div class="user-avatar">B</div>
+            <div>
+              <div style="font-size: 11px; font-weight: 500;">Brad</div>
+              <div style="font-size: 10px; color: var(--text-muted);">Admin</div>
+            </div>
+          </div>
+
+          <div class="user-menu" id="user-menu">
+            <a href="https://dash.cloudflare.com/?to=/:account/access/apps" target="_blank" rel="noreferrer">
+              Cloudflare Access Policies
+            </a>
+            <a href="/cdn-cgi/access/logout">
+              Logout
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <section class="content-card">
+        <div class="content-header">
+          <div class="content-header-left">
+            <div class="content-title" id="content-title">RSVP Manager</div>
+            <div class="content-subtitle" id="content-subtitle">
+              View, filter and export guest responses for all events.
+            </div>
+          </div>
+          <div class="content-header-right">
+            <div class="badge">
+              <span class="badge-dot"></span>
+              <span id="badge-text">Live data connected</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-body">
+          <!-- RSVP SECTION -->
+          <div class="section active" id="section-rsvp">
+            <h3>RSVP Manager</h3>
+            <p>Search, filter and manage guest responses across all events.</p>
+
+            <div class="rsvp-controls">
+              <input id="rsvp-search" type="text" placeholder="Search by name or email…" class="input" />
+              <select id="rsvp-event-filter" class="input">
+                <option value="">All events</option>
+              </select>
+              <select id="rsvp-attendance-filter" class="input">
+                <option value="">All statuses</option>
+                <option value="attending">Attending</option>
+                <option value="not_attending">Not attending</option>
+              </select>
+              <button id="rsvp-export" class="button secondary">
+                <span>Export CSV</span>
+              </button>
+            </div>
+
+            <div class="rsvp-table-wrapper">
+              <table class="rsvp-table">
+                <thead>
+                  <tr>
+                    <th>Guest</th>
+                    <th>Email</th>
+                    <th>Event</th>
+                    <th>Guests</th>
+                    <th>Submitted</th>
+                    <th style="text-align:right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="rsvp-table-body">
+                  <tr>
+                    <td colspan="6" class="rsvp-loading">Loading RSVPs…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pill-row" style="margin-top: 8px;">
+              <span class="pill-tag accent">Backed by /admin/api/list</span>
+              <span class="pill-tag">Events from /admin/api/events</span>
+              <span class="pill-tag">Delete + CSV export ready</span>
+            </div>
+          </div>
+
+          <!-- EVENTS SECTION -->
+          <div class="section" id="section-events">
+            <h3>Events</h3>
+            <p>Manage event names, dates, locations and visibility. This will drive the RSVP form and filters.</p>
+            <ul>
+              <li>View all configured events</li>
+              <li>Add new events</li>
+              <li>Edit existing events</li>
+              <li>Hide/show events</li>
+            </ul>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: Event Manager UI</span>
+              <span class="pill-tag">KV-backed config</span>
+            </div>
+          </div>
+
+          <!-- EDIT WEBSITE SECTION -->
+          <div class="section" id="section-edit">
+            <h3>Edit Website Content</h3>
+            <p>This area will act like a lightweight CMS for your main wedding site.</p>
+            <ul>
+              <li>Hero text, event descriptions, schedule, venue details</li>
+              <li>Travel info, FAQ, footer content</li>
+              <li>Backed by JSON in KV or a config file</li>
+              <li>Simple forms → Worker updates → site reads dynamically</li>
+            </ul>
+            <p>You’ll be able to tweak copy without redeploying.</p>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: define content schema</span>
+              <span class="pill-tag">Create edit forms</span>
+              <span class="pill-tag">Wire to KV</span>
+            </div>
+          </div>
+
+          <!-- BUDGET SECTION -->
+          <div class="section" id="section-budget">
+            <h3>Budget & Cost Tracker</h3>
+            <p>Track all wedding-related costs in one place:</p>
+            <ul>
+              <li>Expenses by category (venue, catering, travel, outfits, etc.)</li>
+              <li>Budget vs actual spend</li>
+              <li>Paid vs outstanding</li>
+              <li>Optional charts later</li>
+            </ul>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: design expense model</span>
+              <span class="pill-tag">Add add/edit/delete UI</span>
+              <span class="pill-tag">Store in KV</span>
+            </div>
+          </div>
+
+          <!-- PLANNER SECTION -->
+          <div class="section" id="section-planner">
+            <h3>Planner & Timeline</h3>
+            <p>Use this as your project board for everything leading up to each event:</p>
+            <ul>
+              <li>Tasks with due dates and status (not started / in progress / done)</li>
+              <li>Assign tasks to you or Claire</li>
+              <li>Separate views for “overall planning” and “wedding week / day-of” timelines</li>
+              <li>Countdown to each event</li>
+            </ul>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: task structure</span>
+              <span class="pill-tag">List + board view (later)</span>
+              <span class="pill-tag">Reminders (optional)</span>
+            </div>
+          </div>
+
+          <!-- RETURN SECTION -->
+          <div class="section" id="section-return">
+            <h3>Return to Main Site</h3>
+            <p>Quick link back to the public wedding site.</p>
+            <p>You can keep this simple, or later show a small status summary (uptime, last deploy, etc.).</p>
+            <a href="/" class="link-button">
+              <span>Go to main site</span>
+              <span>↗</span>
+            </a>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: maybe show site stats</span>
+              <span class="pill-tag">Add quick links</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+   <script src="./admin.js" defer></script>
+
+<!-- EVENT MODAL -->
+<div id="event-modal" class="modal hidden">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <h3 id="event-modal-title">Add Event</h3>
+
+    <form id="event-form">
+      <label>
+        Event Name
+        <input type="text" name="name" class="input" required>
+      </label>
+
+      <label>
+        Date
+        <input type="date" name="date" class="input" required>
+      </label>
+
+      <label>
+        Location
+        <input type="text" name="location" class="input" required>
+      </label>
+
+      <label>
+        Venue
+        <input type="text" name="venue" class="input">
+      </label>
+
+      <label class="checkbox-row">
+        <input type="checkbox" name="visible" checked>
+        Visible on site
+      </label>
+
+      <div class="modal-actions">
+        <button type="button" class="button secondary" id="event-cancel">Cancel</button>
+        <button type="submit" class="button" id="event-save">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+   
 </body>
 </html>
