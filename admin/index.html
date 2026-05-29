@@ -2,133 +2,127 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Event Admin</title>
+  <title>Wedding Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/admin/admin.css">
 </head>
 <body>
-  <div class="admin-shell">
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <h1>Events Admin</h1>
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <button id="menu-toggle" class="burger">☰</button>
+    <h1 class="topbar-title">Wedding Admin</h1>
+
+    <div class="account-menu">
+      <button id="account-menu-button" class="account-button">
+        <span class="account-name">Admin</span>
+        <span class="account-caret">▾</span>
+      </button>
+      <div id="account-menu-dropdown" class="account-dropdown hidden">
+        <a href="/cdn-cgi/access/logout" class="account-item">Logout</a>
+        <a href="https://dash.cloudflare.com/" target="_blank" class="account-item">Cloudflare Access</a>
       </div>
-      <nav class="sidebar-nav">
-        <button class="nav-item active" data-section-target="dashboard-section">Dashboard</button>
-        <button class="nav-item" data-section-target="guests-section">Guests</button>
-        <button class="nav-item" data-section-target="rsvps-section">RSVPs</button>
-        <button class="nav-item" data-section-target="events-section">Events</button>
-        <button class="nav-item" data-section-target="settings-section">Settings</button>
-      </nav>
-    </aside>
+    </div>
+  </header>
 
-    <main class="main">
-      <header class="topbar">
-        <div class="topbar-left">
-          <span class="topbar-title">Admin</span>
-        </div>
-        <div class="topbar-right">
-          <div class="account-menu">
-            <button id="account-menu-button" class="account-button">
-              <span class="account-name">Admin</span>
-              <span class="account-caret">▾</span>
-            </button>
-            <div id="account-menu-dropdown" class="account-dropdown hidden">
-              <a href="/cdn-cgi/access/logout" class="account-item">Logout</a>
-              <a href="https://dash.cloudflare.com/" target="_blank" class="account-item">Cloudflare Access</a>
-            </div>
-          </div>
-        </div>
-      </header>
+  <!-- Hamburger Menu -->
+  <nav id="menu-bar" class="menu-bar hidden">
+    <button class="menu-item active" data-section-target="dashboard-section">Dashboard</button>
+    <button class="menu-item" data-section-target="guests-section">Guests</button>
+    <button class="menu-item" data-section-target="rsvps-section">RSVPs</button>
+    <button class="menu-item" data-section-target="events-section">Events</button>
+    <button class="menu-item" data-section-target="settings-section">Settings</button>
+  </nav>
 
-      <section id="dashboard-section" class="admin-section">
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- Dashboard -->
+    <section id="dashboard-section" class="admin-section">
+      <div class="card">
         <h2>Dashboard</h2>
         <p>Quick overview of guests, RSVPs, and events will go here.</p>
-      </section>
+      </div>
+    </section>
 
-      <section id="guests-section" class="admin-section hidden">
-        <div class="section-header">
-          <h2>Guests</h2>
-        </div>
-        <div class="section-body">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Events</th>
-                <th>Attending</th>
-                <th>Notes</th>
-              </tr>
-            </thead>
-            <tbody id="guests-table-body">
-              <!-- Populated by JS / Worker later -->
-            </tbody>
-          </table>
-        </div>
-      </section>
+    <!-- Guests -->
+    <section id="guests-section" class="admin-section hidden">
+      <div class="card">
+        <h2>Guests</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Events</th>
+              <th>Attending</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="guests-table-body"></tbody>
+        </table>
+      </div>
+    </section>
 
-      <section id="rsvps-section" class="admin-section hidden">
-        <div class="section-header">
-          <h2>RSVPs</h2>
-        </div>
-        <div class="section-body">
-          <div id="rsvp-stats">
-            <!-- Per-event stats (total, attending, not attending) will be rendered here -->
-          </div>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Guest</th>
-                <th>Event</th>
-                <th>Attending</th>
-                <th>Submitted</th>
-                <th>Notes</th>
-              </tr>
-            </thead>
-            <tbody id="rsvps-table-body">
-              <!-- Populated by JS / Worker later -->
-            </tbody>
-          </table>
-        </div>
-      </section>
+    <!-- RSVPs -->
+    <section id="rsvps-section" class="admin-section hidden">
+      <div class="card">
+        <h2>RSVPs</h2>
+        <div id="rsvp-stats"></div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Guest</th>
+              <th>Event</th>
+              <th>Attending</th>
+              <th>Submitted</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="rsvps-table-body"></tbody>
+        </table>
+      </div>
+    </section>
 
-      <section id="events-section" class="admin-section hidden">
+    <!-- Events -->
+    <section id="events-section" class="admin-section hidden">
+      <div class="card">
         <div class="section-header">
           <h2>Events</h2>
           <div class="section-actions">
             <button id="add-event-btn" class="btn primary">Add event</button>
-            <button id="reorder-events-btn" class="btn secondary">Reorder events</button>
+            <button id="reorder-events-btn" class="btn secondary">Reorder</button>
           </div>
         </div>
 
-        <div id="events-list-container">
-          <table class="table events-table">
-            <thead>
-              <tr>
-                <th>Order</th>
-                <th>Name</th>
-                <th>Date</th>
-                <th>Location</th>
-                <th>Venue</th>
-                <th>Visible</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="events-table-body">
-              <!-- Populated by JS -->
-            </tbody>
-          </table>
-        </div>
-      </section>
+        <table class="table events-table">
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Name</th>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Venue</th>
+              <th>Visible</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="events-table-body"></tbody>
+        </table>
+      </div>
+    </section>
 
-      <section id="settings-section" class="admin-section hidden">
+    <!-- Settings -->
+    <section id="settings-section" class="admin-section hidden">
+      <div class="card">
         <h2>Settings</h2>
         <p>General configuration will go here.</p>
-      </section>
-    </main>
-  </div>
+      </div>
+    </section>
 
-  <!-- Add/Edit Event Modal -->
+  </main>
+
+  <!-- Modals -->
   <div id="event-modal" class="modal hidden">
     <div class="modal-backdrop"></div>
     <div class="modal-dialog">
@@ -140,37 +134,25 @@
         <form id="event-form">
           <input type="hidden" id="event-id">
 
-          <div class="form-group">
-            <label for="event-name">Name</label>
-            <input type="text" id="event-name" required>
-          </div>
+          <label>Name</label>
+          <input type="text" id="event-name" required>
 
-          <div class="form-group">
-            <label for="event-date">Date</label>
-            <input type="date" id="event-date">
-          </div>
+          <label>Date</label>
+          <input type="date" id="event-date">
 
-          <div class="form-group">
-            <label for="event-location">Location</label>
-            <input type="text" id="event-location">
-          </div>
+          <label>Location</label>
+          <input type="text" id="event-location">
 
-          <div class="form-group">
-            <label for="event-venue">Venue</label>
-            <input type="text" id="event-venue">
-          </div>
+          <label>Venue</label>
+          <input type="text" id="event-venue">
 
-          <div class="form-group checkbox-group">
-            <label>
-              <input type="checkbox" id="event-visible" checked>
-              Visible on public site
-            </label>
-          </div>
+          <label class="checkbox">
+            <input type="checkbox" id="event-visible" checked>
+            Visible on public site
+          </label>
 
-          <div class="form-group">
-            <label for="event-notes">Internal notes</label>
-            <textarea id="event-notes" rows="3"></textarea>
-          </div>
+          <label>Internal notes</label>
+          <textarea id="event-notes" rows="3"></textarea>
         </form>
       </div>
       <div class="modal-footer">
@@ -180,7 +162,6 @@
     </div>
   </div>
 
-  <!-- Delete confirmation modal -->
   <div id="delete-event-modal" class="modal hidden">
     <div class="modal-backdrop"></div>
     <div class="modal-dialog small">
@@ -189,9 +170,7 @@
         <button class="modal-close" data-close-delete-event-modal>&times;</button>
       </div>
       <div class="modal-body">
-        <p id="delete-event-message">
-          Are you sure you want to delete this event? This cannot be undone.
-        </p>
+        <p id="delete-event-message"></p>
       </div>
       <div class="modal-footer">
         <button class="btn secondary" data-close-delete-event-modal>Cancel</button>
@@ -200,7 +179,6 @@
     </div>
   </div>
 
-  <!-- Reorder events modal -->
   <div id="reorder-events-modal" class="modal hidden">
     <div class="modal-backdrop"></div>
     <div class="modal-dialog">
@@ -209,10 +187,7 @@
         <button class="modal-close" data-close-reorder-events-modal>&times;</button>
       </div>
       <div class="modal-body">
-        <p class="help-text">Drag events to change the order they appear on the site.</p>
-        <ul id="reorder-events-list" class="reorder-list">
-          <!-- Populated by JS -->
-        </ul>
+        <ul id="reorder-events-list" class="reorder-list"></ul>
       </div>
       <div class="modal-footer">
         <button class="btn secondary" data-close-reorder-events-modal>Cancel</button>
