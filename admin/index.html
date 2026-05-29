@@ -172,20 +172,71 @@
           </div>
 
           <!-- EVENTS SECTION -->
-          <div class="section" id="section-events">
-            <h3>Events</h3>
-            <p>Manage event names, dates, locations and visibility. This will drive the RSVP form and filters.</p>
-            <ul>
-              <li>View all configured events</li>
-              <li>Add new events</li>
-              <li>Edit existing events</li>
-              <li>Hide/show events</li>
-            </ul>
-            <div class="pill-row">
-              <span class="pill-tag accent">Next: Event Manager UI</span>
-              <span class="pill-tag">KV-backed config</span>
-            </div>
-          </div>
+          <div id="events-section" class="admin-section hidden">
+           <div class="section-header">
+  <h2>Events</h2>
+  <button id="add-event-btn" class="primary-btn">Add Event</button>
+</div>
+
+<table class="events-table">
+  <thead>
+    <tr>
+      <th>Order</th>
+      <th>Name</th>
+      <th>Date</th>
+      <th>Location</th>
+      <th>Visible</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="events-table-body"></tbody>
+</table>
+
+<!-- Event Modal -->
+<div id="event-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3 id="event-modal-title">Add Event</h3>
+
+    <input type="hidden" id="event-id">
+
+    <label>Name</label>
+    <input id="event-name">
+
+    <label>Date</label>
+    <input id="event-date" type="date">
+
+    <label>Location</label>
+    <input id="event-location">
+
+    <label>Venue</label>
+    <input id="event-venue">
+
+    <label>Notes</label>
+    <textarea id="event-notes"></textarea>
+
+    <label class="checkbox-row">
+      <input type="checkbox" id="event-visible"> Visible
+    </label>
+
+    <div class="modal-actions">
+      <button id="save-event-btn" class="primary-btn">Save</button>
+      <button id="cancel-event-btn" class="secondary-btn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Modal -->
+<div id="delete-event-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Delete Event?</h3>
+    <p>This cannot be undone.</p>
+    <div class="modal-actions">
+      <button id="confirm-delete-event-btn" class="danger-btn">Delete</button>
+      <button id="cancel-delete-event-btn" class="secondary-btn">Cancel</button>
+    </div>
+  </div>
+</div>
+
 
           <!-- EDIT WEBSITE SECTION -->
           <div class="section" id="section-edit">
