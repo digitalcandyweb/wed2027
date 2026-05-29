@@ -166,21 +166,28 @@
   </div>
 
 
-  <!-- EVENTS SECTION  -->
-  <div class="section" id="section-events">
-    <h3>Events</h3>
-    <p>Manage event names, dates, locations and visibility. This will drive the RSVP form and filters.</p>
-    <ul>
-      <li>View all configured events</li>
-      <li>Add new events</li>
-      <li>Edit existing events</li>
-      <li>Hide/show events</li>
-    </ul>
-    <div class="pill-row">
-      <span class="pill-tag accent">Next: Event Manager UI</span>
-      <span class="pill-tag">KV-backed config</span>
-    </div>
-  </div>
+ <!-- EVENTS SECTION -->
+<div class="section" id="section-events">
+  <h3>Events</h3>
+  <p>Manage event names, dates, locations and visibility.</p>
+
+  <button id="add-event-btn" class="button">Add Event</button>
+
+  <table class="events-table">
+    <thead>
+      <tr>
+        <th>Order</th>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Location</th>
+        <th>Visible</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="events-table-body"></tbody>
+  </table>
+</div>
+
           <!-- EDIT WEBSITE SECTION -->
           <div class="section" id="section-edit">
             <h3>Edit Website Content</h3>
