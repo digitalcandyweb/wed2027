@@ -135,6 +135,150 @@
       setActive("rsvp");
     })();
 
+// Events Manager
+const EventsManager = (() => {
+  let events = [];
+  let eventToDelete = null;
+
+  const tableBody = document.getElementById("events-table-body");
+  const addBtn = document.getElementById("add-event-btn");
+
+  const modal = document.getElementById("event-modal");
+  const deleteModal = document.getElementById("delete-event-modal");
+
+  const idInput = document.getElementById("event-id");
+  const nameInput = document.getElementById("event-name");
+  const dateInput = document.getElementById("event-date");
+  const locationInput = document.getElementById("event-location");
+  const venueInput = document.getElementById("event-venue");
+  const notesInput = document.getElementById("event-notes");
+  const visibleInput = document.getElementById("event-visible");
+
+  const saveBtn = document.getElementById("save-event-btn");
+  const cancelBtn = document.getElementById("cancel-event-btn");
+
+  const confirmDeleteBtn = document.getElementById("confirm-delete-event-btn");
+  const cancelDeleteBtn = document.getElementById("cancel-delete-event-btn");
+
+  async function loadEvents() {
+    const res = await fetch("/admin/api/events");
+    events = await res.json();
+    events.sort((a, b) => a.order - b.order);
+    renderTable();
+  }
+
+  function renderTable() {
+    tableBody.innerHTML = "";
+    events.forEach(e => {
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${e.order}</td>
+        <td>${e.name}</td>
+        <td>${e.date}</td>
+        <td>${e.location}</td>
+        <td>${e.visible ? "Yes" : "No"}</td>
+        <td>
+          <button class="small-btn" data-edit="${e.id}">Edit</button>
+          <button class="small-btn danger" data-delete="${e.id}">Delete</button>
+        </td>
+      `;
+
+      tableBody.appendChild(row);
+    });
+
+    attachRowHandlers();
+  }
+
+  function attachRowHandlers() {
+    document.querySelectorAll("[data-edit]").forEach(btn => {
+      btn.addEventListener("click", () => openEdit(btn.dataset.edit));
+    });
+
+    document.querySelectorAll("[data-delete]").forEach(btn => {
+      btn.addEventListener("click", () => openDelete(btn.dataset.delete));
+    });
+  }
+
+  function openAdd() {
+    idInput.value = "";
+    nameInput.value = "";
+    dateInput.value = "";
+    locationInput.value = "";
+    venueInput.value = "";
+    notesInput.value = "";
+    visibleInput.checked = true;
+
+    modal.classList.remove("hidden");
+  }
+
+  function openEdit(id) {
+    const e = events.find(ev => ev.id === id);
+
+    idInput.value = e.id;
+    nameInput.value = e.name;
+    dateInput.value = e.date;
+    locationInput.value = e.location;
+    venueInput.value = e.venue;
+    notesInput.value = e.notes;
+    visibleInput.checked = e.visible;
+
+    modal.classList.remove("hidden");
+  }
+
+  function openDelete(id) {
+    eventToDelete = id;
+    deleteModal.classList.remove("hidden");
+  }
+
+  async function saveEvent() {
+    const body = {
+      id: idInput.value || null,
+      name: nameInput.value,
+      date: dateInput.value,
+      location: locationInput.value,
+      venue: venueInput.value,
+      notes: notesInput.value,
+      visible: visibleInput.checked
+    };
+
+    await fetch("/admin/api/events/save", {
+      method: "POST",
+      body: JSON.stringify(body)
+    });
+
+    modal.classList.add("hidden");
+    loadEvents();
+  }
+
+  async function deleteEvent() {
+    await fetch(`/admin/api/events/delete/${eventToDelete}`, {
+      method: "POST"
+    });
+
+    deleteModal.classList.add("hidden");
+    loadEvents();
+  }
+
+  function init() {
+    addBtn.addEventListener("click", openAdd);
+    saveBtn.addEventListener("click", saveEvent);
+    cancelBtn.addEventListener("click", () => modal.classList.add("hidden"));
+
+    confirmDeleteBtn.addEventListener("click", deleteEvent);
+    cancelDeleteBtn.addEventListener("click", () => deleteModal.classList.add("hidden"));
+
+    loadEvents();
+  }
+
+  return { init };
+})();
+
+document.addEventListener("DOMContentLoaded", () => {
+  EventsManager.init();
+});
+
+
     // RSVP MANAGER
     (function () {
       const tableBody = document.getElementById("rsvp-table-body");
