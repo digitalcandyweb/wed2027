@@ -60,7 +60,6 @@
       background: radial-gradient(circle at top left, #111827 0, #020617 40%, #020617 100%);
     }
 
-    /* Layout */
     .app-shell {
       display: flex;
       width: 100%;
@@ -205,17 +204,11 @@
       letter-spacing: 0.12em;
     }
 
-    .sidebar-footer-bottom {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
     .sidebar-footer-bottom span {
       color: var(--accent);
       font-weight: 500;
     }
 
-    /* Main content */
     .main {
       flex: 1;
       padding: 20px 26px;
@@ -291,7 +284,6 @@
       font-weight: 600;
     }
 
-    /* Dark mode toggle */
     .theme-toggle {
       position: relative;
       width: 46px;
@@ -340,7 +332,6 @@
       right: 8px;
     }
 
-    /* Content card */
     .content-card {
       flex: 1;
       background: rgba(255, 255, 255, 0.96);
@@ -485,7 +476,6 @@
       transform: translateY(-0.5px);
     }
 
-    /* Sections */
     .section {
       display: none;
     }
@@ -494,7 +484,142 @@
       display: block;
     }
 
-    /* Responsive */
+    /* RSVP section */
+    .rsvp-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .input {
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      font-size: 13px;
+      min-width: 140px;
+    }
+
+    .input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .button {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+    }
+
+    .button:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.45);
+    }
+
+    .button.secondary {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      box-shadow: none;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .button.secondary:hover {
+      background: var(--bg-soft);
+      transform: translateY(-1px);
+    }
+
+    .rsvp-table-wrapper {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+    }
+
+    .rsvp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .rsvp-table thead {
+      background: var(--bg-soft);
+    }
+
+    .rsvp-table th {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .rsvp-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: middle;
+    }
+
+    .rsvp-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .rsvp-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: rgba(148, 163, 184, 0.12);
+      color: var(--text-muted);
+    }
+
+    .rsvp-tag.attending {
+      background: rgba(22, 163, 74, 0.12);
+      color: #16a34a;
+    }
+
+    .rsvp-tag.not-attending {
+      background: rgba(220, 38, 38, 0.12);
+      color: #dc2626;
+    }
+
+    .rsvp-actions {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .rsvp-actions .link-button {
+      font-size: 11px;
+      padding: 3px 7px;
+    }
+
+    .rsvp-empty,
+    .rsvp-loading,
+    .rsvp-error {
+      text-align: center;
+      padding: 18px 10px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .rsvp-error {
+      color: var(--danger);
+    }
+
     @media (max-width: 900px) {
       .sidebar {
         display: none;
@@ -505,12 +630,20 @@
       .content-card {
         padding: 14px 14px 16px;
       }
+      .rsvp-table {
+        font-size: 12px;
+      }
+      .rsvp-table th:nth-child(3),
+      .rsvp-table td:nth-child(3),
+      .rsvp-table th:nth-child(5),
+      .rsvp-table td:nth-child(5) {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
   <div class="app-shell">
-    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="logo-circle">W</div>
@@ -561,7 +694,7 @@
       <div class="sidebar-footer">
         <div class="sidebar-footer-top">
           <span>London · Perth</span>
-          <span class="pill">v0.1 shell</span>
+          <span class="pill">v0.2 rsvp</span>
         </div>
         <div class="sidebar-footer-bottom">
           Planning for <span>17 Sep 2027</span> & <span>9 Oct 2027</span>
@@ -569,9 +702,7 @@
       </div>
     </aside>
 
-    <!-- Main -->
     <main class="main">
-      <!-- Topbar -->
       <header class="topbar">
         <div class="topbar-left">
           <div class="topbar-title">
@@ -598,13 +729,12 @@
         </div>
       </header>
 
-      <!-- Content card -->
       <section class="content-card">
         <div class="content-header">
           <div class="content-header-left">
             <div class="content-title" id="content-title">RSVP Manager</div>
             <div class="content-subtitle" id="content-subtitle">
-              View, filter and export guest responses for London and Perth.
+              View, filter and export guest responses for all events.
             </div>
           </div>
           <div class="content-header-right">
@@ -619,37 +749,61 @@
           <!-- RSVP SECTION -->
           <div class="section active" id="section-rsvp">
             <h3>RSVP Manager</h3>
-            <p>
-              This will become your full guest console:
-            </p>
-            <ul>
-              <li>Table of all RSVPs (London / Perth)</li>
-              <li>Filters for event, attendance, dietary, plus ones</li>
-              <li>Search and sort by name or submission date</li>
-              <li>View details, delete, export CSV, resend confirmation email</li>
-            </ul>
-            <div class="pill-row">
-              <span class="pill-tag accent">Next: hook up /admin/api/list</span>
-              <span class="pill-tag">Add table + filters</span>
-              <span class="pill-tag">CSV export</span>
+            <p>Search, filter and manage guest responses across all events.</p>
+
+            <div class="rsvp-controls">
+              <input id="rsvp-search" type="text" placeholder="Search by name or email…" class="input" />
+              <select id="rsvp-event-filter" class="input">
+                <option value="">All events</option>
+              </select>
+              <select id="rsvp-attendance-filter" class="input">
+                <option value="">All statuses</option>
+                <option value="attending">Attending</option>
+                <option value="not_attending">Not attending</option>
+              </select>
+              <button id="rsvp-export" class="button secondary">
+                <span>Export CSV</span>
+              </button>
+            </div>
+
+            <div class="rsvp-table-wrapper">
+              <table class="rsvp-table">
+                <thead>
+                  <tr>
+                    <th>Guest</th>
+                    <th>Email</th>
+                    <th>Event</th>
+                    <th>Guests</th>
+                    <th>Submitted</th>
+                    <th style="text-align:right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="rsvp-table-body">
+                  <tr>
+                    <td colspan="6" class="rsvp-loading">Loading RSVPs…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pill-row" style="margin-top: 8px;">
+              <span class="pill-tag accent">Backed by /admin/api/list</span>
+              <span class="pill-tag">Events from /admin/api/events</span>
+              <span class="pill-tag">Delete + CSV export ready</span>
             </div>
           </div>
 
           <!-- EDIT WEBSITE SECTION -->
           <div class="section" id="section-edit">
             <h3>Edit Website Content</h3>
-            <p>
-              This area will act like a lightweight CMS for your main wedding site.
-            </p>
+            <p>This area will act like a lightweight CMS for your main wedding site.</p>
             <ul>
               <li>Hero text, event descriptions, schedule, venue details</li>
               <li>Travel info, FAQ, footer content</li>
               <li>Backed by JSON in KV or a config file</li>
               <li>Simple forms → Worker updates → site reads dynamically</li>
             </ul>
-            <p>
-              You’ll be able to tweak copy without redeploying.
-            </p>
+            <p>You’ll be able to tweak copy without redeploying.</p>
             <div class="pill-row">
               <span class="pill-tag accent">Next: define content schema</span>
               <span class="pill-tag">Create edit forms</span>
@@ -660,9 +814,7 @@
           <!-- BUDGET SECTION -->
           <div class="section" id="section-budget">
             <h3>Budget & Cost Tracker</h3>
-            <p>
-              Track all wedding-related costs in one place:
-            </p>
+            <p>Track all wedding-related costs in one place:</p>
             <ul>
               <li>Expenses by category (venue, catering, travel, outfits, etc.)</li>
               <li>Budget vs actual spend</li>
@@ -679,9 +831,7 @@
           <!-- PLANNER SECTION -->
           <div class="section" id="section-planner">
             <h3>Planner & Timeline</h3>
-            <p>
-              Use this as your project board for everything leading up to London and Perth:
-            </p>
+            <p>Use this as your project board for everything leading up to each event:</p>
             <ul>
               <li>Tasks with due dates and status (not started / in progress / done)</li>
               <li>Assign tasks to you or Claire</li>
@@ -698,12 +848,8 @@
           <!-- RETURN SECTION -->
           <div class="section" id="section-return">
             <h3>Return to Main Site</h3>
-            <p>
-              Quick link back to the public wedding site.
-            </p>
-            <p>
-              You can keep this simple, or later show a small status summary (uptime, last deploy, etc.).
-            </p>
+            <p>Quick link back to the public wedding site.</p>
+            <p>You can keep this simple, or later show a small status summary (uptime, last deploy, etc.).</p>
             <a href="/" class="link-button">
               <span>Go to main site</span>
               <span>↗</span>
@@ -719,7 +865,7 @@
   </div>
 
   <script>
-    // --- Theme handling ---
+    // THEME
     (function () {
       const root = document.documentElement;
       const toggle = document.getElementById("theme-toggle");
@@ -729,7 +875,6 @@
         toggle.setAttribute("data-mode", mode);
       }
 
-      // Initial theme: localStorage → prefers-color-scheme → light
       const stored = localStorage.getItem("wedding-admin-theme");
       if (stored === "light" || stored === "dark") {
         applyTheme(stored);
@@ -747,7 +892,7 @@
       });
     })();
 
-    // --- Navigation + section switching ---
+    // NAV + SECTION SWITCHING
     (function () {
       const navItems = document.querySelectorAll(".nav-item");
       const sections = {
@@ -769,7 +914,7 @@
           topbarTitle: "RSVP Manager",
           chip: "Guests & responses",
           contentTitle: "RSVP Manager",
-          contentSubtitle: "View, filter and export guest responses for London and Perth.",
+          contentSubtitle: "View, filter and export guest responses for all events.",
           badge: "Live data connected"
         },
         edit: {
@@ -790,7 +935,7 @@
           topbarTitle: "Planner & Timeline",
           chip: "Tasks & milestones",
           contentTitle: "Planner & Timeline",
-          contentSubtitle: "Organise tasks, due dates and timelines for London and Perth.",
+          contentSubtitle: "Organise tasks, due dates and timelines for all events.",
           badge: "Planning workspace"
         },
         return: {
@@ -803,18 +948,15 @@
       };
 
       function setActive(sectionKey) {
-        // nav
         navItems.forEach(item => {
           const key = item.getAttribute("data-section");
           item.classList.toggle("active", key === sectionKey);
         });
 
-        // sections
         Object.entries(sections).forEach(([key, el]) => {
           el.classList.toggle("active", key === sectionKey);
         });
 
-        // text
         const m = meta[sectionKey];
         if (m) {
           topbarTitle.textContent = m.topbarTitle;
@@ -832,8 +974,225 @@
         });
       });
 
-      // default
       setActive("rsvp");
+    })();
+
+    // RSVP MANAGER
+    (function () {
+      const tableBody = document.getElementById("rsvp-table-body");
+      const searchInput = document.getElementById("rsvp-search");
+      const eventFilter = document.getElementById("rsvp-event-filter");
+      const attendanceFilter = document.getElementById("rsvp-attendance-filter");
+      const exportButton = document.getElementById("rsvp-export");
+
+      let allEvents = [];
+      let allRsvps = [];
+      let filteredRsvps = [];
+
+      async function fetchEvents() {
+        try {
+          const res = await fetch("/admin/api/events", { credentials: "include" });
+          if (!res.ok) throw new Error("Failed to load events");
+          const data = await res.json();
+          allEvents = Array.isArray(data) ? data : [];
+          populateEventFilter();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      function populateEventFilter() {
+        eventFilter.innerHTML = "";
+        const optAll = document.createElement("option");
+        optAll.value = "";
+        optAll.textContent = "All events";
+        eventFilter.appendChild(optAll);
+
+        allEvents.forEach(ev => {
+          const opt = document.createElement("option");
+          opt.value = ev.id;
+          opt.textContent = ev.name || ev.id;
+          eventFilter.appendChild(opt);
+        });
+      }
+
+      async function fetchRsvps() {
+        try {
+          tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-loading">Loading RSVPs…</td></tr>';
+          const res = await fetch("/admin/api/list", { credentials: "include" });
+          if (!res.ok) throw new Error("Failed to load RSVPs");
+          const data = await res.json();
+          allRsvps = Array.isArray(data) ? data : [];
+          applyFilters();
+        } catch (err) {
+          console.error(err);
+          tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-error">Error loading RSVPs.</td></tr>';
+        }
+      }
+
+      function getEventName(id) {
+        const ev = allEvents.find(e => e.id === id);
+        return ev ? (ev.name || ev.id) : (id || "—");
+      }
+
+      function formatDate(ts) {
+        if (!ts) return "—";
+        try {
+          return new Date(ts).toLocaleString();
+        } catch {
+          return ts;
+        }
+      }
+
+      function renderTable(rows) {
+        if (!rows.length) {
+          tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-empty">No RSVPs match your filters yet.</td></tr>';
+          return;
+        }
+
+        tableBody.innerHTML = "";
+        rows.forEach(r => {
+          const tr = document.createElement("tr");
+
+          const attending = r.attending === true || r.status === "attending";
+          const statusLabel = attending ? "Attending" : (r.status === "not_attending" || r.attending === false ? "Not attending" : "Unknown");
+
+          tr.innerHTML = `
+            <td>
+              <div style="font-weight:500;">${r.name || "—"}</div>
+              <div style="margin-top:2px;">
+                <span class="rsvp-tag ${attending ? "attending" : "not-attending"}">${statusLabel}</span>
+              </div>
+            </td>
+            <td>${r.email || "—"}</td>
+            <td>${getEventName(r.event)}</td>
+            <td>${typeof r.guests === "number" ? r.guests : (r.guests || "—")}</td>
+            <td>${formatDate(r.timestamp)}</td>
+            <td>
+              <div class="rsvp-actions">
+                <button class="link-button" type="button" data-action="view" data-id="${r.id || ""}">View</button>
+                <button class="link-button" type="button" data-action="delete" data-id="${r.id || ""}" style="color:var(--danger);">Delete</button>
+              </div>
+            </td>
+          `;
+
+          tableBody.appendChild(tr);
+        });
+      }
+
+      function applyFilters() {
+        const q = (searchInput.value || "").toLowerCase();
+        const ev = eventFilter.value;
+        const att = attendanceFilter.value;
+
+        filteredRsvps = allRsvps.filter(r => {
+          const matchesSearch =
+            !q ||
+            (r.name && r.name.toLowerCase().includes(q)) ||
+            (r.email && r.email.toLowerCase().includes(q));
+
+          const matchesEvent = !ev || r.event === ev;
+
+          let status = "";
+          if (r.attending === true || r.status === "attending") status = "attending";
+          else if (r.attending === false || r.status === "not_attending") status = "not_attending";
+
+          const matchesAttendance = !att || status === att;
+
+          return matchesSearch && matchesEvent && matchesAttendance;
+        });
+
+        renderTable(filteredRsvps);
+      }
+
+      async function deleteRsvp(id) {
+        if (!id) return;
+        const confirmDelete = window.confirm("Delete this RSVP? This cannot be undone.");
+        if (!confirmDelete) return;
+
+        try {
+          const res = await fetch(`/admin/api/delete/${encodeURIComponent(id)}`, {
+            method: "POST",
+            credentials: "include"
+          });
+          if (!res.ok) throw new Error("Failed to delete RSVP");
+          allRsvps = allRsvps.filter(r => r.id !== id);
+          applyFilters();
+        } catch (err) {
+          console.error(err);
+          alert("Error deleting RSVP.");
+        }
+      }
+
+      function exportCsv() {
+        const rows = filteredRsvps.length ? filteredRsvps : allRsvps;
+        if (!rows.length) {
+          alert("No RSVPs to export.");
+          return;
+        }
+
+        const header = ["id", "name", "email", "event", "guests", "attending", "timestamp"];
+        const lines = [header.join(",")];
+
+        rows.forEach(r => {
+          const attending = r.attending === true || r.status === "attending"
+            ? "attending"
+            : (r.attending === false || r.status === "not_attending" ? "not_attending" : "");
+          const line = [
+            r.id || "",
+            (r.name || "").replace(/"/g, '""'),
+            (r.email || "").replace(/"/g, '""'),
+            getEventName(r.event).replace(/"/g, '""'),
+            typeof r.guests === "number" ? r.guests : (r.guests || ""),
+            attending,
+            r.timestamp || ""
+          ].map(v => `"${v}"`).join(",");
+          lines.push(line);
+        });
+
+        const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        const now = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+        a.download = `wedding-rsvps-${now}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      tableBody.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+        const action = btn.getAttribute("data-action");
+        const id = btn.getAttribute("data-id");
+        if (action === "delete") {
+          deleteRsvp(id);
+        } else if (action === "view") {
+          const r = allRsvps.find(x => x.id === id);
+          if (!r) return;
+          alert(
+            `Name: ${r.name || "—"}\n` +
+            `Email: ${r.email || "—"}\n` +
+            `Event: ${getEventName(r.event)}\n` +
+            `Guests: ${r.guests || "—"}\n` +
+            `Attending: ${r.attending}\n` +
+            `Submitted: ${formatDate(r.timestamp)}\n\n` +
+            (r.notes ? `Notes: ${r.notes}` : "")
+          );
+        }
+      });
+
+      searchInput.addEventListener("input", applyFilters);
+      eventFilter.addEventListener("change", applyFilters);
+      attendanceFilter.addEventListener("change", applyFilters);
+      exportButton.addEventListener("click", exportCsv);
+
+      (async function init() {
+        await fetchEvents();
+        await fetchRsvps();
+      })();
     })();
   </script>
 </body>
