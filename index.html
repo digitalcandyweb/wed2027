@@ -1,31 +1,1236 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Claire & Brad – Wedding 2027</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Wedding Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-elevated: #f7f7f8;
+      --bg-soft: #f3f4f6;
+      --border-subtle: #e5e7eb;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --accent: #2563eb;
+      --accent-soft: rgba(37, 99, 235, 0.08);
+      --accent-border: rgba(37, 99, 235, 0.25);
+      --danger: #dc2626;
+      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.08);
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --radius-pill: 999px;
+      --transition-fast: 150ms ease-out;
+    }
+
+    [data-theme="dark"] {
+      --bg: #050816;
+      --bg-elevated: #0b1020;
+      --bg-soft: #111827;
+      --border-subtle: #1f2937;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --accent: #60a5fa;
+      --accent-soft: rgba(96, 165, 250, 0.12);
+      --accent-border: rgba(96, 165, 250, 0.35);
+      --danger: #f97373;
+      --shadow-soft: 0 22px 55px rgba(0, 0, 0, 0.6);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #e5edff 0, #ffffff 40%, #ffffff 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    [data-theme="dark"] body {
+      background: radial-gradient(circle at top left, #111827 0, #020617 40%, #020617 100%);
+    }
+
+    .app-shell {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(18px);
+      border-right: 1px solid var(--border-subtle);
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    [data-theme="dark"] .sidebar {
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 8px 10px;
+    }
+
+    .logo-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
+    }
+
+    .sidebar-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-title-main {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .sidebar-title-sub {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+    }
+
+    .sidebar-section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      margin: 10px 4px 4px;
+    }
+
+    .nav-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-item {
+      border-radius: var(--radius-md);
+      padding: 9px 10px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .nav-item:hover {
+      background: var(--bg-soft);
+      color: var(--text-main);
+      transform: translateY(-1px);
+    }
+
+    .nav-item.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent-border);
+    }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .nav-item.active .nav-icon {
+      background: rgba(37, 99, 235, 0.12);
+      color: var(--accent);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border-subtle);
+      display: flex;
+      justify-content: flex-end;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      border-radius: var(--radius-pill);
+      padding: 3px 8px;
+      border: 1px solid var(--border-subtle);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .main {
+      flex: 1;
+      padding: 20px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .topbar-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .topbar-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .topbar-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .topbar-chip {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-soft);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .topbar-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .user-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #f97316, #ec4899);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .user-menu {
+      position: absolute;
+      top: 40px;
+      right: 0;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 6px 0;
+      display: none;
+      flex-direction: column;
+      min-width: 190px;
+      box-shadow: var(--shadow-soft);
+      z-index: 20;
+    }
+
+    .user-menu a {
+      padding: 8px 14px;
+      font-size: 13px;
+      color: var(--text-main);
+      text-decoration: none;
+      display: block;
+    }
+
+    .user-menu a:hover {
+      background: var(--bg-soft);
+    }
+
+    .theme-toggle {
+      position: relative;
+      width: 46px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      display: flex;
+      align-items: center;
+      padding: 2px;
+      cursor: pointer;
+      transition: background var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .theme-toggle-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.5);
+      transform: translateX(0);
+      transition: transform var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 11px;
+    }
+
+    .theme-toggle[data-mode="dark"] .theme-toggle-thumb {
+      transform: translateX(20px);
+    }
+
+    .theme-toggle-icon {
+      position: absolute;
+      font-size: 11px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .theme-toggle-icon.sun { left: 8px; }
+    .theme-toggle-icon.moon { right: 8px; }
+
+    .content-card {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow: hidden;
+    }
+
+    [data-theme="dark"] .content-card {
+      background: rgba(15, 23, 42, 0.96);
+    }
+
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .content-header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .content-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .content-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .content-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-soft);
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    .content-body {
+      flex: 1;
+      border-radius: 12px;
+      background: var(--bg-soft);
+      border: 1px dashed var(--border-subtle);
+      padding: 14px 14px 16px;
+      overflow: auto;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .content-body h3 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .content-body p {
+      margin: 0 0 6px;
+      line-height: 1.5;
+    }
+
+    .content-body ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .content-body li {
+      margin-bottom: 4px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .pill-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      background: rgba(148, 163, 184, 0.12);
+      color: var(--text-muted);
+    }
+
+    .pill-tag.accent {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+    }
+
+    .link-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 4px 8px;
+      border-radius: var(--radius-pill);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .link-button:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent-border);
+      transform: translateY(-0.5px);
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* RSVP section */
+    .rsvp-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .input {
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      font-size: 13px;
+      min-width: 140px;
+    }
+
+    .input::placeholder { color: var(--text-muted); }
+
+    .button {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+    }
+
+    .button:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.45);
+    }
+
+    .button.secondary {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      box-shadow: none;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .button.secondary:hover {
+      background: var(--bg-soft);
+      transform: translateY(-1px);
+    }
+
+    .rsvp-table-wrapper {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+    }
+
+    .rsvp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .rsvp-table thead { background: var(--bg-soft); }
+
+    .rsvp-table th {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .rsvp-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: middle;
+    }
+
+    .rsvp-table tr:last-child td { border-bottom: none; }
+
+    .rsvp-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: rgba(148, 163, 184, 0.12);
+      color: var(--text-muted);
+    }
+
+    .rsvp-tag.attending {
+      background: rgba(22, 163, 74, 0.12);
+      color: #16a34a;
+    }
+
+    .rsvp-tag.not-attending {
+      background: rgba(220, 38, 38, 0.12);
+      color: #dc2626;
+    }
+
+    .rsvp-actions {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .rsvp-actions .link-button {
+      font-size: 11px;
+      padding: 3px 7px;
+    }
+
+    .rsvp-empty,
+    .rsvp-loading,
+    .rsvp-error {
+      text-align: center;
+      padding: 18px 10px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .rsvp-error { color: var(--danger); }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { padding: 14px 14px 18px; }
+      .content-card { padding: 14px 14px 16px; }
+      .rsvp-table { font-size: 12px; }
+      .rsvp-table th:nth-child(3),
+      .rsvp-table td:nth-child(3),
+      .rsvp-table th:nth-child(5),
+      .rsvp-table td:nth-child(5) {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- <header class="hero">
-    <h1>Claire & Brad</h1>
-    <p class="subtitle">Save the Date · 2027</p>
-  </header> -->
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-circle">W</div>
+        <div class="sidebar-title">
+          <span class="sidebar-title-main">Wedding Admin</span>
+          <span class="sidebar-title-sub">Control centre</span>
+        </div>
+      </div>
 
-  <section class="details">
-	<img src="SavetheDate-wreath.png" alt="Save the Date" class="mainimg">
-    <h2>Our Celebrations</h2>
-  </section>
+      <div>
+        <div class="sidebar-section-label">Overview</div>
+        <ul class="nav-list">
+          <li class="nav-item active" data-section="rsvp">
+            <div class="nav-icon">👥</div>
+            <span>RSVP Manager</span>
+          </li>
+          <li class="nav-item" data-section="events">
+            <div class="nav-icon">📍</div>
+            <span>Events</span>
+          </li>
+          <li class="nav-item" data-section="edit">
+            <div class="nav-icon">📝</div>
+            <span>Edit Website Content</span>
+          </li>
+        </ul>
+      </div>
 
-  <section class="cta">
-    <a href="lodden.html" class="button">UK Wedding</a>
-	<a href="london.html" class="button">UK Celebration</a>
-    <a href="perth.html" class="button">Perth Celebration</a>
-  </section>
+      <div>
+        <div class="sidebar-section-label">Planning</div>
+        <ul class="nav-list">
+          <li class="nav-item" data-section="budget">
+            <div class="nav-icon">💸</div>
+            <span>Budget & Cost Tracker</span>
+          </li>
+          <li class="nav-item" data-section="planner">
+            <div class="nav-icon">📅</div>
+            <span>Planner & Timeline</span>
+          </li>
+        </ul>
+      </div>
 
-  <footer>
-	<img src="SavetheDate-cb.png" alt="C+B Monogram" class="monogram">
-    <p>© 2027 Claire & Brad Wedding · digitalcandy.win</p>
-  </footer>
+      <div>
+        <div class="sidebar-section-label">Site</div>
+        <ul class="nav-list">
+          <li class="nav-item" data-section="return">
+            <div class="nav-icon">↩️</div>
+            <span>Return to Main Site</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <span class="pill">v0.3 admin</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title">
+            <span id="topbar-title-text">RSVP Manager</span>
+            <span class="topbar-chip" id="topbar-chip-text">Guests & responses</span>
+          </div>
+          <div class="topbar-subtitle">
+            Central place to manage your wedding website, guests, budget and planning.
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="theme-toggle" id="theme-toggle" data-mode="light" aria-label="Toggle dark mode">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+            <div class="theme-toggle-thumb">●</div>
+          </div>
+
+          <div class="topbar-user" id="user-menu-toggle">
+            <div class="user-avatar">B</div>
+            <div>
+              <div style="font-size: 11px; font-weight: 500;">Brad</div>
+              <div style="font-size: 10px; color: var(--text-muted);">Admin</div>
+            </div>
+          </div>
+
+          <div class="user-menu" id="user-menu">
+            <a href="https://dash.cloudflare.com/?to=/:account/access/apps" target="_blank" rel="noreferrer">
+              Cloudflare Access Policies
+            </a>
+            <a href="/cdn-cgi/access/logout">
+              Logout
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <section class="content-card">
+        <div class="content-header">
+          <div class="content-header-left">
+            <div class="content-title" id="content-title">RSVP Manager</div>
+            <div class="content-subtitle" id="content-subtitle">
+              View, filter and export guest responses for all events.
+            </div>
+          </div>
+          <div class="content-header-right">
+            <div class="badge">
+              <span class="badge-dot"></span>
+              <span id="badge-text">Live data connected</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-body">
+          <!-- RSVP SECTION -->
+          <div class="section active" id="section-rsvp">
+            <h3>RSVP Manager</h3>
+            <p>Search, filter and manage guest responses across all events.</p>
+
+            <div class="rsvp-controls">
+              <input id="rsvp-search" type="text" placeholder="Search by name or email…" class="input" />
+              <select id="rsvp-event-filter" class="input">
+                <option value="">All events</option>
+              </select>
+              <select id="rsvp-attendance-filter" class="input">
+                <option value="">All statuses</option>
+                <option value="attending">Attending</option>
+                <option value="not_attending">Not attending</option>
+              </select>
+              <button id="rsvp-export" class="button secondary">
+                <span>Export CSV</span>
+              </button>
+            </div>
+
+            <div class="rsvp-table-wrapper">
+              <table class="rsvp-table">
+                <thead>
+                  <tr>
+                    <th>Guest</th>
+                    <th>Email</th>
+                    <th>Event</th>
+                    <th>Guests</th>
+                    <th>Submitted</th>
+                    <th style="text-align:right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="rsvp-table-body">
+                  <tr>
+                    <td colspan="6" class="rsvp-loading">Loading RSVPs…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pill-row" style="margin-top: 8px;">
+              <span class="pill-tag accent">Backed by /admin/api/list</span>
+              <span class="pill-tag">Events from /admin/api/events</span>
+              <span class="pill-tag">Delete + CSV export ready</span>
+            </div>
+          </div>
+
+          <!-- EVENTS SECTION -->
+          <div class="section" id="section-events">
+            <h3>Events</h3>
+            <p>Manage event names, dates, locations and visibility. This will drive the RSVP form and filters.</p>
+            <ul>
+              <li>View all configured events</li>
+              <li>Add new events</li>
+              <li>Edit existing events</li>
+              <li>Hide/show events</li>
+            </ul>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: Event Manager UI</span>
+              <span class="pill-tag">KV-backed config</span>
+            </div>
+          </div>
+
+          <!-- EDIT WEBSITE SECTION -->
+          <div class="section" id="section-edit">
+            <h3>Edit Website Content</h3>
+            <p>This area will act like a lightweight CMS for your main wedding site.</p>
+            <ul>
+              <li>Hero text, event descriptions, schedule, venue details</li>
+              <li>Travel info, FAQ, footer content</li>
+              <li>Backed by JSON in KV or a config file</li>
+              <li>Simple forms → Worker updates → site reads dynamically</li>
+            </ul>
+            <p>You’ll be able to tweak copy without redeploying.</p>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: define content schema</span>
+              <span class="pill-tag">Create edit forms</span>
+              <span class="pill-tag">Wire to KV</span>
+            </div>
+          </div>
+
+          <!-- BUDGET SECTION -->
+          <div class="section" id="section-budget">
+            <h3>Budget & Cost Tracker</h3>
+            <p>Track all wedding-related costs in one place:</p>
+            <ul>
+              <li>Expenses by category (venue, catering, travel, outfits, etc.)</li>
+              <li>Budget vs actual spend</li>
+              <li>Paid vs outstanding</li>
+              <li>Optional charts later</li>
+            </ul>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: design expense model</span>
+              <span class="pill-tag">Add add/edit/delete UI</span>
+              <span class="pill-tag">Store in KV</span>
+            </div>
+          </div>
+
+          <!-- PLANNER SECTION -->
+          <div class="section" id="section-planner">
+            <h3>Planner & Timeline</h3>
+            <p>Use this as your project board for everything leading up to each event:</p>
+            <ul>
+              <li>Tasks with due dates and status (not started / in progress / done)</li>
+              <li>Assign tasks to you or Claire</li>
+              <li>Separate views for “overall planning” and “wedding week / day-of” timelines</li>
+              <li>Countdown to each event</li>
+            </ul>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: task structure</span>
+              <span class="pill-tag">List + board view (later)</span>
+              <span class="pill-tag">Reminders (optional)</span>
+            </div>
+          </div>
+
+          <!-- RETURN SECTION -->
+          <div class="section" id="section-return">
+            <h3>Return to Main Site</h3>
+            <p>Quick link back to the public wedding site.</p>
+            <p>You can keep this simple, or later show a small status summary (uptime, last deploy, etc.).</p>
+            <a href="/" class="link-button">
+              <span>Go to main site</span>
+              <span>↗</span>
+            </a>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: maybe show site stats</span>
+              <span class="pill-tag">Add quick links</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // THEME
+    (function () {
+      const root = document.documentElement;
+      const toggle = document.getElementById("theme-toggle");
+
+      function applyTheme(mode) {
+        root.setAttribute("data-theme", mode);
+        toggle.setAttribute("data-mode", mode);
+      }
+
+      const stored = localStorage.getItem("wedding-admin-theme");
+      if (stored === "light" || stored === "dark") {
+        applyTheme(stored);
+      } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        applyTheme("dark");
+      } else {
+        applyTheme("light");
+      }
+
+      toggle.addEventListener("click", () => {
+        const current = toggle.getAttribute("data-mode") === "dark" ? "dark" : "light";
+        const next = current === "dark" ? "light" : "dark";
+        applyTheme(next);
+        localStorage.setItem("wedding-admin-theme", next);
+      });
+    })();
+
+    // USER MENU
+    (function () {
+      const toggle = document.getElementById("user-menu-toggle");
+      const menu = document.getElementById("user-menu");
+
+      toggle.addEventListener("click", () => {
+        const visible = menu.style.display === "flex";
+        menu.style.display = visible ? "none" : "flex";
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+          menu.style.display = "none";
+        }
+      });
+    })();
+
+    // NAV + SECTION SWITCHING
+    (function () {
+      const navItems = document.querySelectorAll(".nav-item");
+      const sections = {
+        rsvp: document.getElementById("section-rsvp"),
+        events: document.getElementById("section-events"),
+        edit: document.getElementById("section-edit"),
+        budget: document.getElementById("section-budget"),
+        planner: document.getElementById("section-planner"),
+        return: document.getElementById("section-return"),
+      };
+
+      const topbarTitle = document.getElementById("topbar-title-text");
+      const topbarChip = document.getElementById("topbar-chip-text");
+      const contentTitle = document.getElementById("content-title");
+      const contentSubtitle = document.getElementById("content-subtitle");
+      const badgeText = document.getElementById("badge-text");
+
+      const meta = {
+        rsvp: {
+          topbarTitle: "RSVP Manager",
+          chip: "Guests & responses",
+          contentTitle: "RSVP Manager",
+          contentSubtitle: "View, filter and export guest responses for all events.",
+          badge: "Live data connected"
+        },
+        events: {
+          topbarTitle: "Events",
+          chip: "Event configuration",
+          contentTitle: "Events",
+          contentSubtitle: "Manage event names, dates, locations and visibility.",
+          badge: "Config-driven"
+        },
+        edit: {
+          topbarTitle: "Edit Website Content",
+          chip: "Copy & layout",
+          contentTitle: "Edit Website Content",
+          contentSubtitle: "Update hero text, event details, travel info and more without redeploying.",
+          badge: "Config-driven content"
+        },
+        budget: {
+          topbarTitle: "Budget & Cost Tracker",
+          chip: "Money & commitments",
+          contentTitle: "Budget & Cost Tracker",
+          contentSubtitle: "Track all wedding-related expenses and compare against your planned budget.",
+          badge: "Private to admin"
+        },
+        planner: {
+          topbarTitle: "Planner & Timeline",
+          chip: "Tasks & milestones",
+          contentTitle: "Planner & Timeline",
+          contentSubtitle: "Organise tasks, due dates and timelines for all events.",
+          badge: "Planning workspace"
+        },
+        return: {
+          topbarTitle: "Return to Main Site",
+          chip: "Public view",
+          contentTitle: "Return to Main Site",
+          contentSubtitle: "Jump back to the public wedding site or add quick status info here.",
+          badge: "Public site link"
+        }
+      };
+
+      function setActive(sectionKey) {
+        navItems.forEach(item => {
+          const key = item.getAttribute("data-section");
+          item.classList.toggle("active", key === sectionKey);
+        });
+
+        Object.entries(sections).forEach(([key, el]) => {
+          el.classList.toggle("active", key === sectionKey);
+        });
+
+        const m = meta[sectionKey];
+        if (m) {
+          topbarTitle.textContent = m.topbarTitle;
+          topbarChip.textContent = m.chip;
+          contentTitle.textContent = m.contentTitle;
+          contentSubtitle.textContent = m.contentSubtitle;
+          badgeText.textContent = m.badge;
+        }
+      }
+
+      navItems.forEach(item => {
+        item.addEventListener("click", () => {
+          const key = item.getAttribute("data-section");
+          setActive(key);
+        });
+      });
+
+      setActive("rsvp");
+    })();
+
+    // RSVP MANAGER
+    (function () {
+      const tableBody = document.getElementById("rsvp-table-body");
+      const searchInput = document.getElementById("rsvp-search");
+      const eventFilter = document.getElementById("rsvp-event-filter");
+      const attendanceFilter = document.getElementById("rsvp-attendance-filter");
+      const exportButton = document.getElementById("rsvp-export");
+
+      let allEvents = [];
+      let allRsvps = [];
+      let filteredRsvps = [];
+
+      async function fetchEvents() {
+        try {
+          const res = await fetch("/admin/api/events", { credentials: "include" });
+          if (!res.ok) throw new Error("Failed to load events");
+          const data = await res.json();
+          allEvents = Array.isArray(data) ? data : [];
+          populateEventFilter();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      function populateEventFilter() {
+        eventFilter.innerHTML = "";
+        const optAll = document.createElement("option");
+        optAll.value = "";
+        optAll.textContent = "All events";
+        eventFilter.appendChild(optAll);
+
+        allEvents.forEach(ev => {
+          const opt = document.createElement("option");
+          opt.value = ev.id;
+          opt.textContent = ev.name || ev.id;
+          eventFilter.appendChild(opt);
+        });
+      }
+
+      async function fetchRsvps() {
+        try {
+          tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-loading">Loading RSVPs…</td></tr>';
+          const res = await fetch("/admin/api/list", { credentials: "include" });
+          if (!res.ok) throw new Error("Failed to load RSVPs");
+          const data = await res.json();
+          allRsvps = Array.isArray(data) ? data : [];
+          applyFilters();
+        } catch (err) {
+          console.error(err);
+          tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-error">Error loading RSVPs.</td></tr>';
+        }
+      }
+
+      function getEventName(id) {
+        const ev = allEvents.find(e => e.id === id);
+        return ev ? (ev.name || ev.id) : (id || "—");
+      }
+
+      function formatDate(ts) {
+        if (!ts) return "—";
+        try {
+          return new Date(ts).toLocaleString();
+        } catch {
+          return ts;
+        }
+      }
+
+      function renderTable(rows) {
+        if (!rows.length) {
+          tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-empty">No RSVPs match your filters yet.</td></tr>';
+          return;
+        }
+
+        tableBody.innerHTML = "";
+        rows.forEach(r => {
+          const tr = document.createElement("tr");
+
+          const attending = r.attending === true;
+          const statusLabel = attending ? "Attending" : "Not attending";
+
+          tr.innerHTML = `
+            <td>
+              <div style="font-weight:500;">${r.name || "—"}</div>
+              <div style="margin-top:2px;">
+                <span class="rsvp-tag ${attending ? "attending" : "not-attending"}">${statusLabel}</span>
+              </div>
+            </td>
+            <td>${r.email || "—"}</td>
+            <td>${getEventName(r.event)}</td>
+            <td>${typeof r.guests === "number" ? r.guests : (r.guests || "—")}</td>
+            <td>${formatDate(r.timestamp)}</td>
+            <td>
+              <div class="rsvp-actions">
+                <button class="link-button" type="button" data-action="view" data-id="${r.id || ""}">View</button>
+                <button class="link-button" type="button" data-action="delete" data-id="${r.id || ""}" style="color:var(--danger);">Delete</button>
+              </div>
+            </td>
+          `;
+
+          tableBody.appendChild(tr);
+        });
+      }
+
+      function applyFilters() {
+        const q = (searchInput.value || "").toLowerCase();
+        const ev = eventFilter.value;
+        const att = attendanceFilter.value;
+
+        filteredRsvps = allRsvps.filter(r => {
+          const matchesSearch =
+            !q ||
+            (r.name && r.name.toLowerCase().includes(q)) ||
+            (r.email && r.email.toLowerCase().includes(q));
+
+          const matchesEvent = !ev || r.event === ev;
+
+          const status = r.attending === true ? "attending" : "not_attending";
+          const matchesAttendance = !att || status === att;
+
+          return matchesSearch && matchesEvent && matchesAttendance;
+        });
+
+        renderTable(filteredRsvps);
+      }
+
+      async function deleteRsvp(id) {
+        if (!id) return;
+        const confirmDelete = window.confirm("Delete this RSVP? This cannot be undone.");
+        if (!confirmDelete) return;
+
+        try {
+          const res = await fetch(`/admin/api/delete/${encodeURIComponent(id)}`, {
+            method: "POST",
+            credentials: "include"
+          });
+          if (!res.ok) throw new Error("Failed to delete RSVP");
+          allRsvps = allRsvps.filter(r => r.id !== id);
+          applyFilters();
+        } catch (err) {
+          console.error(err);
+          alert("Error deleting RSVP.");
+        }
+      }
+
+      function exportCsv() {
+        const rows = filteredRsvps.length ? filteredRsvps : allRsvps;
+        if (!rows.length) {
+          alert("No RSVPs to export.");
+          return;
+        }
+
+        const header = ["id", "name", "email", "event", "guests", "attending", "timestamp"];
+        const lines = [header.join(",")];
+
+        rows.forEach(r => {
+          const attending = r.attending === true ? "attending" : "not_attending";
+          const line = [
+            r.id || "",
+            (r.name || "").replace(/"/g, '""'),
+            (r.email || "").replace(/"/g, '""'),
+            getEventName(r.event).replace(/"/g, '""'),
+            typeof r.guests === "number" ? r.guests : (r.guests || ""),
+            attending,
+            r.timestamp || ""
+          ].map(v => `"${v}"`).join(",");
+          lines.push(line);
+        });
+
+        const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const now = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `wedding-rsvps-${now}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      tableBody.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+        const action = btn.getAttribute("data-action");
+        const id = btn.getAttribute("data-id");
+        if (action === "delete") {
+          deleteRsvp(id);
+        } else if (action === "view") {
+          const r = allRsvps.find(x => x.id === id);
+          if (!r) return;
+          const attending = r.attending === true ? "Attending" : "Not attending";
+          alert(
+            `Name: ${r.name || "—"}\n` +
+            `Email: ${r.email || "—"}\n` +
+            `Event: ${getEventName(r.event)}\n` +
+            `Guests: ${r.guests || "—"}\n` +
+            `Attending: ${attending}\n` +
+            `Submitted: ${formatDate(r.timestamp)}\n\n` +
+            (r.notes ? `Notes: ${r.notes}` : "")
+          );
+        }
+      });
+
+      searchInput.addEventListener("input", applyFilters);
+      eventFilter.addEventListener("change", applyFilters);
+      attendanceFilter.addEventListener("change", applyFilters);
+      exportButton.addEventListener("click", exportCsv);
+
+      (async function init() {
+        await fetchEvents();
+        await fetchRsvps();
+      })();
+    })();
+  </script>
 </body>
 </html>
