@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+  <link rel="stylesheet" href="/admin.css">
 </head>
 <body>
   <div class="app-shell">
@@ -169,24 +170,23 @@
             </div>
           </div>
 
- <!-- HTML.EVENTS-SECTION -->
-<div class="section" id="section-events">
-  <h3>Events</h3>
-  <p>Manage event names, dates, locations and visibility. This will drive the RSVP form and filters.</p>
+          <!-- HTML.EVENTS-SECTION -->
+          <div class="section" id="section-events">
+            <h3>Events</h3>
+            <p>Manage event names, dates, locations and visibility. This will drive the RSVP form and filters.</p>
 
-  <div class="events-header">
-    <button class="button secondary" id="add-event-btn">Add event</button>
-  </div>
+            <div class="events-header">
+              <button class="button secondary" id="add-event-btn">Add event</button>
+            </div>
 
-  <div id="events-list" class="events-list"></div>
+            <div id="events-list" class="events-list"></div>
 
-  <div class="pill-row">
-    <span class="pill-tag accent">Full Events Manager</span>
-    <span class="pill-tag">Visibility toggle</span>
-    <span class="pill-tag">KV-backed config</span>
-  </div>
-</div>
-
+            <div class="pill-row">
+              <span class="pill-tag accent">Full Events Manager</span>
+              <span class="pill-tag">Visibility toggle</span>
+              <span class="pill-tag">KV-backed config</span>
+            </div>
+          </div>
 
           <!-- HTML.EDIT-SECTION -->
           <div class="section" id="section-edit">
@@ -298,5 +298,7 @@
       </form>
     </div>
   </div>
+
+  <script src="/admin.js" defer></script>
 </body>
 </html>

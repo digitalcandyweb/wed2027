@@ -238,7 +238,6 @@
     });
   }
 
-  // JS.RSVP-SECTION
   function applyFilters() {
     const q = (searchInput.value || "").toLowerCase();
     const ev = eventFilter.value;
@@ -440,11 +439,9 @@
     const pill = e.target.closest(".visibility-pill");
     const btn = e.target.closest("button[data-action]");
 
-    // Visibility toggle
     if (pill) {
       const id = pill.dataset.id;
       const isVisible = pill.classList.contains("visible");
-
       const newState = !isVisible;
 
       await fetch("/admin/api/events/save", {
