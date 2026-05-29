@@ -123,33 +123,70 @@
           </div>
         </div>
 
-        <div class="content-body">
+		<div class="content-body">
           <!-- RSVP SECTION -->
           <div class="section active" id="section-rsvp">
+            <h3>RSVP Manager</h3>
+            <p>Search, filter and manage guest responses across all events.</p>
+
+            <div class="rsvp-controls">
+              <input id="rsvp-search" type="text" placeholder="Search by name or email…" class="input" />
+              <select id="rsvp-event-filter" class="input">
+                <option value="">All events</option>
+              </select>
+              <select id="rsvp-attendance-filter" class="input">
+                <option value="">All statuses</option>
+                <option value="attending">Attending</option>
+                <option value="not_attending">Not attending</option>
+              </select>
+              <button id="rsvp-export" class="button secondary">
+                <span>Export CSV</span>
+              </button>
+            </div>
+
+            <div class="rsvp-table-wrapper">
+              <table class="rsvp-table">
+                <thead>
+                  <tr>
+                    <th>Guest</th>
+                    <th>Email</th>
+                    <th>Event</th>
+                    <th>Guests</th>
+                    <th>Submitted</th>
+                    <th style="text-align:right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="rsvp-table-body">
+                  <tr>
+                    <td colspan="6" class="rsvp-loading">Loading RSVPs…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pill-row" style="margin-top: 8px;">
+              <span class="pill-tag accent">Backed by /admin/api/list</span>
+              <span class="pill-tag">Events from /admin/api/events</span>
+              <span class="pill-tag">Delete + CSV export ready</span>
+            </div>
           </div>
 
 
-<!-- EVENTS SECTION -->
-<div class="section" id="section-events">
-  <h3>Events</h3>
-  <p>Manage event names, dates, locations and visibility.</p>
-
-  <button id="add-event-btn" class="button">Add Event</button>
-
-  <table class="events-table">
-    <thead>
-      <tr>
-        <th>Order</th>
-        <th>Name</th>
-        <th>Date</th>
-        <th>Location</th>
-        <th>Visible</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="events-table-body"></tbody>
-  </table>
-</div>
+		<!-- EVENTS SECTION -->
+          <div class="section" id="section-events">
+            <h3>Events</h3>
+            <p>Manage event names, dates, locations and visibility. This will drive the RSVP form and filters.</p>
+            <ul>
+              <li>View all configured events</li>
+              <li>Add new events</li>
+              <li>Edit existing events</li>
+              <li>Hide/show events</li>
+            </ul>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: Event Manager UI</span>
+              <span class="pill-tag">KV-backed config</span>
+            </div>
+          </div>
 
 
           <!-- EDIT SECTION -->
