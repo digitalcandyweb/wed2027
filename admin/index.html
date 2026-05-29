@@ -5,7 +5,6 @@
   <title>Wedding Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -43,9 +42,7 @@
       --shadow-soft: 0 22px 55px rgba(0, 0, 0, 0.6);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -64,6 +61,7 @@
       display: flex;
       width: 100%;
       min-height: 100vh;
+      position: relative;
     }
 
     .sidebar {
@@ -183,16 +181,9 @@
       padding-top: 8px;
       border-top: 1px dashed var(--border-subtle);
       display: flex;
-      flex-direction: column;
-      gap: 8px;
+      justify-content: flex-end;
       font-size: 11px;
       color: var(--text-muted);
-    }
-
-    .sidebar-footer-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
     }
 
     .pill {
@@ -204,17 +195,13 @@
       letter-spacing: 0.12em;
     }
 
-    .sidebar-footer-bottom span {
-      color: var(--accent);
-      font-weight: 500;
-    }
-
     .main {
       flex: 1;
       padding: 20px 26px;
       display: flex;
       flex-direction: column;
       gap: 16px;
+      position: relative;
     }
 
     .topbar {
@@ -222,6 +209,8 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      position: relative;
+      z-index: 10;
     }
 
     .topbar-left {
@@ -257,6 +246,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      position: relative;
     }
 
     .topbar-user {
@@ -269,6 +259,7 @@
       border: 1px solid var(--border-subtle);
       font-size: 12px;
       color: var(--text-muted);
+      cursor: pointer;
     }
 
     .user-avatar {
@@ -282,6 +273,33 @@
       color: white;
       font-size: 11px;
       font-weight: 600;
+    }
+
+    .user-menu {
+      position: absolute;
+      top: 40px;
+      right: 0;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 6px 0;
+      display: none;
+      flex-direction: column;
+      min-width: 190px;
+      box-shadow: var(--shadow-soft);
+      z-index: 20;
+    }
+
+    .user-menu a {
+      padding: 8px 14px;
+      font-size: 13px;
+      color: var(--text-main);
+      text-decoration: none;
+      display: block;
+    }
+
+    .user-menu a:hover {
+      background: var(--bg-soft);
     }
 
     .theme-toggle {
@@ -324,13 +342,8 @@
       pointer-events: none;
     }
 
-    .theme-toggle-icon.sun {
-      left: 8px;
-    }
-
-    .theme-toggle-icon.moon {
-      right: 8px;
-    }
+    .theme-toggle-icon.sun { left: 8px; }
+    .theme-toggle-icon.moon { right: 8px; }
 
     .content-card {
       flex: 1;
@@ -476,13 +489,8 @@
       transform: translateY(-0.5px);
     }
 
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
-    }
+    .section { display: none; }
+    .section.active { display: block; }
 
     /* RSVP section */
     .rsvp-controls {
@@ -503,9 +511,7 @@
       min-width: 140px;
     }
 
-    .input::placeholder {
-      color: var(--text-muted);
-    }
+    .input::placeholder { color: var(--text-muted); }
 
     .button {
       padding: 6px 12px;
@@ -553,9 +559,7 @@
       font-size: 13px;
     }
 
-    .rsvp-table thead {
-      background: var(--bg-soft);
-    }
+    .rsvp-table thead { background: var(--bg-soft); }
 
     .rsvp-table th {
       text-align: left;
@@ -572,9 +576,7 @@
       vertical-align: middle;
     }
 
-    .rsvp-table tr:last-child td {
-      border-bottom: none;
-    }
+    .rsvp-table tr:last-child td { border-bottom: none; }
 
     .rsvp-tag {
       display: inline-flex;
@@ -616,30 +618,59 @@
       font-size: 13px;
     }
 
-    .rsvp-error {
-      color: var(--danger);
-    }
+    .rsvp-error { color: var(--danger); }
 
     @media (max-width: 900px) {
-      .sidebar {
-        display: none;
-      }
-      .main {
-        padding: 14px 14px 18px;
-      }
-      .content-card {
-        padding: 14px 14px 16px;
-      }
-      .rsvp-table {
-        font-size: 12px;
-      }
+      .sidebar { display: none; }
+      .main { padding: 14px 14px 18px; }
+      .content-card { padding: 14px 14px 16px; }
+      .rsvp-table { font-size: 12px; }
       .rsvp-table th:nth-child(3),
       .rsvp-table td:nth-child(3),
       .rsvp-table th:nth-child(5),
       .rsvp-table td:nth-child(5) {
         display: none;
       }
+	  
+	/* EVENTS SECTION */
+	.events-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	}
+
+	.event-card {
+	background: var(--bg-elevated);
+	border: 1px solid var(--border-subtle);
+	border-radius: 10px;
+	padding: 12px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	}
+
+	.event-info {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	}
+
+	.event-name {
+	font-weight: 600;
+	color: var(--text-main);
+	}
+
+	.event-meta {
+	font-size: 12px;
+	color: var(--text-muted);
+	}
+
+	.event-actions {
+		display: flex;
+		gap: 6px;
+	}
     }
+
   </style>
 </head>
 <body>
@@ -659,6 +690,10 @@
           <li class="nav-item active" data-section="rsvp">
             <div class="nav-icon">👥</div>
             <span>RSVP Manager</span>
+          </li>
+          <li class="nav-item" data-section="events">
+            <div class="nav-icon">📍</div>
+            <span>Events</span>
           </li>
           <li class="nav-item" data-section="edit">
             <div class="nav-icon">📝</div>
@@ -692,13 +727,7 @@
       </div>
 
       <div class="sidebar-footer">
-        <div class="sidebar-footer-top">
-          <span>London · Perth</span>
-          <span class="pill">v0.2 rsvp</span>
-        </div>
-        <div class="sidebar-footer-bottom">
-          Planning for <span>17 Sep 2027</span> & <span>9 Oct 2027</span>
-        </div>
+        <span class="pill">v0.3 admin</span>
       </div>
     </aside>
 
@@ -719,12 +748,22 @@
             <span class="theme-toggle-icon moon">🌙</span>
             <div class="theme-toggle-thumb">●</div>
           </div>
-          <div class="topbar-user">
+
+          <div class="topbar-user" id="user-menu-toggle">
             <div class="user-avatar">B</div>
             <div>
               <div style="font-size: 11px; font-weight: 500;">Brad</div>
               <div style="font-size: 10px; color: var(--text-muted);">Admin</div>
             </div>
+          </div>
+
+          <div class="user-menu" id="user-menu">
+            <a href="https://dash.cloudflare.com/?to=/:account/access/apps" target="_blank" rel="noreferrer">
+              Cloudflare Access Policies
+            </a>
+            <a href="/cdn-cgi/access/logout">
+              Logout
+            </a>
           </div>
         </div>
       </header>
@@ -790,6 +829,22 @@
               <span class="pill-tag accent">Backed by /admin/api/list</span>
               <span class="pill-tag">Events from /admin/api/events</span>
               <span class="pill-tag">Delete + CSV export ready</span>
+            </div>
+          </div>
+
+          <!-- EVENTS SECTION -->
+          <div class="section" id="section-events">
+            <h3>Events</h3>
+            <p>Manage event names, dates, locations and visibility. This will drive the RSVP form and filters.</p>
+            <ul>
+              <li>View all configured events</li>
+              <li>Add new events</li>
+              <li>Edit existing events</li>
+              <li>Hide/show events</li>
+            </ul>
+            <div class="pill-row">
+              <span class="pill-tag accent">Next: Event Manager UI</span>
+              <span class="pill-tag">KV-backed config</span>
             </div>
           </div>
 
@@ -892,11 +947,29 @@
       });
     })();
 
+    // USER MENU
+    (function () {
+      const toggle = document.getElementById("user-menu-toggle");
+      const menu = document.getElementById("user-menu");
+
+      toggle.addEventListener("click", () => {
+        const visible = menu.style.display === "flex";
+        menu.style.display = visible ? "none" : "flex";
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+          menu.style.display = "none";
+        }
+      });
+    })();
+
     // NAV + SECTION SWITCHING
     (function () {
       const navItems = document.querySelectorAll(".nav-item");
       const sections = {
         rsvp: document.getElementById("section-rsvp"),
+        events: document.getElementById("section-events"),
         edit: document.getElementById("section-edit"),
         budget: document.getElementById("section-budget"),
         planner: document.getElementById("section-planner"),
@@ -916,6 +989,13 @@
           contentTitle: "RSVP Manager",
           contentSubtitle: "View, filter and export guest responses for all events.",
           badge: "Live data connected"
+        },
+        events: {
+          topbarTitle: "Events",
+          chip: "Event configuration",
+          contentTitle: "Events",
+          contentSubtitle: "Manage event names, dates, locations and visibility.",
+          badge: "Config-driven"
         },
         edit: {
           topbarTitle: "Edit Website Content",
@@ -1054,8 +1134,8 @@
         rows.forEach(r => {
           const tr = document.createElement("tr");
 
-          const attending = r.attending === true || r.status === "attending";
-          const statusLabel = attending ? "Attending" : (r.status === "not_attending" || r.attending === false ? "Not attending" : "Unknown");
+          const attending = r.attending === true;
+          const statusLabel = attending ? "Attending" : "Not attending";
 
           tr.innerHTML = `
             <td>
@@ -1080,6 +1160,7 @@
         });
       }
 
+	// RSVP SECTION
       function applyFilters() {
         const q = (searchInput.value || "").toLowerCase();
         const ev = eventFilter.value;
@@ -1093,10 +1174,7 @@
 
           const matchesEvent = !ev || r.event === ev;
 
-          let status = "";
-          if (r.attending === true || r.status === "attending") status = "attending";
-          else if (r.attending === false || r.status === "not_attending") status = "not_attending";
-
+          const status = r.attending === true ? "attending" : "not_attending";
           const matchesAttendance = !att || status === att;
 
           return matchesSearch && matchesEvent && matchesAttendance;
@@ -1135,9 +1213,7 @@
         const lines = [header.join(",")];
 
         rows.forEach(r => {
-          const attending = r.attending === true || r.status === "attending"
-            ? "attending"
-            : (r.attending === false || r.status === "not_attending" ? "not_attending" : "");
+          const attending = r.attending === true ? "attending" : "not_attending";
           const line = [
             r.id || "",
             (r.name || "").replace(/"/g, '""'),
@@ -1152,9 +1228,9 @@
 
         const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
+        const now = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
         const a = document.createElement("a");
         a.href = url;
-        const now = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
         a.download = `wedding-rsvps-${now}.csv`;
         document.body.appendChild(a);
         a.click();
@@ -1172,12 +1248,13 @@
         } else if (action === "view") {
           const r = allRsvps.find(x => x.id === id);
           if (!r) return;
+          const attending = r.attending === true ? "Attending" : "Not attending";
           alert(
             `Name: ${r.name || "—"}\n` +
             `Email: ${r.email || "—"}\n` +
             `Event: ${getEventName(r.event)}\n` +
             `Guests: ${r.guests || "—"}\n` +
-            `Attending: ${r.attending}\n` +
+            `Attending: ${attending}\n` +
             `Submitted: ${formatDate(r.timestamp)}\n\n` +
             (r.notes ? `Notes: ${r.notes}` : "")
           );
@@ -1193,6 +1270,65 @@
         await fetchEvents();
         await fetchRsvps();
       })();
+	  
+	// EVENTS MANAGER
+(function () {
+  const eventsList = document.getElementById("events-list");
+  const addEventBtn = document.getElementById("add-event-btn");
+
+  async function loadEvents() {
+    eventsList.innerHTML = `<div class="loading">Loading events…</div>`;
+
+    try {
+      const res = await fetch("/admin/api/events", { credentials: "include" });
+      const events = await res.json();
+
+      if (!events.length) {
+        eventsList.innerHTML = `<div class="loading">No events configured yet.</div>`;
+        return;
+      }
+
+      eventsList.innerHTML = "";
+
+      events.forEach(ev => {
+        const card = document.createElement("div");
+        card.className = "event-card";
+
+        card.innerHTML = `
+          <div class="event-info">
+            <div class="event-name">${ev.name}</div>
+            <div class="event-meta">${ev.date} — ${ev.location}</div>
+          </div>
+          <div class="event-actions">
+            <button class="link-button" data-action="edit" data-id="${ev.id}">Edit</button>
+            <button class="link-button" data-action="delete" data-id="${ev.id}" style="color:var(--danger);">Delete</button>
+          </div>
+        `;
+
+        eventsList.appendChild(card);
+      });
+    } catch (err) {
+      eventsList.innerHTML = `<div class="loading">Error loading events.</div>`;
+      console.error(err);
+    }
+  }
+
+  // Placeholder for future UI
+  addEventBtn.addEventListener("click", () => {
+    alert("Event creation UI coming next!");
+  });
+
+  // Load events when the section becomes active
+  const observer = new MutationObserver(() => {
+    const section = document.getElementById("section-events");
+    if (section.classList.contains("active")) {
+      loadEvents();
+    }
+  });
+
+  observer.observe(document.body, { attributes: true, subtree: true });
+})();
+
     })();
   </script>
 </body>
