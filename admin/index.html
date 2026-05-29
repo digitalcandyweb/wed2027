@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
+	/* CSS.Style-SECTION */
     :root {
       --bg: #ffffff;
       --bg-elevated: #f7f7f8;
@@ -546,6 +547,7 @@
       transform: translateY(-1px);
     }
 
+	/* CSS.RSVP-SECTION */
     .rsvp-table-wrapper {
       border-radius: 10px;
       overflow: hidden;
@@ -632,7 +634,7 @@
         display: none;
       }
 	  
-	/* EVENTS SECTION */
+	/* CSS.EVENTS-SECTION */
 	.events-list {
 	display: flex;
 	flex-direction: column;
@@ -669,6 +671,66 @@
 		display: flex;
 		gap: 6px;
 	}
+	
+	/* CSS.EVENT-MODAL */
+.modal.hidden {
+  display: none;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  position: relative;
+  background: var(--bg-elevated);
+  border-radius: 14px;
+  padding: 20px;
+  width: 360px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-soft);
+  z-index: 201;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-content h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-main);
+}
+
     }
 
   </style>
@@ -785,7 +847,7 @@
         </div>
 
         <div class="content-body">
-          <!-- RSVP SECTION -->
+          <!-- HTML.RSVP-SECTION -->
           <div class="section active" id="section-rsvp">
             <h3>RSVP Manager</h3>
             <p>Search, filter and manage guest responses across all events.</p>
@@ -832,7 +894,7 @@
             </div>
           </div>
 
-          <!-- EVENTS SECTION -->
+          <!-- HTML.EVENTS-SECTION -->
           <div class="section" id="section-events">
             <h3>Events</h3>
             <p>Manage event names, dates, locations and visibility. This will drive the RSVP form and filters.</p>
@@ -848,7 +910,7 @@
             </div>
           </div>
 
-          <!-- EDIT WEBSITE SECTION -->
+          <!-- HTML.EDIT-SECTION -->
           <div class="section" id="section-edit">
             <h3>Edit Website Content</h3>
             <p>This area will act like a lightweight CMS for your main wedding site.</p>
@@ -866,7 +928,7 @@
             </div>
           </div>
 
-          <!-- BUDGET SECTION -->
+          <!-- HTML.BUDGET-SECTION -->
           <div class="section" id="section-budget">
             <h3>Budget & Cost Tracker</h3>
             <p>Track all wedding-related costs in one place:</p>
@@ -883,7 +945,7 @@
             </div>
           </div>
 
-          <!-- PLANNER SECTION -->
+          <!-- HTML.PLANNER-SECTION -->
           <div class="section" id="section-planner">
             <h3>Planner & Timeline</h3>
             <p>Use this as your project board for everything leading up to each event:</p>
@@ -900,7 +962,7 @@
             </div>
           </div>
 
-          <!-- RETURN SECTION -->
+          <!-- HTML.RETURN-SECTION -->
           <div class="section" id="section-return">
             <h3>Return to Main Site</h3>
             <p>Quick link back to the public wedding site.</p>
@@ -1160,7 +1222,7 @@
         });
       }
 
-	// RSVP SECTION
+	// JS.RSVP-SECTION
       function applyFilters() {
         const q = (searchInput.value || "").toLowerCase();
         const ev = eventFilter.value;
@@ -1271,54 +1333,136 @@
         await fetchRsvps();
       })();
 	  
-	// EVENTS MANAGER
+	/* JS.EVENTS-MANAGER-MODEL */
 (function () {
   const eventsList = document.getElementById("events-list");
   const addEventBtn = document.getElementById("add-event-btn");
 
-  async function loadEvents() {
-    eventsList.innerHTML = `<div class="loading">Loading events…</div>`;
+  const modal = document.getElementById("event-modal");
+  const modalTitle = document.getElementById("event-modal-title");
+  const form = document.getElementById("event-form");
+  const cancelBtn = document.getElementById("event-cancel");
 
-    try {
-      const res = await fetch("/admin/api/events", { credentials: "include" });
-      const events = await res.json();
+  let editingId = null;
 
-      if (!events.length) {
-        eventsList.innerHTML = `<div class="loading">No events configured yet.</div>`;
-        return;
-      }
+  function openModal(mode, eventData = null) {
+    modal.classList.remove("hidden");
 
-      eventsList.innerHTML = "";
+    if (mode === "add") {
+      editingId = null;
+      modalTitle.textContent = "Add Event";
+      form.reset();
+      form.visible.checked = true;
+    }
 
-      events.forEach(ev => {
-        const card = document.createElement("div");
-        card.className = "event-card";
+    if (mode === "edit") {
+      editingId = eventData.id;
+      modalTitle.textContent = "Edit Event";
 
-        card.innerHTML = `
-          <div class="event-info">
-            <div class="event-name">${ev.name}</div>
-            <div class="event-meta">${ev.date} — ${ev.location}</div>
-          </div>
-          <div class="event-actions">
-            <button class="link-button" data-action="edit" data-id="${ev.id}">Edit</button>
-            <button class="link-button" data-action="delete" data-id="${ev.id}" style="color:var(--danger);">Delete</button>
-          </div>
-        `;
-
-        eventsList.appendChild(card);
-      });
-    } catch (err) {
-      eventsList.innerHTML = `<div class="loading">Error loading events.</div>`;
-      console.error(err);
+      form.name.value = eventData.name;
+      form.date.value = eventData.date;
+      form.location.value = eventData.location;
+      form.venue.value = eventData.venue || "";
+      form.visible.checked = eventData.visible !== false;
     }
   }
 
-  // Placeholder for future UI
-  addEventBtn.addEventListener("click", () => {
-    alert("Event creation UI coming next!");
+  function closeModal() {
+    modal.classList.add("hidden");
+  }
+
+  cancelBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
   });
 
-  // Load events when the section becomes active
+  async function loadEvents() {
+    eventsList.innerHTML = `<div class="loading">Loading events…</div>`;
+
+    const res = await fetch("/admin/api/events", { credentials: "include" });
+    const events = await res.json();
+
+    if (!events.length) {
+      eventsList.innerHTML = `<div class="loading">No events configured yet.</div>`;
+      return;
+    }
+
+    eventsList.innerHTML = "";
+
+    events.forEach(ev => {
+      const card = document.createElement("div");
+      card.className = "event-card";
+
+      card.innerHTML = `
+        <div class="event-info">
+          <div class="event-name">${ev.name}</div>
+          <div class="event-meta">${ev.date} — ${ev.location}</div>
+        </div>
+        <div class="event-actions">
+          <button class="link-button" data-action="edit" data-id="${ev.id}">Edit</button>
+          <button class="link-button" data-action="delete" data-id="${ev.id}" style="color:var(--danger);">Delete</button>
+        </div>
+      `;
+
+      eventsList.appendChild(card);
+    });
+  }
+
+  // Add Event
+  addEventBtn.addEventListener("click", () => openModal("add"));
+
+  // Edit/Delete actions
+  eventsList.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+
+    const action = btn.dataset.action;
+    const id = btn.dataset.id;
+
+    if (action === "edit") {
+      const res = await fetch("/admin/api/events", { credentials: "include" });
+      const events = await res.json();
+      const ev = events.find(e => e.id === id);
+      openModal("edit", ev);
+    }
+
+    if (action === "delete") {
+      if (!confirm("Delete this event?")) return;
+
+      await fetch(`/admin/api/events/delete/${id}`, {
+        method: "POST",
+        credentials: "include"
+      });
+
+      loadEvents();
+    }
+  });
+
+  // Save Event
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+      id: editingId,
+      name: form.name.value,
+      date: form.date.value,
+      location: form.location.value,
+      venue: form.venue.value,
+      visible: form.visible.checked
+    };
+
+    await fetch("/admin/api/events/save", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    closeModal();
+    loadEvents();
+  });
+
+  // Auto-load when section becomes active
   const observer = new MutationObserver(() => {
     const section = document.getElementById("section-events");
     if (section.classList.contains("active")) {
@@ -1328,8 +1472,47 @@
 
   observer.observe(document.body, { attributes: true, subtree: true });
 })();
-
     })();
   </script>
+  
+	<!-- HTML.EVENT-MODAL -->
+<div id="event-modal" class="modal hidden">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <h3 id="event-modal-title">Add Event</h3>
+
+    <form id="event-form">
+      <label>
+        Event Name
+        <input type="text" name="name" class="input" required>
+      </label>
+
+      <label>
+        Date
+        <input type="date" name="date" class="input" required>
+      </label>
+
+      <label>
+        Location
+        <input type="text" name="location" class="input" required>
+      </label>
+
+      <label>
+        Venue
+        <input type="text" name="venue" class="input">
+      </label>
+
+      <label class="checkbox-row">
+        <input type="checkbox" name="visible" checked>
+        Visible on site
+      </label>
+
+      <div class="modal-actions">
+        <button type="button" class="button secondary" id="event-cancel">Cancel</button>
+        <button type="submit" class="button" id="event-save">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
 </body>
 </html>
