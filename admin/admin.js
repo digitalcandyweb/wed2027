@@ -350,7 +350,7 @@
   })();
 })();
 
-// JS.EVENTS-MANAGER-MODEL
+/* JS.EVENTS-MANAGER */
 (function () {
   const eventsList = document.getElementById("events-list");
   const addEventBtn = document.getElementById("add-event-btn");
@@ -372,13 +372,13 @@
       form.visible.checked = true;
     }
 
-    if (mode === "edit" && eventData) {
+    if (mode === "edit") {
       editingId = eventData.id;
       modalTitle.textContent = "Edit Event";
 
-      form.name.value = eventData.name || "";
-      form.date.value = eventData.date || "";
-      form.location.value = eventData.location || "";
+      form.name.value = eventData.name;
+      form.date.value = eventData.date;
+      form.location.value = eventData.location;
       form.venue.value = eventData.venue || "";
       form.visible.checked = eventData.visible !== false;
     }
@@ -390,88 +390,96 @@
 
   cancelBtn.addEventListener("click", closeModal);
   modal.addEventListener("click", (e) => {
-    if (e.target === modal || e.target.classList.contains("modal-backdrop")) {
-      closeModal();
-    }
+    if (e.target === modal) closeModal();
   });
 
   async function loadEvents() {
-    eventsList.innerHTML = `<div class="rsvp-loading">Loading events…</div>`;
+    eventsList.innerHTML = `<div class="loading">Loading events…</div>`;
 
-    try {
-      const res = await fetch("/admin/api/events", { credentials: "include" });
-      if (!res.ok) throw new Error("Failed to load events");
-      const events = await res.json();
+    const res = await fetch("/admin/api/events", { credentials: "include" });
+    const events = await res.json();
 
-      if (!Array.isArray(events) || !events.length) {
-        eventsList.innerHTML = `<div class="rsvp-empty">No events configured yet.</div>`;
-        return;
-      }
-
-      eventsList.innerHTML = "";
-
-      events.forEach(ev => {
-        const card = document.createElement("div");
-        card.className = "event-card";
-
-        card.innerHTML = `
-          <div class="event-info">
-            <div class="event-name">${ev.name}</div>
-            <div class="event-meta">${ev.date} — ${ev.location}</div>
-          </div>
-          <div class="event-actions">
-            <button class="link-button" data-action="edit" data-id="${ev.id}">Edit</button>
-            <button class="link-button" data-action="delete" data-id="${ev.id}" style="color:var(--danger);">Delete</button>
-          </div>
-        `;
-
-        eventsList.appendChild(card);
-      });
-    } catch (err) {
-      console.error(err);
-      eventsList.innerHTML = `<div class="rsvp-error">Error loading events.</div>`;
+    if (!events.length) {
+      eventsList.innerHTML = `<div class="loading">No events configured yet.</div>`;
+      return;
     }
+
+    eventsList.innerHTML = "";
+
+    events.forEach(ev => {
+      const card = document.createElement("div");
+      card.className = "event-card";
+      if (ev.visible === false) card.classList.add("hidden");
+
+      card.innerHTML = `
+        <div class="event-info">
+          <div class="event-name">${ev.name}</div>
+          <div class="event-meta">${ev.date} — ${ev.location}</div>
+        </div>
+
+        <div class="event-actions">
+          <div class="visibility-pill ${ev.visible === false ? "hidden" : "visible"}" data-id="${ev.id}">
+            <div class="dot"></div>
+            <span>${ev.visible === false ? "Hidden" : "Visible"}</span>
+          </div>
+
+          <button class="link-button" data-action="edit" data-id="${ev.id}">Edit</button>
+          <button class="link-button" data-action="delete" data-id="${ev.id}" style="color:var(--danger);">Delete</button>
+        </div>
+      `;
+
+      eventsList.appendChild(card);
+    });
   }
 
   // Add Event
   addEventBtn.addEventListener("click", () => openModal("add"));
 
-  // Edit/Delete actions
+  // Edit/Delete/Visibility actions
   eventsList.addEventListener("click", async (e) => {
+    const pill = e.target.closest(".visibility-pill");
     const btn = e.target.closest("button[data-action]");
+
+    // Visibility toggle
+    if (pill) {
+      const id = pill.dataset.id;
+      const isVisible = pill.classList.contains("visible");
+
+      const newState = !isVisible;
+
+      await fetch("/admin/api/events/save", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, visible: newState })
+      });
+
+      loadEvents();
+      return;
+    }
+
     if (!btn) return;
 
     const action = btn.dataset.action;
     const id = btn.dataset.id;
 
     if (action === "edit") {
-      try {
-        const res = await fetch("/admin/api/events", { credentials: "include" });
-        if (!res.ok) throw new Error("Failed to load events");
-        const events = await res.json();
-        const ev = events.find(e => e.id === id);
-        if (!ev) return;
-        openModal("edit", ev);
-      } catch (err) {
-        console.error(err);
-        alert("Error loading event.");
-      }
+      const res = await fetch("/admin/api/events", { credentials: "include" });
+      const events = await res.json();
+      const ev = events.find(e => e.id === id);
+      if (!ev) return;
+      openModal("edit", ev);
     }
 
     if (action === "delete") {
       if (!confirm("Delete this event?")) return;
 
-      try {
-        const res = await fetch(`/admin/api/events/delete/${encodeURIComponent(id)}`, {
-          method: "POST",
-          credentials: "include"
-        });
-        if (!res.ok) throw new Error("Failed to delete event");
-        loadEvents();
-      } catch (err) {
-        console.error(err);
-        alert("Error deleting event.");
-      }
+      await fetch(`/admin/api/events/delete/${id}`, {
+        method: "POST",
+        credentials: "include"
+      });
+
+      loadEvents();
     }
   });
 
@@ -488,29 +496,24 @@
       visible: form.visible.checked
     };
 
-    try {
-      const res = await fetch("/admin/api/events/save", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-      if (!res.ok) throw new Error("Failed to save event");
-      closeModal();
-      loadEvents();
-    } catch (err) {
-      console.error(err);
-      alert("Error saving event.");
-    }
+    await fetch("/admin/api/events/save", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    closeModal();
+    loadEvents();
   });
 
-  // Auto-load when Events section becomes active
-  const eventsSection = document.getElementById("section-events");
+  // Auto-load when section becomes active
   const observer = new MutationObserver(() => {
-    if (eventsSection.classList.contains("active")) {
+    const section = document.getElementById("section-events");
+    if (section.classList.contains("active")) {
       loadEvents();
     }
   });
 
-  observer.observe(eventsSection, { attributes: true, attributeFilter: ["class"] });
+  observer.observe(document.body, { attributes: true, subtree: true });
 })();

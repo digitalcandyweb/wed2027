@@ -752,3 +752,97 @@ body {
   font-size: 13px;
   color: var(--text-main);
 }
+/* EVENTS — Premium Cards */
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.event-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.event-card.hidden {
+  opacity: 0.55;
+}
+
+.event-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.event-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.event-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Visibility pill */
+.visibility-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid var(--border-subtle);
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.visibility-pill:hover {
+  transform: translateY(-1px);
+}
+
+.visibility-pill.visible {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.visibility-pill.visible .dot {
+  background: var(--accent);
+}
+
+.visibility-pill.hidden {
+  background: rgba(148, 163, 184, 0.12);
+  border-color: var(--border-subtle);
+  color: var(--text-muted);
+}
+
+.visibility-pill.hidden .dot {
+  background: var(--text-muted);
+}
+
+.visibility-pill .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+/* Event actions */
+.event-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.loading {
+  padding: 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
