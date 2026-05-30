@@ -293,6 +293,185 @@ const EventsManager = (() => {
   return { init };
 })();
 
+// =========================
+// BUDGET MANAGER
+// =========================
+const BudgetManager = (() => {
+  let expenses = [];
+  let expenseToDelete = null;
+
+  const tableBody = document.getElementById("budget-table-body");
+  const addBtn = document.getElementById("add-expense-btn");
+
+  const modal = document.getElementById("budget-modal");
+  const idInput = document.getElementById("expense-id");
+  const categoryInput = document.getElementById("expense-category");
+  const descriptionInput = document.getElementById("expense-description");
+  const amountInput = document.getElementById("expense-amount");
+  const dateInput = document.getElementById("expense-date");
+  const paidInput = document.getElementById("expense-paid");
+  const notesInput = document.getElementById("expense-notes");
+
+  const saveBtn = document.getElementById("save-expense-btn");
+  const cancelBtn = document.getElementById("cancel-expense-btn");
+
+  const deleteModal = document.getElementById("delete-expense-modal");
+  const confirmDeleteBtn = document.getElementById("confirm-delete-expense-btn");
+  const cancelDeleteBtn = document.getElementById("cancel-delete-expense-btn");
+
+  // Load all expenses
+  async function loadBudget() {
+    try {
+      const res = await fetch("/admin/api/budget", { credentials: "include" });
+      const data = await res.json();
+      expenses = Array.isArray(data) ? data : [];
+      expenses.sort((a, b) => a.order - b.order);
+      renderTable();
+    } catch (err) {
+      console.error("Failed to load budget", err);
+    }
+  }
+
+  // Render table
+  function renderTable() {
+    tableBody.innerHTML = "";
+
+    if (!expenses.length) {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td colspan="7" style="text-align:center; padding:12px; color:var(--text-muted);">No expenses recorded yet.</td>`;
+      tableBody.appendChild(row);
+      return;
+    }
+
+    expenses.forEach(e => {
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${e.order}</td>
+        <td>${e.category}</td>
+        <td>${e.description}</td>
+        <td>£${Number(e.amount).toFixed(2)}</td>
+        <td>${e.paid ? "Yes" : "No"}</td>
+        <td>${e.date || "—"}</td>
+        <td>
+          <button class="small-btn" data-edit="${e.id}">Edit</button>
+          <button class="small-btn danger" data-delete="${e.id}">Delete</button>
+        </td>
+      `;
+
+      tableBody.appendChild(row);
+    });
+
+    attachRowHandlers();
+  }
+
+  function attachRowHandlers() {
+    document.querySelectorAll("[data-edit]").forEach(btn => {
+      btn.addEventListener("click", () => openEdit(btn.dataset.edit));
+    });
+
+    document.querySelectorAll("[data-delete]").forEach(btn => {
+      btn.addEventListener("click", () => openDelete(btn.dataset.delete));
+    });
+  }
+
+  // Open modal for new expense
+  function openAdd() {
+    idInput.value = "";
+    categoryInput.value = "";
+    descriptionInput.value = "";
+    amountInput.value = "";
+    dateInput.value = "";
+    paidInput.checked = false;
+    notesInput.value = "";
+
+    modal.classList.remove("hidden");
+  }
+
+  // Open modal for editing
+  function openEdit(id) {
+    const e = expenses.find(x => x.id === id);
+    if (!e) return;
+
+    idInput.value = e.id;
+    categoryInput.value = e.category;
+    descriptionInput.value = e.description;
+    amountInput.value = e.amount;
+    dateInput.value = e.date;
+    paidInput.checked = !!e.paid;
+    notesInput.value = e.notes || "";
+
+    modal.classList.remove("hidden");
+  }
+
+  // Open delete modal
+  function openDelete(id) {
+    expenseToDelete = id;
+    deleteModal.classList.remove("hidden");
+  }
+
+  // Save expense
+  async function saveExpense() {
+    const body = {
+      id: idInput.value || null,
+      category: categoryInput.value,
+      description: descriptionInput.value,
+      amount: parseFloat(amountInput.value || 0),
+      date: dateInput.value,
+      paid: paidInput.checked,
+      notes: notesInput.value
+    };
+
+    try {
+      await fetch("/admin/api/budget/save", {
+        method: "POST",
+        body: JSON.stringify(body),
+        credentials: "include"
+      });
+
+      modal.classList.add("hidden");
+      await loadBudget();
+    } catch (err) {
+      console.error("Failed to save expense", err);
+      alert("Error saving expense.");
+    }
+  }
+
+  // Delete expense
+  async function deleteExpense() {
+    if (!expenseToDelete) return;
+
+    try {
+      await fetch(`/admin/api/budget/delete/${encodeURIComponent(expenseToDelete)}`, {
+        method: "POST",
+        credentials: "include"
+      });
+
+      deleteModal.classList.add("hidden");
+      await loadBudget();
+    } catch (err) {
+      console.error("Failed to delete expense", err);
+      alert("Error deleting expense.");
+    }
+  }
+
+  function init() {
+    if (!tableBody || !addBtn) return;
+
+    addBtn.addEventListener("click", openAdd);
+    saveBtn.addEventListener("click", saveExpense);
+    cancelBtn.addEventListener("click", () => modal.classList.add("hidden"));
+
+    confirmDeleteBtn.addEventListener("click", deleteExpense);
+    cancelDeleteBtn.addEventListener("click", () => deleteModal.classList.add("hidden"));
+
+    loadBudget();
+  }
+
+  return { init };
+})();
+
+
 // RSVP MANAGER
 (function () {
   const tableBody = document.getElementById("rsvp-table-body");
@@ -509,4 +688,6 @@ const EventsManager = (() => {
 
 document.addEventListener("DOMContentLoaded", () => {
   EventsManager.init();
+  BudgetManager.init();
 });
+

@@ -739,4 +739,47 @@ body {
   .rsvp-table td:nth-child(5) {
     display: none;
   }
+  
+  /* ========================= */
+/* BUDGET TABLE */
+/* ========================= */
+
+.budget-table-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  margin-top: 10px;
+}
+
+.budget-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.budget-table th,
+.budget-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.budget-table th {
+  text-align: left;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.budget-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ========================= */
+/* DELETE MODAL FOR BUDGET */
+/* ========================= */
+
+#delete-expense-modal .modal-content {
+  max-width: 360px;
+}
+
 }
