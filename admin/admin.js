@@ -183,6 +183,7 @@ const EventsManager = (() => {
         <td>${e.date}</td>
         <td>${e.location}</td>
         <td>${e.visible ? "Yes" : "No"}</td>
+		<td>${e.notes || "—"}</td>
         <td>
           <button class="small-btn" data-edit="${e.id}">Edit</button>
           <button class="small-btn danger" data-delete="${e.id}">Delete</button>
@@ -353,6 +354,7 @@ const BudgetManager = (() => {
         <td>£${Number(e.amount).toFixed(2)}</td>
         <td>${e.paid ? "Yes" : "No"}</td>
         <td>${e.date || "—"}</td>
+		<td>${e.notes || "—"}</td>
         <td>
           <button class="small-btn" data-edit="${e.id}">Edit</button>
           <button class="small-btn danger" data-delete="${e.id}">Delete</button>
