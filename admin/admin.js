@@ -51,7 +51,6 @@
     edit: document.getElementById("section-edit"),
     budget: document.getElementById("section-budget"),
     planner: document.getElementById("section-planner"),
-    return: document.getElementById("section-return"),
   };
 
   const topbarTitle = document.getElementById("topbar-title-text");
@@ -95,13 +94,6 @@
       contentTitle: "Planner & Timeline",
       contentSubtitle: "Organise tasks, due dates and timelines for all events.",
       badge: "Planning workspace"
-    },
-    return: {
-      topbarTitle: "Return to Main Site",
-      chip: "Public view",
-      contentTitle: "Return to Main Site",
-      contentSubtitle: "Jump back to the public wedding site or add quick status info here.",
-      badge: "Public site link"
     }
   };
 
@@ -112,6 +104,7 @@
     });
 
     Object.entries(sections).forEach(([key, el]) => {
+      if (!el) return;
       el.classList.toggle("active", key === sectionKey);
     });
 
@@ -161,14 +154,26 @@ const EventsManager = (() => {
   const cancelDeleteBtn = document.getElementById("cancel-delete-event-btn");
 
   async function loadEvents() {
-    const res = await fetch("/admin/api/events");
-    events = await res.json();
-    events.sort((a, b) => a.order - b.order);
-    renderTable();
+    try {
+      const res = await fetch("/admin/api/events", { credentials: "include" });
+      const data = await res.json();
+      events = Array.isArray(data) ? data : [];
+      events.sort((a, b) => a.order - b.order);
+      renderTable();
+    } catch (e) {
+      console.error("Failed to load events", e);
+    }
   }
 
   function renderTable() {
     tableBody.innerHTML = "";
+    if (!events.length) {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td colspan="6" style="text-align:center; color:var(--text-muted); padding:12px;">No events configured yet.</td>`;
+      tableBody.appendChild(row);
+      return;
+    }
+
     events.forEach(e => {
       const row = document.createElement("tr");
 
@@ -214,14 +219,15 @@ const EventsManager = (() => {
 
   function openEdit(id) {
     const e = events.find(ev => ev.id === id);
+    if (!e) return;
 
     idInput.value = e.id;
     nameInput.value = e.name;
     dateInput.value = e.date;
     locationInput.value = e.location;
-    venueInput.value = e.venue;
-    notesInput.value = e.notes;
-    visibleInput.checked = e.visible;
+    venueInput.value = e.venue || "";
+    notesInput.value = e.notes || "";
+    visibleInput.checked = !!e.visible;
 
     modal.classList.remove("hidden");
   }
@@ -242,25 +248,38 @@ const EventsManager = (() => {
       visible: visibleInput.checked
     };
 
-    await fetch("/admin/api/events/save", {
-      method: "POST",
-      body: JSON.stringify(body)
-    });
-
-    modal.classList.add("hidden");
-    loadEvents();
+    try {
+      await fetch("/admin/api/events/save", {
+        method: "POST",
+        body: JSON.stringify(body),
+        credentials: "include"
+      });
+      modal.classList.add("hidden");
+      await loadEvents();
+    } catch (e) {
+      console.error("Failed to save event", e);
+      alert("Error saving event.");
+    }
   }
 
   async function deleteEvent() {
-    await fetch(`/admin/api/events/delete/${eventToDelete}`, {
-      method: "POST"
-    });
-
-    deleteModal.classList.add("hidden");
-    loadEvents();
+    if (!eventToDelete) return;
+    try {
+      await fetch(`/admin/api/events/delete/${encodeURIComponent(eventToDelete)}`, {
+        method: "POST",
+        credentials: "include"
+      });
+      deleteModal.classList.add("hidden");
+      await loadEvents();
+    } catch (e) {
+      console.error("Failed to delete event", e);
+      alert("Error deleting event.");
+    }
   }
 
   function init() {
+    if (!tableBody || !addBtn) return;
+
     addBtn.addEventListener("click", openAdd);
     saveBtn.addEventListener("click", saveEvent);
     cancelBtn.addEventListener("click", () => modal.classList.add("hidden"));
@@ -273,10 +292,6 @@ const EventsManager = (() => {
 
   return { init };
 })();
-
-document.addEventListener("DOMContentLoaded", () => {
-  EventsManager.init();
-});
 
 // RSVP MANAGER
 (function () {
@@ -491,3 +506,7 @@ document.addEventListener("DOMContentLoaded", () => {
     await fetchRsvps();
   })();
 })();
+
+document.addEventListener("DOMContentLoaded", () => {
+  EventsManager.init();
+});
