@@ -339,7 +339,7 @@ const BudgetManager = (() => {
 
     if (!expenses.length) {
       const row = document.createElement("tr");
-      row.innerHTML = `<td colspan="7" style="text-align:center; padding:12px; color:var(--text-muted);">No expenses recorded yet.</td>`;
+      row.innerHTML = `<td colspan="8" style="text-align:center; padding:12px; color:var(--text-muted);">No expenses recorded yet.</td>`;
       tableBody.appendChild(row);
       return;
     }
