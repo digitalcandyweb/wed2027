@@ -7,25 +7,237 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- <header class="hero">
-    <h1>Claire & Brad</h1>
-    <p class="subtitle">Save the Date · 2027</p>
-  </header> -->
 
-  <section class="details">
-	<img src="SavetheDate-wreath.png" alt="Save the Date" class="mainimg">
-    <h2>Our Celebrations</h2>
+  <!-- Side menu -->
+  <nav class="side-menu" id="sideMenu">
+    <div class="side-menu-header">
+      <!-- Updated logo: replace src with your generated transparent PNG -->
+      <img src="cb-logo-gold.png" alt="C+B Monogram" class="logo">
+      <button class="close-menu" id="closeMenuBtn" aria-label="Close menu">×</button>
+    </div>
+    <ul class="side-menu-links">
+      <li><a href="#events" class="menu-link">Events</a></li>
+      <li><a href="#rsvp" class="menu-link">RSVP</a></li>
+      <li><a href="#more" class="menu-link">More to come</a></li>
+      <li><a href="/admin" class="menu-link">Admin page</a></li>
+    </ul>
+  </nav>
+
+  <!-- Overlay when menu is open -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Top bar with burger -->
+  <header class="top-bar">
+    <button class="burger" id="burgerBtn" aria-label="Open menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="top-bar-title">
+      Claire &amp; Brad
+    </div>
+  </header>
+
+  <!-- Hero / intro -->
+  <section class="hero main-hero" id="top">
+    <div class="hero-inner">
+      <p class="eyebrow">Save the Date</p>
+      <h1>Claire &amp; Brad</h1>
+      <p class="subtitle">London &amp; Perth · 2027</p>
+    </div>
   </section>
 
-  <section class="cta">
-    <a href="lodden.html" class="button">UK Wedding</a>
-	<a href="london.html" class="button">UK Celebration</a>
-    <a href="perth.html" class="button">Perth Celebration</a>
+  <!-- Events section -->
+  <section class="section" id="events">
+    <h2>Our Events</h2>
+
+    <!-- Event 1: London Wedding (Lodden Suite) -->
+    <article class="event-card">
+      <div class="event-header">
+        <h3>London Wedding</h3>
+        <p class="event-meta">13 February 2027 · Waltham Forest Town Hall – Lodden Suite</p>
+      </div>
+
+      <!-- Simple image carousel -->
+      <div class="carousel" data-carousel>
+        <div class="carousel-track">
+          <!-- Replace these with real Lodden images -->
+          <img src="LoddenSuite-1.jpg" alt="Lodden Suite – view 1" class="carousel-image active">
+          <img src="LoddenSuite-2.jpg" alt="Lodden Suite – view 2" class="carousel-image">
+          <img src="LoddenSuite-3.jpg" alt="Lodden Suite – view 3" class="carousel-image">
+        </div>
+        <button class="carousel-control prev" aria-label="Previous image">‹</button>
+        <button class="carousel-control next" aria-label="Next image">›</button>
+        <div class="carousel-dots">
+          <button class="dot active"></button>
+          <button class="dot"></button>
+          <button class="dot"></button>
+        </div>
+      </div>
+
+      <p class="event-text">
+        A classic William Morris interior, the Lodden Suite is perfect for an intimate ceremony
+        with our favourite people.
+      </p>
+    </article>
+
+    <!-- Event 2: London Celebration -->
+    <article class="event-card">
+      <div class="event-header">
+        <h3>London Celebration</h3>
+        <p class="event-meta">18 September 2027 · Walthamstow Village Community Hall</p>
+      </div>
+      <p class="event-text">
+        A relaxed London celebration with food, drinks and dancing in Walthamstow Village.
+        Full details to follow.
+      </p>
+    </article>
+
+    <!-- Event 3: Perth Celebration -->
+    <article class="event-card">
+      <div class="event-header">
+        <h3>Perth Celebration</h3>
+        <p class="event-meta">9 October 2027 · Stirling, Perth</p>
+      </div>
+      <p class="event-text">
+        A sunny Perth gathering with family and friends from near and far.
+        More information coming soon.
+      </p>
+    </article>
   </section>
 
-  <footer>
-	<img src="SavetheDate-cb.png" alt="C+B Monogram" class="monogram">
-    <p>© 2027 Claire & Brad Wedding · digitalcandy.win</p>
+  <!-- RSVP section -->
+  <section class="section" id="rsvp">
+    <h2>RSVP</h2>
+    <p class="section-intro">
+      We’d love to know your plans. Please reply by filling in the form below.
+    </p>
+
+    <form action="/rsvp-submit" method="POST" class="rsvp-form">
+      <input type="hidden" name="form-name" value="wedding-rsvp">
+
+      <label for="name">Full name</label>
+      <input id="name" type="text" name="name" required>
+
+      <label for="email">Email address</label>
+      <input id="email" type="email" name="email" required>
+
+      <label for="phone">Phone number (optional)</label>
+      <input id="phone" type="tel" name="phone">
+
+      <label for="event">Which celebration(s) are you replying for?</label>
+      <select id="event" name="event" required>
+        <option value="">Please select…</option>
+        <option value="LondonWedding">London Wedding – 13 February 2027</option>
+        <option value="LondonCelebration">London Celebration – 18 September 2027</option>
+        <option value="BothLondon">Both London events</option>
+        <option value="Perth">Perth – 9 October 2027</option>
+        <option value="All">All events</option>
+      </select>
+
+      <fieldset class="attendance">
+        <legend>Will you be attending?</legend>
+        <label class="radio-label">
+          <input type="radio" name="attending" value="yes" required>
+          Joyfully accepting
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="attending" value="no" required>
+          Regretfully declining
+        </label>
+      </fieldset>
+
+      <label for="guests">Number of guests (including you)</label>
+      <input id="guests" type="number" name="guests" min="1" max="10">
+
+      <label for="message">Message (optional)</label>
+      <textarea id="message" name="message" rows="4" placeholder="Dietary needs, song requests, travel notes…"></textarea>
+
+      <button type="submit" class="button primary">Submit RSVP</button>
+    </form>
+
+    <p class="contact-note">
+      Questions? Email us at <strong>rsvp@digitalcandy.win</strong>
+    </p>
+  </section>
+
+  <!-- More to come -->
+  <section class="section" id="more">
+    <h2>More to come</h2>
+    <p class="section-intro">
+      Travel tips, accommodation suggestions and more details will be added here closer to the date.
+    </p>
+  </section>
+
+  <!-- Footer with logo -->
+  <footer class="footer">
+    <img src="cb-logo-gold.png" alt="C+B Monogram" class="logo footer-logo">
+    <p>© 2027 Claire &amp; Brad Wedding · digitalcandy.win</p>
   </footer>
+
+  <script>
+    // Burger menu logic
+    const burgerBtn = document.getElementById('burgerBtn');
+    const closeMenuBtn = document.getElementById('closeMenuBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    const overlay = document.getElementById('overlay');
+    const menuLinks = document.querySelectorAll('.menu-link');
+
+    function openMenu() {
+      sideMenu.classList.add('open');
+      overlay.classList.add('visible');
+      document.body.classList.add('no-scroll');
+    }
+
+    function closeMenu() {
+      sideMenu.classList.remove('open');
+      overlay.classList.remove('visible');
+      document.body.classList.remove('no-scroll');
+    }
+
+    burgerBtn.addEventListener('click', openMenu);
+    closeMenuBtn.addEventListener('click', closeMenu);
+    overlay.addEventListener('click', closeMenu);
+
+    menuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        // Smooth scroll handled by CSS; just close menu
+        closeMenu();
+      });
+    });
+
+    // Simple carousel logic (single carousel for now)
+    document.querySelectorAll('[data-carousel]').forEach(carousel => {
+      const images = carousel.querySelectorAll('.carousel-image');
+      const dots = carousel.querySelectorAll('.dot');
+      const prevBtn = carousel.querySelector('.prev');
+      const nextBtn = carousel.querySelector('.next');
+      let index = 0;
+
+      function showSlide(i) {
+        images.forEach((img, idx) => {
+          img.classList.toggle('active', idx === i);
+        });
+        dots.forEach((dot, idx) => {
+          dot.classList.toggle('active', idx === i);
+        });
+        index = i;
+      }
+
+      prevBtn.addEventListener('click', () => {
+        const newIndex = (index - 1 + images.length) % images.length;
+        showSlide(newIndex);
+      });
+
+      nextBtn.addEventListener('click', () => {
+        const newIndex = (index + 1) % images.length;
+        showSlide(newIndex);
+      });
+
+      dots.forEach((dot, idx) => {
+        dot.addEventListener('click', () => showSlide(idx));
+      });
+    });
+  </script>
 </body>
 </html>
