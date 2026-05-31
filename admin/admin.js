@@ -67,7 +67,6 @@
 
   const contentTitle = document.getElementById("content-title");
   const contentSubtitle = document.getElementById("content-subtitle");
-/*  const badgeText = document.getElementById("badge-text"); */
   const rsvpSummary = document.getElementById("rsvp-summary");
   const topbarChip = document.getElementById("topbar-chip-text");
 
@@ -119,7 +118,6 @@
     if (m) {
       contentTitle.textContent = m.contentTitle;
       contentSubtitle.textContent = m.contentSubtitle;
-      badgeText.textContent = m.badge;
       if (topbarChip) topbarChip.textContent = m.chip;
     }
 
