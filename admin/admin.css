@@ -717,33 +717,9 @@ body {
   color: var(--accent);
 }
 
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .sidebar {
-    display: none;
-  }
 
-  .main {
-    padding: 14px 14px 18px;
-  }
 
-  .content-card {
-    padding: 14px 14px 16px;
-  }
-
-  .rsvp-table {
-    font-size: 12px;
-  }
-
-  .rsvp-table th:nth-child(3),
-  .rsvp-table td:nth-child(3),
-  .rsvp-table th:nth-child(5),
-  .rsvp-table td:nth-child(5) {
-    display: none;
-  }
-}
-
-/* GLOBAL SETTINGS — ACCORDION
+/* GLOBAL SETTINGS — ACCORDION + FORM LAYOUT (NON‑BREAKING) */
 
 /* Accordion container */
 .settings-accordion {
@@ -863,4 +839,30 @@ body {
 
 .settings-status.error {
   color: var(--danger);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    padding: 14px 14px 18px;
+  }
+
+  .content-card {
+    padding: 14px 14px 16px;
+  }
+
+  .rsvp-table {
+    font-size: 12px;
+  }
+
+  .rsvp-table th:nth-child(3),
+  .rsvp-table td:nth-child(3),
+  .rsvp-table th:nth-child(5),
+  .rsvp-table td:nth-child(5) {
+    display: none;
+  }
 }
