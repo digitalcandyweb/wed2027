@@ -24,7 +24,7 @@
       </div>
 
       <div>
-        <div class="sidebar-section-label">Overview</div>
+        <div class="sidebar-section-label">Overviw</div>
         <ul class="nav-list">
           <li class="nav-item active" data-section="rsvp">
             <div class="nav-icon">👥</div>
@@ -306,7 +306,46 @@
     </div>
   </div>
 </div>
+  
+  <!-- EVENT MODAL -->
+  <div id="event-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <h3 id="event-modal-title">Add Event</h3>
 
+      <form id="event-form">
+        <label>
+          Event Name
+          <input type="text" name="name" class="input" required>
+        </label>
+
+        <label>
+          Date
+          <input type="date" name="date" class="input" required>
+        </label>
+
+        <label>
+          Location
+          <input type="text" name="location" class="input" required>
+        </label>
+
+        <label>
+          Venue
+          <input type="text" name="venue" class="input">
+        </label>
+
+        <label class="checkbox-row">
+          <input type="checkbox" name="visible" checked>
+          Visible on site
+        </label>
+
+        <div class="modal-actions">
+          <button type="button" class="button secondary" id="event-cancel">Cancel</button>
+          <button type="submit" class="button" id="event-save">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <script src="./admin.js" defer></script>
 </body>
