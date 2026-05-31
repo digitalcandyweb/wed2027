@@ -42,10 +42,22 @@
   });
 })();
 
+// SIDEBAR COLLAPSE
+(function () {
+  const sidebar = document.querySelector(".sidebar");
+  const toggle = document.getElementById("sidebar-toggle");
+  if (!sidebar || !toggle) return;
+
+  toggle.addEventListener("click", () => {
+    sidebar.classList.toggle("collapsed");
+  });
+})();
+
 // NAV + SECTION SWITCHING
 (function () {
   const navItems = document.querySelectorAll(".nav-item");
   const sections = {
+    dashboard: document.getElementById("section-dashboard"),
     rsvp: document.getElementById("section-rsvp"),
     events: document.getElementById("section-events"),
     edit: document.getElementById("section-edit"),
@@ -53,47 +65,42 @@
     planner: document.getElementById("section-planner"),
   };
 
-  const topbarTitle = document.getElementById("topbar-title-text");
-  const topbarChip = document.getElementById("topbar-chip-text");
   const contentTitle = document.getElementById("content-title");
   const contentSubtitle = document.getElementById("content-subtitle");
-  const badgeText = document.getElementById("badge-text");
+/*  const badgeText = document.getElementById("badge-text"); */
+  const rsvpSummary = document.getElementById("rsvp-summary");
+  const topbarChip = document.getElementById("topbar-chip-text");
 
   const meta = {
+    dashboard: {
+      contentTitle: "Dashboard overview",
+      contentSubtitle: "High-level view of attendance and events.",
+      chip: "Dashboard"
+    },
     rsvp: {
-      topbarTitle: "RSVP Manager",
-      chip: "Guests & responses",
       contentTitle: "RSVP Manager",
       contentSubtitle: "View, filter and export guest responses for all events.",
-      badge: "Live data connected"
+      chip: "Guests & responses"
     },
     events: {
-      topbarTitle: "Events",
-      chip: "Event configuration",
       contentTitle: "Events",
       contentSubtitle: "Manage event names, dates, locations and visibility.",
-      badge: "Config-driven"
+      chip: "Event configuration"
     },
     edit: {
-      topbarTitle: "Edit Website Content",
-      chip: "Copy & layout",
       contentTitle: "Edit Website Content",
       contentSubtitle: "Update hero text, event details, travel info and more without redeploying.",
-      badge: "Config-driven content"
+      chip: "Copy & layout"
     },
     budget: {
-      topbarTitle: "Budget & Cost Tracker",
-      chip: "Money & commitments",
       contentTitle: "Budget & Cost Tracker",
       contentSubtitle: "Track all wedding-related expenses and compare against your planned budget.",
-      badge: "Private to admin"
+      chip: "Money & commitments"
     },
     planner: {
-      topbarTitle: "Planner & Timeline",
-      chip: "Tasks & milestones",
       contentTitle: "Planner & Timeline",
       contentSubtitle: "Organise tasks, due dates and timelines for all events.",
-      badge: "Planning workspace"
+      chip: "Tasks & milestones"
     }
   };
 
@@ -110,11 +117,14 @@
 
     const m = meta[sectionKey];
     if (m) {
-      topbarTitle.textContent = m.topbarTitle;
-      topbarChip.textContent = m.chip;
       contentTitle.textContent = m.contentTitle;
       contentSubtitle.textContent = m.contentSubtitle;
       badgeText.textContent = m.badge;
+      if (topbarChip) topbarChip.textContent = m.chip;
+    }
+
+    if (rsvpSummary) {
+      rsvpSummary.style.display = sectionKey === "rsvp" ? "flex" : "none";
     }
   }
 
@@ -125,40 +135,63 @@
     });
   });
 
-  setActive("rsvp");
+  setActive("dashboard");
 })();
 
-// Events Manager
+// Dashboard updater
+function updateDashboard(rsvps, events) {
+  const attending = rsvps.filter(r => r.attending === true).length;
+  const notAttending = rsvps.filter(r => r.attending === false).length;
+
+  const dashA = document.getElementById("dash-attending");
+  const dashN = document.getElementById("dash-not-attending");
+  if (dashA) dashA.textContent = attending;
+  if (dashN) dashN.textContent = notAttending;
+
+  const summaryA = document.getElementById("summary-attending");
+  const summaryN = document.getElementById("summary-not-attending");
+  if (summaryA) summaryA.textContent = attending;
+  if (summaryN) summaryN.textContent = notAttending;
+
+  const container = document.getElementById("dashboard-events");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  events.forEach(ev => {
+    const count = rsvps.filter(r => r.event === ev.id && r.attending === true).length;
+
+    const card = document.createElement("div");
+    card.className = "dashboard-event-card";
+    card.innerHTML = `
+      <div class="event-name">${ev.name}</div>
+      <div class="event-count">${count}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// EVENTS MANAGER
 const EventsManager = (() => {
   let events = [];
-  let eventToDelete = null;
 
   const tableBody = document.getElementById("events-table-body");
   const addBtn = document.getElementById("add-event-btn");
 
   const modal = document.getElementById("event-modal");
-  const deleteModal = document.getElementById("delete-event-modal");
+  const form = document.getElementById("event-form");
+  const cancelBtn = document.getElementById("event-cancel");
+  const modalTitle = document.getElementById("event-modal-title");
 
-  const idInput = document.getElementById("event-id");
-  const nameInput = document.getElementById("event-name");
-  const dateInput = document.getElementById("event-date");
-  const locationInput = document.getElementById("event-location");
-  const venueInput = document.getElementById("event-venue");
-  const notesInput = document.getElementById("event-notes");
-  const visibleInput = document.getElementById("event-visible");
-
-  const saveBtn = document.getElementById("save-event-btn");
-  const cancelBtn = document.getElementById("cancel-event-btn");
-
-  const confirmDeleteBtn = document.getElementById("confirm-delete-event-btn");
-  const cancelDeleteBtn = document.getElementById("cancel-delete-event-btn");
+  let editingId = null;
 
   async function loadEvents() {
+    if (!tableBody) return;
     try {
       const res = await fetch("/admin/api/events", { credentials: "include" });
       const data = await res.json();
       events = Array.isArray(data) ? data : [];
-      events.sort((a, b) => a.order - b.order);
+      events.sort((a, b) => (a.order || 0) - (b.order || 0));
       renderTable();
     } catch (e) {
       console.error("Failed to load events", e);
@@ -169,7 +202,7 @@ const EventsManager = (() => {
     tableBody.innerHTML = "";
     if (!events.length) {
       const row = document.createElement("tr");
-      row.innerHTML = `<td colspan="6" style="text-align:center; color:var(--text-muted); padding:12px;">No events configured yet.</td>`;
+      row.innerHTML = `<td colspan="7" style="text-align:center; color:var(--text-muted); padding:12px;">No events configured yet.</td>`;
       tableBody.appendChild(row);
       return;
     }
@@ -178,12 +211,12 @@ const EventsManager = (() => {
       const row = document.createElement("tr");
 
       row.innerHTML = `
-        <td>${e.order}</td>
+        <td>${e.order ?? "—"}</td>
         <td>${e.name}</td>
         <td>${e.date}</td>
         <td>${e.location}</td>
         <td>${e.visible ? "Yes" : "No"}</td>
-		<td>${e.notes || "—"}</td>
+        <td>${e.notes || "—"}</td>
         <td>
           <button class="small-btn" data-edit="${e.id}">Edit</button>
           <button class="small-btn danger" data-delete="${e.id}">Delete</button>
@@ -202,51 +235,48 @@ const EventsManager = (() => {
     });
 
     document.querySelectorAll("[data-delete]").forEach(btn => {
-      btn.addEventListener("click", () => openDelete(btn.dataset.delete));
+      btn.addEventListener("click", () => deleteEvent(btn.dataset.delete));
     });
   }
 
   function openAdd() {
-    idInput.value = "";
-    nameInput.value = "";
-    dateInput.value = "";
-    locationInput.value = "";
-    venueInput.value = "";
-    notesInput.value = "";
-    visibleInput.checked = true;
-
+    if (!modal || !form) return;
+    editingId = null;
+    modalTitle.textContent = "Add Event";
+    form.name.value = "";
+    form.date.value = "";
+    form.location.value = "";
+    form.venue.value = "";
+    form.visible.checked = true;
     modal.classList.remove("hidden");
   }
 
   function openEdit(id) {
+    if (!modal || !form) return;
     const e = events.find(ev => ev.id === id);
     if (!e) return;
 
-    idInput.value = e.id;
-    nameInput.value = e.name;
-    dateInput.value = e.date;
-    locationInput.value = e.location;
-    venueInput.value = e.venue || "";
-    notesInput.value = e.notes || "";
-    visibleInput.checked = !!e.visible;
-
+    editingId = e.id;
+    modalTitle.textContent = "Edit Event";
+    form.name.value = e.name || "";
+    form.date.value = e.date || "";
+    form.location.value = e.location || "";
+    form.venue.value = e.venue || "";
+    form.visible.checked = e.visible !== false;
     modal.classList.remove("hidden");
   }
 
-  function openDelete(id) {
-    eventToDelete = id;
-    deleteModal.classList.remove("hidden");
-  }
+  async function saveEvent(e) {
+    e.preventDefault();
+    if (!form) return;
 
-  async function saveEvent() {
     const body = {
-      id: idInput.value || null,
-      name: nameInput.value,
-      date: dateInput.value,
-      location: locationInput.value,
-      venue: venueInput.value,
-      notes: notesInput.value,
-      visible: visibleInput.checked
+      id: editingId,
+      name: form.name.value,
+      date: form.date.value,
+      location: form.location.value,
+      venue: form.venue.value,
+      visible: form.visible.checked
     };
 
     try {
@@ -257,36 +287,34 @@ const EventsManager = (() => {
       });
       modal.classList.add("hidden");
       await loadEvents();
-    } catch (e) {
-      console.error("Failed to save event", e);
+    } catch (err) {
+      console.error("Failed to save event", err);
       alert("Error saving event.");
     }
   }
 
-  async function deleteEvent() {
-    if (!eventToDelete) return;
+  async function deleteEvent(id) {
+    if (!id) return;
+    if (!confirm("Delete this event?")) return;
+
     try {
-      await fetch(`/admin/api/events/delete/${encodeURIComponent(eventToDelete)}`, {
+      await fetch(`/admin/api/events/delete/${encodeURIComponent(id)}`, {
         method: "POST",
         credentials: "include"
       });
-      deleteModal.classList.add("hidden");
       await loadEvents();
-    } catch (e) {
-      console.error("Failed to delete event", e);
+    } catch (err) {
+      console.error("Failed to delete event", err);
       alert("Error deleting event.");
     }
   }
 
   function init() {
-    if (!tableBody || !addBtn) return;
+    if (!tableBody || !addBtn || !form || !modal) return;
 
     addBtn.addEventListener("click", openAdd);
-    saveBtn.addEventListener("click", saveEvent);
+    form.addEventListener("submit", saveEvent);
     cancelBtn.addEventListener("click", () => modal.classList.add("hidden"));
-
-    confirmDeleteBtn.addEventListener("click", deleteEvent);
-    cancelDeleteBtn.addEventListener("click", () => deleteModal.classList.add("hidden"));
 
     loadEvents();
   }
@@ -294,9 +322,7 @@ const EventsManager = (() => {
   return { init };
 })();
 
-// =========================
 // BUDGET MANAGER
-// =========================
 const BudgetManager = (() => {
   let expenses = [];
   let expenseToDelete = null;
@@ -320,20 +346,19 @@ const BudgetManager = (() => {
   const confirmDeleteBtn = document.getElementById("confirm-delete-expense-btn");
   const cancelDeleteBtn = document.getElementById("cancel-delete-expense-btn");
 
-  // Load all expenses
   async function loadBudget() {
+    if (!tableBody) return;
     try {
       const res = await fetch("/admin/api/budget", { credentials: "include" });
       const data = await res.json();
       expenses = Array.isArray(data) ? data : [];
-      expenses.sort((a, b) => a.order - b.order);
+      expenses.sort((a, b) => (a.order || 0) - (b.order || 0));
       renderTable();
     } catch (err) {
       console.error("Failed to load budget", err);
     }
   }
 
-  // Render table
   function renderTable() {
     tableBody.innerHTML = "";
 
@@ -348,13 +373,13 @@ const BudgetManager = (() => {
       const row = document.createElement("tr");
 
       row.innerHTML = `
-        <td>${e.order}</td>
+        <td>${e.order ?? "—"}</td>
         <td>${e.category}</td>
         <td>${e.description}</td>
         <td>£${Number(e.amount).toFixed(2)}</td>
         <td>${e.paid ? "Yes" : "No"}</td>
         <td>${e.date || "—"}</td>
-		<td>${e.notes || "—"}</td>
+        <td>${e.notes || "—"}</td>
         <td>
           <button class="small-btn" data-edit="${e.id}">Edit</button>
           <button class="small-btn danger" data-delete="${e.id}">Delete</button>
@@ -377,8 +402,8 @@ const BudgetManager = (() => {
     });
   }
 
-  // Open modal for new expense
   function openAdd() {
+    if (!modal) return;
     idInput.value = "";
     categoryInput.value = "";
     descriptionInput.value = "";
@@ -390,8 +415,8 @@ const BudgetManager = (() => {
     modal.classList.remove("hidden");
   }
 
-  // Open modal for editing
   function openEdit(id) {
+    if (!modal) return;
     const e = expenses.find(x => x.id === id);
     if (!e) return;
 
@@ -406,13 +431,12 @@ const BudgetManager = (() => {
     modal.classList.remove("hidden");
   }
 
-  // Open delete modal
   function openDelete(id) {
+    if (!deleteModal) return;
     expenseToDelete = id;
     deleteModal.classList.remove("hidden");
   }
 
-  // Save expense
   async function saveExpense() {
     const body = {
       id: idInput.value || null,
@@ -439,7 +463,6 @@ const BudgetManager = (() => {
     }
   }
 
-  // Delete expense
   async function deleteExpense() {
     if (!expenseToDelete) return;
 
@@ -458,21 +481,22 @@ const BudgetManager = (() => {
   }
 
   function init() {
-    if (!tableBody || !addBtn) return;
+    if (!tableBody || !addBtn || !modal) return;
 
     addBtn.addEventListener("click", openAdd);
     saveBtn.addEventListener("click", saveExpense);
     cancelBtn.addEventListener("click", () => modal.classList.add("hidden"));
 
-    confirmDeleteBtn.addEventListener("click", deleteExpense);
-    cancelDeleteBtn.addEventListener("click", () => deleteModal.classList.add("hidden"));
+    if (confirmDeleteBtn && cancelDeleteBtn && deleteModal) {
+      confirmDeleteBtn.addEventListener("click", deleteExpense);
+      cancelDeleteBtn.addEventListener("click", () => deleteModal.classList.add("hidden"));
+    }
 
     loadBudget();
   }
 
   return { init };
 })();
-
 
 // RSVP MANAGER
 (function () {
@@ -521,6 +545,7 @@ const BudgetManager = (() => {
       const data = await res.json();
       allRsvps = Array.isArray(data) ? data : [];
       applyFilters();
+      updateDashboard(allRsvps, allEvents);
     } catch (err) {
       console.error(err);
       tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-error">Error loading RSVPs.</td></tr>';
@@ -612,6 +637,7 @@ const BudgetManager = (() => {
       if (!res.ok) throw new Error("Failed to delete RSVP");
       allRsvps = allRsvps.filter(r => r.id !== id);
       applyFilters();
+      updateDashboard(allRsvps, allEvents);
     } catch (err) {
       console.error(err);
       alert("Error deleting RSVP.");
@@ -692,4 +718,3 @@ document.addEventListener("DOMContentLoaded", () => {
   EventsManager.init();
   BudgetManager.init();
 });
-

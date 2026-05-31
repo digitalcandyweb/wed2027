@@ -14,19 +14,21 @@
 
 <body>
   <div class="app-shell">
-    <aside class="sidebar">
+    <aside class="sidebar collapsed" id="sidebar">
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+
       <div class="sidebar-header">
         <div class="logo-circle">W</div>
-        <div class="sidebar-title">
-          <span class="sidebar-title-main">Wedding Admin</span>
-          <span class="sidebar-title-sub">Control centre</span>
-        </div>
       </div>
 
       <div>
-        <div class="sidebar-section-label">Overviw</div>
+        <div class="sidebar-section-label">Overview</div>
         <ul class="nav-list">
-          <li class="nav-item active" data-section="rsvp">
+          <li class="nav-item active" data-section="dashboard">
+            <div class="nav-icon">⏱</div>
+            <span>Dashboard</span>
+          </li>
+          <li class="nav-item" data-section="rsvp">
             <div class="nav-icon">👥</div>
             <span>RSVP Manager</span>
           </li>
@@ -61,284 +63,223 @@
     </aside>
 
     <main class="main">
-  <header class="topbar">
-    <div class="topbar-left">
-      <div class="topbar-title">
-        <span id="topbar-title-text">RSVP Manager</span>
-        <span class="topbar-chip" id="topbar-chip-text">Guests & responses</span>
-      </div>
-      <div class="topbar-subtitle">
-        Central place to manage your wedding website, guests, budget and planning.
-      </div>
-    </div>
-
-    <div class="topbar-right">
-      <div class="theme-toggle" id="theme-toggle" data-mode="light" aria-label="Toggle dark mode">
-        <span class="theme-toggle-icon sun">☀️</span>
-        <span class="theme-toggle-icon moon">🌙</span>
-        <div class="theme-toggle-thumb">●</div>
-      </div>
-
-      <div class="topbar-user" id="user-menu-toggle">
-        <div class="user-avatar">B</div>
-        <div>
-          <div style="font-size: 11px; font-weight: 500;">Brad</div>
-          <div style="font-size: 10px; color: var(--text-muted);">Admin</div>
-        </div>
-      </div>
-
-      <div class="user-menu" id="user-menu">
-        <a href="https://dash.cloudflare.com/?to=/:account/access/apps" target="_blank" rel="noreferrer">
-          CloudFlare Admin Access
-        </a>
-        <a href="https://digitalcandy.win/">
-          Return to main site
-        </a>
-        <a href="/cdn-cgi/access/logout">
-          Logout
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- CONTENT CARD WRAPPER (required for layout + JS) -->
-  <section class="content-card">
-
-    <!-- DYNAMIC HEADER (updates when switching sections) -->
-    <div class="content-header">
-      <div class="content-header-left">
-        <div class="content-title" id="content-title">RSVP Manager</div>
-        <div class="content-subtitle" id="content-subtitle">
-          View, filter and export guest responses for all events.
-        </div>
-      </div>
-
-      <div class="content-header-right">
-        <div class="rsvp-summary">
-          <span class="summary attending">Attending: <span id="summary-attending">0</span></span>
-          <span class="summary not-attending">Not attending: <span id="summary-not-attending">0</span></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ALL SECTIONS LIVE INSIDE THIS BODY -->
-    <div class="content-body">
-
-      <!-- RSVP SECTION -->
-      <div class="section active" id="section-rsvp">
-
-        <div class="rsvp-controls">
-          <input id="rsvp-search" type="text" placeholder="Search by name or email…" class="input" />
-
-          <select id="rsvp-event-filter" class="input">
-            <option value="">All events</option>
-          </select>
-
-          <select id="rsvp-attendance-filter" class="input">
-            <option value="">All statuses</option>
-            <option value="attending">Attending</option>
-            <option value="not_attending">Not attending</option>
-          </select>
-
-          <button id="rsvp-export" class="button secondary">
-            <span>Export CSV</span>
-          </button>
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title">
+            <span id="topbar-title-text">Wedding Admin Control Centre</span>
+            <span class="topbar-chip" id="topbar-chip-text">Dashboard</span>
+          </div>
+          <div class="topbar-subtitle">
+            Central place to manage your wedding website, guests, budget and planning.
+          </div>
         </div>
 
-        <div class="rsvp-table-wrapper">
-          <table class="rsvp-table">
-            <thead>
-              <tr>
-                <th>Guest</th>
-                <th>Email</th>
-                <th>Event</th>
-                <th>Guests</th>
-                <th>Submitted</th>
-                <th style="text-align:right;">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="rsvp-table-body">
-              <tr>
-                <td colspan="6" class="rsvp-loading">Loading RSVPs…</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="topbar-right">
+          <div class="theme-toggle" id="theme-toggle" data-mode="light" aria-label="Toggle dark mode">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+            <div class="theme-toggle-thumb">●</div>
+          </div>
+
+          <div class="topbar-user" id="user-menu-toggle">
+            <div class="user-avatar">B</div>
+            <div>
+              <div style="font-size: 11px; font-weight: 500;">Brad</div>
+              <div style="font-size: 10px; color: var(--text-muted);">Admin</div>
+            </div>
+          </div>
+
+          <div class="user-menu" id="user-menu">
+            <a href="https://dash.cloudflare.com/?to=/:account/access/apps" target="_blank" rel="noreferrer">
+              CloudFlare Admin Access
+            </a>
+            <a href="https://digitalcandy.win/">Return to main site</a>
+            <a href="/cdn-cgi/access/logout">Logout</a>
+          </div>
+        </div>
+      </header>
+
+      <section class="content-card">
+        <div class="content-header">
+          <div class="content-header-left">
+            <div class="content-title" id="content-title">Dashboard overview</div>
+            <div class="content-subtitle" id="content-subtitle">
+              High-level view of attendance and events.
+            </div>
+          </div>
+
+          <div class="content-header-right">
+            <div class="rsvp-summary" id="rsvp-summary" style="display:none;">
+              <span class="summary attending">Attending: <span id="summary-attending">0</span></span>
+              <span class="summary not-attending">Not attending: <span id="summary-not-attending">0</span></span>
+            </div>
+          </div>
         </div>
 
-        <div class="pill-row" style="margin-top: 8px;">
-          <span class="pill-tag accent">Backed by /admin/api/list</span>
-          <span class="pill-tag">Events from /admin/api/events</span>
-          <span class="pill-tag">Delete + CSV export ready</span>
+        <div class="content-body">
+
+          <!-- DASHBOARD -->
+          <div class="section active" id="section-dashboard">
+            <h3>Dashboard</h3>
+            <p>Quick overview of guest responses and attendance by event.</p>
+
+            <div class="dashboard-grid">
+              <div class="dashboard-card">
+                <div class="gauge-label">Attending</div>
+                <div class="gauge-circle attending" id="dash-attending">0</div>
+              </div>
+              <div class="dashboard-card">
+                <div class="gauge-label">Not attending</div>
+                <div class="gauge-circle not-attending" id="dash-not-attending">0</div>
+              </div>
+            </div>
+
+            <h3>Attendance by event</h3>
+            <div class="dashboard-events-grid" id="dashboard-events"></div>
+          </div>
+
+          <!-- RSVP -->
+          <div class="section" id="section-rsvp">
+            <h3>RSVP Manager</h3>
+            <p>Search, filter and manage guest responses across all events.</p>
+
+            <div class="rsvp-controls">
+              <input id="rsvp-search" type="text" placeholder="Search by name or email…" class="input" />
+              <select id="rsvp-event-filter" class="input"></select>
+              <select id="rsvp-attendance-filter" class="input">
+                <option value="">All statuses</option>
+                <option value="attending">Attending</option>
+                <option value="not_attending">Not attending</option>
+              </select>
+              <button id="rsvp-export" class="button secondary">Export CSV</button>
+            </div>
+
+            <div class="rsvp-table-wrapper">
+              <table class="rsvp-table">
+                <thead>
+                  <tr>
+                    <th>Guest</th>
+                    <th>Email</th>
+                    <th>Event</th>
+                    <th>Guests</th>
+                    <th>Submitted</th>
+                    <th style="text-align:right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="rsvp-table-body">
+                  <tr><td colspan="6" class="rsvp-loading">Loading RSVPs…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- EVENTS -->
+          <div class="section" id="section-events">
+            <h3>Events</h3>
+            <p>Manage event names, dates, locations and visibility.</p>
+
+            <button id="add-event-btn" class="button">Add Event</button>
+
+            <div class="events-table-wrapper">
+              <table class="events-table">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Visible</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="events-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- EDIT -->
+          <div class="section" id="section-edit">
+            <h3>Edit Website Content</h3>
+            <p>Manage hero text, event descriptions, travel info and more.</p>
+          </div>
+
+          <!-- BUDGET -->
+          <div class="section" id="section-budget">
+            <h3>Budget & Cost Tracker</h3>
+            <p>Track all wedding-related expenses in one place.</p>
+
+            <button id="add-expense-btn" class="button">Add Expense</button>
+
+            <div class="budget-table-wrapper">
+              <table class="budget-table">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Paid</th>
+                    <th>Date</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="budget-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- PLANNER -->
+          <div class="section" id="section-planner">
+            <h3>Planner & Timeline</h3>
+            <p>Organise tasks, due dates and timelines for all events.</p>
+          </div>
+
         </div>
-      </div>
-
-      <!-- EVENTS SECTION -->
-      <div class="section" id="section-events">
-        <h3>Events</h3>
-        <p>Manage event names, dates, locations and visibility.</p>
-
-        <button id="add-event-btn" class="button">Add Event</button>
-
-        <div class="events-table-wrapper">
-          <table class="events-table">
-            <thead>
-              <tr>
-                <th>Order</th>
-                <th>Name</th>
-                <th>Date</th>
-                <th>Location</th>
-                <th>Visible</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="events-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- EDIT WEBSITE SECTION -->
-      <div class="section" id="section-edit">
-        <h3>Edit Website Content</h3>
-        <p>This area will act like a lightweight CMS for your main wedding site.</p>
-        <ul>
-          <li>Hero text, event descriptions, schedule, venue details</li>
-          <li>Travel info, FAQ, footer content</li>
-          <li>Backed by JSON in KV or a config file</li>
-          <li>Simple forms → Worker updates → site reads dynamically</li>
-        </ul>
-        <div class="pill-row">
-          <span class="pill-tag accent">Next: define content schema</span>
-          <span class="pill-tag">Create edit forms</span>
-          <span class="pill-tag">Wire to KV</span>
-        </div>
-      </div>
-
-      <!-- BUDGET SECTION -->
-      <div class="section" id="section-budget">
-        <h3>Budget & Cost Tracker</h3>
-        <p>Track all wedding-related expenses in one place.</p>
-
-        <button id="add-expense-btn" class="button">Add Expense</button>
-
-        <div class="budget-table-wrapper">
-          <table class="budget-table">
-            <thead>
-              <tr>
-                <th>Order</th>
-                <th>Category</th>
-                <th>Description</th>
-                <th>Amount</th>
-                <th>Paid</th>
-                <th>Date</th>
-                <th>Notes</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="budget-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- PLANNER SECTION -->
-      <div class="section" id="section-planner">
-        <h3>Planner & Timeline</h3>
-        <p>Use this as your project board for everything leading up to each event:</p>
-        <ul>
-          <li>Tasks with due dates and status</li>
-          <li>Assign tasks to you or Claire</li>
-          <li>Overall planning + wedding week timelines</li>
-          <li>Countdown to each event</li>
-        </ul>
-        <div class="pill-row">
-          <span class="pill-tag accent">Next: task structure</span>
-          <span class="pill-tag">List + board view (later)</span>
-          <span class="pill-tag">Reminders (optional)</span>
-        </div>
-      </div>
-
-    </div>
-  </section>
-</main>
-
+      </section>
+    </main>
   </div>
 
-<!-- BUDGET MODAL -->
-<div id="budget-modal" class="modal hidden">
-  <div class="modal-content">
-    <h3 id="budget-modal-title">Add Expense</h3>
-
-    <input type="hidden" id="expense-id">
-
-    <label>Category</label>
-    <input id="expense-category">
-
-    <label>Description</label>
-    <input id="expense-description">
-
-    <label>Amount</label>
-    <input id="expense-amount" type="number" step="0.01">
-
-    <label>Date</label>
-    <input id="expense-date" type="date">
-
-    <label class="checkbox-row">
-      <input type="checkbox" id="expense-paid"> Paid
-    </label>
-
-    <label>Notes</label>
-    <textarea id="expense-notes"></textarea>
-
-    <div class="modal-actions">
-      <button id="save-expense-btn" class="button">Save</button>
-      <button id="cancel-expense-btn" class="button secondary">Cancel</button>
+  <!-- BUDGET MODALS -->
+  <div id="budget-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="budget-modal-title">Add Expense</h3>
+      <input type="hidden" id="expense-id">
+      <label>Category</label><input id="expense-category">
+      <label>Description</label><input id="expense-description">
+      <label>Amount</label><input id="expense-amount" type="number" step="0.01">
+      <label>Date</label><input id="expense-date" type="date">
+      <label class="checkbox-row"><input type="checkbox" id="expense-paid"> Paid</label>
+      <label>Notes</label><textarea id="expense-notes"></textarea>
+      <div class="modal-actions">
+        <button id="save-expense-btn" class="button">Save</button>
+        <button id="cancel-expense-btn" class="button secondary">Cancel</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- BUDGET DELETE MODAL -->
-<div id="delete-expense-modal" class="modal hidden">
-  <div class="modal-content">
-    <h3>Delete Expense?</h3>
-    <p>This cannot be undone.</p>
-    <div class="modal-actions">
-      <button id="confirm-delete-expense-btn" class="button danger-btn">Delete</button>
-      <button id="cancel-delete-expense-btn" class="button secondary">Cancel</button>
+  <div id="delete-expense-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Delete Expense?</h3>
+      <p>This cannot be undone.</p>
+      <div class="modal-actions">
+        <button id="confirm-delete-expense-btn" class="button danger-btn">Delete</button>
+        <button id="cancel-delete-expense-btn" class="button secondary">Cancel</button>
+      </div>
     </div>
   </div>
-</div>
-  
+
   <!-- EVENT MODAL -->
   <div id="event-modal" class="modal hidden">
-    <div class="modal-backdrop"></div>
     <div class="modal-content">
       <h3 id="event-modal-title">Add Event</h3>
-
       <form id="event-form">
-        <label>
-          Event Name
-          <input type="text" name="name" class="input" required>
-        </label>
-
-        <label>
-          Date
-          <input type="date" name="date" class="input" required>
-        </label>
-
-        <label>
-          Location
-          <input type="text" name="location" class="input" required>
-        </label>
-
-        <label>
-          Venue
-          <input type="text" name="venue" class="input">
-        </label>
-
-        <label class="checkbox-row">
-          <input type="checkbox" name="visible" checked>
-          Visible on site
-        </label>
-
+        <label>Event Name<input type="text" name="name" class="input" required></label>
+        <label>Date<input type="date" name="date" class="input" required></label>
+        <label>Location<input type="text" name="location" class="input" required></label>
+        <label>Venue<input type="text" name="venue" class="input"></label>
+        <label class="checkbox-row"><input type="checkbox" name="visible" checked> Visible on site</label>
         <div class="modal-actions">
           <button type="button" class="button secondary" id="event-cancel">Cancel</button>
           <button type="submit" class="button" id="event-save">Save</button>
