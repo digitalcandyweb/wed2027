@@ -540,7 +540,7 @@ const BudgetManager = (() => {
       tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-loading">Loading RSVPs…</td></tr>';
       const res = await fetch("/admin/api/list", { credentials: "include" });
       if (!res.ok) throw new Error("Failed to load RSVPs");
-      const data = await res.json();
+            const data = await res.json();
       allRsvps = Array.isArray(data) ? data : [];
       applyFilters();
       updateDashboard(allRsvps, allEvents);
@@ -712,7 +712,10 @@ const BudgetManager = (() => {
   })();
 })();
 
+// INIT MANAGERS
 document.addEventListener("DOMContentLoaded", () => {
   EventsManager.init();
   BudgetManager.init();
 });
+
+	  
