@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <title>Wedding Admin Control Centre</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="./admin.css" />
+  <link rel="stylesheet" href="/admin/admin.css" />
 </head>
 <body>
-  <div class="admin-shell">
+  <div class="app-shell">
     <!-- SIDEBAR -->
     <aside class="sidebar collapsed">
       <div class="sidebar-header">
@@ -126,14 +126,14 @@
               <h2>RSVP summary</h2>
               <p>High-level overview of RSVP responses.</p>
             </div>
-            <div class="summary-row">
-              <div class="summary-item">
-                <div class="summary-label">Attending</div>
-                <div class="summary-value" id="summary-attending">0</div>
+            <div class="summary-row rsvp-summary-bar">
+              <div class="summary-item rsvp-summary-item">
+                <span class="label">Attending</span>
+                <span class="value" id="summary-attending">0</span>
               </div>
-              <div class="summary-item">
-                <div class="summary-label">Not attending</div>
-                <div class="summary-value" id="summary-not-attending">0</div>
+              <div class="summary-item rsvp-summary-item">
+                <span class="label">Not attending</span>
+                <span class="value" id="summary-not-attending">0</span>
               </div>
             </div>
           </div>
@@ -293,202 +293,201 @@
           </div>
         </section>
 
- <!-- GLOBAL SETTINGS SECTION -->
-<section class="section" id="section-settings">
-  <div class="card">
-    <div class="card-header">
-      <h2>Global Settings</h2>
-      <p>Configure wedding details, contact info, website behaviour and advanced options.</p>
-    </div>
+        <!-- GLOBAL SETTINGS SECTION -->
+        <section class="section" id="section-settings">
+          <div class="card">
+            <div class="card-header">
+              <h2>Global Settings</h2>
+              <p>Configure wedding details, contact info, website behaviour and advanced options.</p>
+            </div>
 
-    <div class="settings-accordion" id="settings-accordion">
+            <div class="settings-accordion" id="settings-accordion">
 
-      <!-- Wedding Details -->
-      <div class="settings-accordion-item">
-        <button class="settings-accordion-header">
-          <span>Wedding Details</span>
-          <span class="settings-accordion-chevron">⌄</span>
-        </button>
-        <div class="settings-accordion-body">
-          <div class="settings-form-grid">
-            <label>
-              <span>Wedding title</span>
-              <input id="settings-wedding-title" type="text">
-            </label>
-            <label>
-              <span>Couple names</span>
-              <input id="settings-couple-names" type="text">
-            </label>
-            <label>
-              <span>London date</span>
-              <input id="settings-date-london" type="date">
-            </label>
-            <label>
-              <span>Perth date</span>
-              <input id="settings-date-perth" type="date">
-            </label>
-            <label>
-              <span>London timezone</span>
-              <input id="settings-tz-london" type="text">
-            </label>
-            <label>
-              <span>Perth timezone</span>
-              <input id="settings-tz-perth" type="text">
-            </label>
-            <label>
-              <span>RSVP deadline</span>
-              <input id="settings-rsvp-deadline" type="date">
-            </label>
+              <!-- Wedding Details -->
+              <div class="settings-accordion-item">
+                <button class="settings-accordion-header" type="button">
+                  <span>Wedding Details</span>
+                  <span class="settings-accordion-chevron">⌄</span>
+                </button>
+                <div class="settings-accordion-body">
+                  <div class="settings-form-grid">
+                    <label>
+                      <span>Wedding title</span>
+                      <input id="settings-wedding-title" type="text">
+                    </label>
+                    <label>
+                      <span>Couple names</span>
+                      <input id="settings-couple-names" type="text">
+                    </label>
+                    <label>
+                      <span>London date</span>
+                      <input id="settings-date-london" type="date">
+                    </label>
+                    <label>
+                      <span>Perth date</span>
+                      <input id="settings-date-perth" type="date">
+                    </label>
+                    <label>
+                      <span>London timezone</span>
+                      <input id="settings-tz-london" type="text">
+                    </label>
+                    <label>
+                      <span>Perth timezone</span>
+                      <input id="settings-tz-perth" type="text">
+                    </label>
+                    <label>
+                      <span>RSVP deadline</span>
+                      <input id="settings-rsvp-deadline" type="date">
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact -->
+              <div class="settings-accordion-item">
+                <button class="settings-accordion-header" type="button">
+                  <span>Contact</span>
+                  <span class="settings-accordion-chevron">⌄</span>
+                </button>
+                <div class="settings-accordion-body">
+                  <div class="settings-form-grid">
+                    <label>
+                      <span>Contact email</span>
+                      <input id="settings-contact-email" type="email">
+                    </label>
+                    <label>
+                      <span>RSVP notification email</span>
+                      <input id="settings-rsvp-email" type="email">
+                    </label>
+                    <label>
+                      <span>Contact phone</span>
+                      <input id="settings-contact-phone" type="tel">
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Website -->
+              <div class="settings-accordion-item">
+                <button class="settings-accordion-header" type="button">
+                  <span>Website</span>
+                  <span class="settings-accordion-chevron">⌄</span>
+                </button>
+                <div class="settings-accordion-body">
+                  <div class="settings-form-grid">
+                    <label class="settings-checkbox-row">
+                      <input id="settings-site-live" type="checkbox">
+                      <span>Site is live</span>
+                    </label>
+                    <label>
+                      <span>Default theme</span>
+                      <select id="settings-default-theme">
+                        <option value="system">Match system</option>
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>Accent colour</span>
+                      <input id="settings-accent-color" type="color" value="#2563eb">
+                    </label>
+                    <label class="settings-checkbox-row">
+                      <input id="settings-show-countdown" type="checkbox">
+                      <span>Show countdown</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Branding -->
+              <div class="settings-accordion-item">
+                <button class="settings-accordion-header" type="button">
+                  <span>Branding</span>
+                  <span class="settings-accordion-chevron">⌄</span>
+                </button>
+                <div class="settings-accordion-body">
+                  <div class="settings-form-grid">
+                    <label>
+                      <span>Logo URL</span>
+                      <input id="settings-logo-url" type="url">
+                    </label>
+                    <label>
+                      <span>Favicon URL</span>
+                      <input id="settings-favicon-url" type="url">
+                    </label>
+                    <label>
+                      <span>Typography</span>
+                      <select id="settings-typography">
+                        <option value="">Default</option>
+                        <option value="serif">Serif</option>
+                        <option value="sans">Sans-serif</option>
+                        <option value="script">Script</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Social Links -->
+              <div class="settings-accordion-item">
+                <button class="settings-accordion-header" type="button">
+                  <span>Social Links</span>
+                  <span class="settings-accordion-chevron">⌄</span>
+                </button>
+                <div class="settings-accordion-body">
+                  <div class="settings-form-grid">
+                    <label>
+                      <span>Instagram</span>
+                      <input id="settings-social-instagram" type="url">
+                    </label>
+                    <label>
+                      <span>Facebook</span>
+                      <input id="settings-social-facebook" type="url">
+                    </label>
+                    <label>
+                      <span>TikTok</span>
+                      <input id="settings-social-tiktok" type="url">
+                    </label>
+                    <label>
+                      <span>Website</span>
+                      <input id="settings-social-website" type="url">
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Advanced -->
+              <div class="settings-accordion-item">
+                <button class="settings-accordion-header" type="button">
+                  <span>Advanced</span>
+                  <span class="settings-accordion-chevron">⌄</span>
+                </button>
+                <div class="settings-accordion-body">
+                  <div class="settings-form-grid">
+                    <label>
+                      <span>Custom CSS</span>
+                      <textarea id="settings-custom-css" rows="4"></textarea>
+                    </label>
+                    <label>
+                      <span>Custom JS</span>
+                      <textarea id="settings-custom-js" rows="4"></textarea>
+                    </label>
+                    <label>
+                      <span>Analytics ID</span>
+                      <input id="settings-analytics-id" type="text">
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="settings-footer">
+              <button id="save-settings" class="button primary" type="button">Save settings</button>
+              <span id="settings-status" class="settings-status"></span>
+            </div>
           </div>
-        </div>
-      </div>
-
-      <!-- Contact -->
-      <div class="settings-accordion-item">
-        <button class="settings-accordion-header">
-          <span>Contact</span>
-          <span class="settings-accordion-chevron">⌄</span>
-        </button>
-        <div class="settings-accordion-body">
-          <div class="settings-form-grid">
-            <label>
-              <span>Contact email</span>
-              <input id="settings-contact-email" type="email">
-            </label>
-            <label>
-              <span>RSVP notification email</span>
-              <input id="settings-rsvp-email" type="email">
-            </label>
-            <label>
-              <span>Contact phone</span>
-              <input id="settings-contact-phone" type="tel">
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Website -->
-      <div class="settings-accordion-item">
-        <button class="settings-accordion-header">
-          <span>Website</span>
-          <span class="settings-accordion-chevron">⌄</span>
-        </button>
-        <div class="settings-accordion-body">
-          <div class="settings-form-grid">
-            <label class="settings-checkbox-row">
-              <input id="settings-site-live" type="checkbox">
-              <span>Site is live</span>
-            </label>
-            <label>
-              <span>Default theme</span>
-              <select id="settings-default-theme">
-                <option value="system">Match system</option>
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-              </select>
-            </label>
-            <label>
-              <span>Accent colour</span>
-              <input id="settings-accent-color" type="color" value="#2563eb">
-            </label>
-            <label class="settings-checkbox-row">
-              <input id="settings-show-countdown" type="checkbox">
-              <span>Show countdown</span>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Branding -->
-      <div class="settings-accordion-item">
-        <button class="settings-accordion-header">
-          <span>Branding</span>
-          <span class="settings-accordion-chevron">⌄</span>
-        </button>
-        <div class="settings-accordion-body">
-          <div class="settings-form-grid">
-            <label>
-              <span>Logo URL</span>
-              <input id="settings-logo-url" type="url">
-            </label>
-            <label>
-              <span>Favicon URL</span>
-              <input id="settings-favicon-url" type="url">
-            </label>
-            <label>
-              <span>Typography</span>
-              <select id="settings-typography">
-                <option value="">Default</option>
-                <option value="serif">Serif</option>
-                <option value="sans">Sans-serif</option>
-                <option value="script">Script</option>
-              </select>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Social Links -->
-      <div class="settings-accordion-item">
-        <button class="settings-accordion-header">
-          <span>Social Links</span>
-          <span class="settings-accordion-chevron">⌄</span>
-        </button>
-        <div class="settings-accordion-body">
-          <div class="settings-form-grid">
-            <label>
-              <span>Instagram</span>
-              <input id="settings-social-instagram" type="url">
-            </label>
-            <label>
-              <span>Facebook</span>
-              <input id="settings-social-facebook" type="url">
-            </label>
-            <label>
-              <span>TikTok</span>
-              <input id="settings-social-tiktok" type="url">
-            </label>
-            <label>
-              <span>Website</span>
-              <input id="settings-social-website" type="url">
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Advanced -->
-      <div class="settings-accordion-item">
-        <button class="settings-accordion-header">
-          <span>Advanced</span>
-          <span class="settings-accordion-chevron">⌄</span>
-        </button>
-        <div class="settings-accordion-body">
-          <div class="settings-form-grid">
-            <label>
-              <span>Custom CSS</span>
-              <textarea id="settings-custom-css" rows="4"></textarea>
-            </label>
-            <label>
-              <span>Custom JS</span>
-              <textarea id="settings-custom-js" rows="4"></textarea>
-            </label>
-            <label>
-              <span>Analytics ID</span>
-              <input id="settings-analytics-id" type="text">
-            </label>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="settings-footer">
-      <button id="save-settings" class="button primary">Save settings</button>
-      <span id="settings-status" class="settings-status"></span>
-    </div>
-  </div>
-</section>
-
+        </section>
 
         <!-- BUDGET SECTION -->
         <section class="section" id="section-budget">
@@ -595,7 +594,7 @@
           </div>
         </section>
 
-        <!-- PLANNER SECTION (placeholder for now) -->
+        <!-- PLANNER SECTION -->
         <section class="section" id="section-planner">
           <div class="card">
             <div class="card-header">
@@ -611,6 +610,6 @@
     </div>
   </div>
 
-  <script src="./admin.js" defer></script>
+  <script src="/admin/admin.js" defer></script>
 </body>
 </html>

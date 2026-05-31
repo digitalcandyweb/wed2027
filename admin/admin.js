@@ -32,7 +32,8 @@
   const menu = document.getElementById("user-menu");
   if (!toggle || !menu) return;
 
-  toggle.addEventListener("click", () => {
+  toggle.addEventListener("click", (e) => {
+    e.stopPropagation();
     const visible = menu.style.display === "flex";
     menu.style.display = visible ? "none" : "flex";
   });
@@ -765,10 +766,10 @@ const SettingsManager = (() => {
 
   function initAccordion() {
     if (!accordion) return;
-    const items = accordion.querySelectorAll(".accordion-item");
+    const items = accordion.querySelectorAll(".settings-accordion-item");
     items.forEach(item => {
-      const header = item.querySelector(".accordion-header");
-      const body = item.querySelector(".accordion-body");
+      const header = item.querySelector(".settings-accordion-header");
+      const body = item.querySelector(".settings-accordion-body");
       if (!header || !body) return;
 
       header.addEventListener("click", () => {
@@ -862,6 +863,17 @@ const SettingsManager = (() => {
     };
   }
 
+  function showStatus(message, isError = false) {
+    if (!statusEl) return;
+    statusEl.textContent = message;
+    statusEl.classList.add("visible");
+    statusEl.classList.toggle("error", !!isError);
+    setTimeout(() => {
+      statusEl.classList.remove("visible");
+      statusEl.classList.remove("error");
+    }, 2500);
+  }
+
   async function loadSettings() {
     if (!accordion) return;
     try {
@@ -869,50 +881,27 @@ const SettingsManager = (() => {
       if (!res.ok) throw new Error("Failed to load settings");
       const data = await res.json();
       applySettingsToForm(data || {});
-      if (statusEl) {
-        statusEl.textContent = "Settings loaded";
-        statusEl.classList.add("visible");
-        setTimeout(() => statusEl.classList.remove("visible"), 2000);
-      }
+      showStatus("Settings loaded", false);
     } catch (err) {
       console.error("Failed to load settings", err);
-      if (statusEl) {
-        statusEl.textContent = "Error loading settings";
-        statusEl.classList.add("error", "visible");
-      }
+      showStatus("Error loading settings", true);
     }
   }
 
   async function saveSettings() {
     const payload = readFormToSettings();
     try {
-      if (statusEl) {
-        statusEl.textContent = "Saving…";
-        statusEl.classList.remove("error");
-        statusEl.classList.add("visible");
-      }
-
+      showStatus("Saving settings…", false);
       const res = await fetch("/admin/api/settings/save", {
         method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        credentials: "include"
       });
-
       if (!res.ok) throw new Error("Failed to save settings");
-
-      if (statusEl) {
-        statusEl.textContent = "Settings saved";
-        statusEl.classList.remove("error");
-        statusEl.classList.add("visible");
-        setTimeout(() => statusEl.classList.remove("visible"), 2500);
-      }
+      showStatus("Settings saved", false);
     } catch (err) {
       console.error("Failed to save settings", err);
-      if (statusEl) {
-        statusEl.textContent = "Error saving settings";
-        statusEl.classList.add("error", "visible");
-      }
+      showStatus("Error saving settings", true);
     }
   }
 
@@ -921,14 +910,17 @@ const SettingsManager = (() => {
     initAccordion();
     loadSettings();
     if (saveBtn) {
-      saveBtn.addEventListener("click", saveSettings);
+      saveBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        saveSettings();
+      });
     }
   }
 
   return { init };
 })();
 
-// INIT MANAGERS
+// INITIALISE MANAGERS ON DOM READY
 document.addEventListener("DOMContentLoaded", () => {
   EventsManager.init();
   BudgetManager.init();
