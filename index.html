@@ -1,243 +1,616 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Claire & Brad – Wedding 2027</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Wedding Admin Control Centre</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./admin.css" />
 </head>
 <body>
-
-  <!-- Side menu -->
-  <nav class="side-menu" id="sideMenu">
-    <div class="side-menu-header">
-      <!-- Updated logo: replace src with your generated transparent PNG -->
-      <img src="cb-logo-gold.png" alt="C+B Monogram" class="logo">
-      <button class="close-menu" id="closeMenuBtn" aria-label="Close menu">×</button>
-    </div>
-    <ul class="side-menu-links">
-      <li><a href="#events" class="menu-link">Events</a></li>
-      <li><a href="#rsvp" class="menu-link">RSVP</a></li>
-      <li><a href="#more" class="menu-link">More to come</a></li>
-      <li><a href="/admin" class="menu-link">Admin page</a></li>
-    </ul>
-  </nav>
-
-  <!-- Overlay when menu is open -->
-  <div class="overlay" id="overlay"></div>
-
-  <!-- Top bar with burger -->
-  <header class="top-bar">
-    <button class="burger" id="burgerBtn" aria-label="Open menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-    <div class="top-bar-title">
-      Claire &amp; Brad
-    </div>
-  </header>
-
-  <!-- Hero / intro -->
-  <section class="hero main-hero" id="top">
-    <div class="hero-inner">
-      <p class="eyebrow">Save the Date</p>
-      <h1>Claire &amp; Brad</h1>
-      <p class="subtitle">London &amp; Perth · 2027</p>
-    </div>
-  </section>
-
-  <!-- Events section -->
-  <section class="section" id="events">
-    <h2>Our Events</h2>
-
-    <!-- Event 1: London Wedding (Lodden Suite) -->
-    <article class="event-card">
-      <div class="event-header">
-        <h3>London Wedding</h3>
-        <p class="event-meta">13 February 2027 · Waltham Forest Town Hall – Lodden Suite</p>
-      </div>
-
-      <!-- Simple image carousel -->
-      <div class="carousel" data-carousel>
-        <div class="carousel-track">
-          <!-- Replace these with real Lodden images -->
-          <img src="LoddenSuite-1.jpg" alt="Lodden Suite – view 1" class="carousel-image active">
-          <img src="LoddenSuite-2.jpg" alt="Lodden Suite – view 2" class="carousel-image">
-          <img src="LoddenSuite-3.jpg" alt="Lodden Suite – view 3" class="carousel-image">
+  <div class="admin-shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar collapsed">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <span class="logo-mark">💍</span>
+          <span class="logo-text">Wedding Admin</span>
         </div>
-        <button class="carousel-control prev" aria-label="Previous image">‹</button>
-        <button class="carousel-control next" aria-label="Next image">›</button>
-        <div class="carousel-dots">
-          <button class="dot active"></button>
-          <button class="dot"></button>
-          <button class="dot"></button>
+        <button id="sidebar-toggle" class="icon-button" type="button" aria-label="Toggle sidebar">
+          ☰
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Overview</div>
+        <div class="nav-item active" data-section="dashboard">
+          <span class="icon">📊</span>
+          <span class="label">Dashboard</span>
+        </div>
+
+        <div class="nav-section-label">Guests & Events</div>
+        <div class="nav-item" data-section="rsvp">
+          <span class="icon">📨</span>
+          <span class="label">RSVP Manager</span>
+        </div>
+        <div class="nav-item" data-section="events">
+          <span class="icon">📅</span>
+          <span class="label">Events</span>
+        </div>
+
+        <div class="nav-section-label">Content & Site</div>
+        <div class="nav-item" data-section="edit">
+          <span class="icon">📝</span>
+          <span class="label">Edit Website Content</span>
+        </div>
+        <div class="nav-item" data-section="settings">
+          <span class="icon">🛠️</span>
+          <span class="label">Global Settings</span>
+        </div>
+
+        <div class="nav-section-label">Planning & Budget</div>
+        <div class="nav-item" data-section="budget">
+          <span class="icon">💷</span>
+          <span class="label">Budget</span>
+        </div>
+        <div class="nav-item" data-section="planner">
+          <span class="icon">📋</span>
+          <span class="label">Planner</span>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <div class="main">
+      <!-- TOP BAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-chip">
+            <span id="topbar-chip-text">Dashboard</span>
+          </div>
+          <div class="topbar-title-group">
+            <h1 id="content-title">Dashboard overview</h1>
+            <p id="content-subtitle">High-level view of attendance and events.</p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button id="theme-toggle" class="icon-button" type="button" data-mode="dark" aria-label="Toggle theme">
+            🌗
+          </button>
+
+          <div class="user-menu-wrapper">
+            <button id="user-menu-toggle" class="user-pill" type="button">
+              <span class="user-avatar">B</span>
+              <span class="user-name">Brad</span>
+              <span class="user-chevron">⌄</span>
+            </button>
+            <div id="user-menu" class="user-menu">
+              <button type="button">View site</button>
+              <button type="button">Sign out</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT AREA -->
+      <main class="content">
+        <!-- DASHBOARD SECTION -->
+        <section class="section active" id="section-dashboard">
+          <div class="grid grid-3">
+            <div class="card metric-card">
+              <div class="metric-label">Attending</div>
+              <div class="metric-value" id="dash-attending">0</div>
+            </div>
+            <div class="card metric-card">
+              <div class="metric-label">Not attending</div>
+              <div class="metric-value" id="dash-not-attending">0</div>
+            </div>
+            <div class="card metric-card">
+              <div class="metric-label">Events</div>
+              <div class="metric-value" id="dash-events-count">—</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Attendance by event</h2>
+              <p>Quick view of confirmed guests per event.</p>
+            </div>
+            <div id="dashboard-events" class="dashboard-events-grid">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>RSVP summary</h2>
+              <p>High-level overview of RSVP responses.</p>
+            </div>
+            <div class="summary-row">
+              <div class="summary-item">
+                <div class="summary-label">Attending</div>
+                <div class="summary-value" id="summary-attending">0</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Not attending</div>
+                <div class="summary-value" id="summary-not-attending">0</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RSVP MANAGER SECTION -->
+        <section class="section" id="section-rsvp">
+          <div class="card">
+            <div class="card-header">
+              <h2>RSVP Manager</h2>
+              <p>View, filter and export guest responses for all events.</p>
+            </div>
+
+            <div id="rsvp-summary" class="rsvp-summary-bar">
+              <div class="rsvp-summary-item">
+                <span class="label">Attending</span>
+                <span class="value" id="summary-attending">0</span>
+              </div>
+              <div class="rsvp-summary-item">
+                <span class="label">Not attending</span>
+                <span class="value" id="summary-not-attending">0</span>
+              </div>
+            </div>
+
+            <div class="rsvp-controls">
+              <div class="rsvp-filters">
+                <input
+                  id="rsvp-search"
+                  type="search"
+                  placeholder="Search by name or email…"
+                  class="input"
+                />
+                <select id="rsvp-event-filter" class="input">
+                  <option value="">All events</option>
+                </select>
+                <select id="rsvp-attendance-filter" class="input">
+                  <option value="">All statuses</option>
+                  <option value="attending">Attending</option>
+                  <option value="not_attending">Not attending</option>
+                </select>
+              </div>
+              <button id="rsvp-export" class="button secondary" type="button">
+                Export CSV
+              </button>
+            </div>
+
+            <div class="table-wrapper">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Guest</th>
+                    <th>Email</th>
+                    <th>Event</th>
+                    <th>Guests</th>
+                    <th>Submitted</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="rsvp-table-body">
+                  <tr>
+                    <td colspan="6" class="rsvp-loading">Loading RSVPs…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- EVENTS SECTION -->
+        <section class="section" id="section-events">
+          <div class="card">
+            <div class="card-header">
+              <h2>Events</h2>
+              <p>Manage event names, dates, locations and visibility.</p>
+              <button id="add-event-btn" class="button primary" type="button">
+                Add event
+              </button>
+            </div>
+
+            <div class="table-wrapper">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Visible</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="events-table-body">
+                  <tr>
+                    <td colspan="7" style="text-align:center; padding:12px; color:var(--text-muted);">
+                      Loading events…
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Event Modal -->
+          <div id="event-modal" class="modal hidden">
+            <div class="modal-backdrop"></div>
+            <div class="modal-dialog">
+              <div class="modal-header">
+                <h3 id="event-modal-title">Add Event</h3>
+              </div>
+              <form id="event-form" class="modal-body">
+                <div class="form-grid">
+                  <label>
+                    <span>Name</span>
+                    <input name="name" type="text" class="input" required />
+                  </label>
+                  <label>
+                    <span>Date</span>
+                    <input name="date" type="date" class="input" />
+                  </label>
+                  <label>
+                    <span>Location</span>
+                    <input name="location" type="text" class="input" />
+                  </label>
+                  <label>
+                    <span>Venue</span>
+                    <input name="venue" type="text" class="input" />
+                  </label>
+                  <label class="checkbox-row">
+                    <input name="visible" type="checkbox" checked />
+                    <span>Visible on website</span>
+                  </label>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" id="event-cancel" class="button secondary">
+                    Cancel
+                  </button>
+                  <button type="submit" class="button primary">
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- EDIT WEBSITE CONTENT SECTION -->
+        <section class="section" id="section-edit">
+          <div class="card">
+            <div class="card-header">
+              <h2>Edit Website Content</h2>
+              <p>Update hero text, event details, travel info and more without redeploying.</p>
+            </div>
+            <p style="color:var(--text-muted);">
+              Content editor wiring will be added once the main site structure is finalised.
+            </p>
+          </div>
+        </section>
+
+ <!-- GLOBAL SETTINGS SECTION -->
+<section class="section" id="section-settings">
+  <div class="card">
+    <div class="card-header">
+      <h2>Global Settings</h2>
+      <p>Configure wedding details, contact info, website behaviour and advanced options.</p>
+    </div>
+
+    <div class="settings-accordion" id="settings-accordion">
+
+      <!-- Wedding Details -->
+      <div class="settings-accordion-item">
+        <button class="settings-accordion-header">
+          <span>Wedding Details</span>
+          <span class="settings-accordion-chevron">⌄</span>
+        </button>
+        <div class="settings-accordion-body">
+          <div class="settings-form-grid">
+            <label>
+              <span>Wedding title</span>
+              <input id="settings-wedding-title" type="text">
+            </label>
+            <label>
+              <span>Couple names</span>
+              <input id="settings-couple-names" type="text">
+            </label>
+            <label>
+              <span>London date</span>
+              <input id="settings-date-london" type="date">
+            </label>
+            <label>
+              <span>Perth date</span>
+              <input id="settings-date-perth" type="date">
+            </label>
+            <label>
+              <span>London timezone</span>
+              <input id="settings-tz-london" type="text">
+            </label>
+            <label>
+              <span>Perth timezone</span>
+              <input id="settings-tz-perth" type="text">
+            </label>
+            <label>
+              <span>RSVP deadline</span>
+              <input id="settings-rsvp-deadline" type="date">
+            </label>
+          </div>
         </div>
       </div>
 
-      <p class="event-text">
-        A classic William Morris interior, the Lodden Suite is perfect for an intimate ceremony
-        with our favourite people.
-      </p>
-    </article>
-
-    <!-- Event 2: London Celebration -->
-    <article class="event-card">
-      <div class="event-header">
-        <h3>London Celebration</h3>
-        <p class="event-meta">18 September 2027 · Walthamstow Village Community Hall</p>
+      <!-- Contact -->
+      <div class="settings-accordion-item">
+        <button class="settings-accordion-header">
+          <span>Contact</span>
+          <span class="settings-accordion-chevron">⌄</span>
+        </button>
+        <div class="settings-accordion-body">
+          <div class="settings-form-grid">
+            <label>
+              <span>Contact email</span>
+              <input id="settings-contact-email" type="email">
+            </label>
+            <label>
+              <span>RSVP notification email</span>
+              <input id="settings-rsvp-email" type="email">
+            </label>
+            <label>
+              <span>Contact phone</span>
+              <input id="settings-contact-phone" type="tel">
+            </label>
+          </div>
+        </div>
       </div>
-      <p class="event-text">
-        A relaxed London celebration with food, drinks and dancing in Walthamstow Village.
-        Full details to follow.
-      </p>
-    </article>
 
-    <!-- Event 3: Perth Celebration -->
-    <article class="event-card">
-      <div class="event-header">
-        <h3>Perth Celebration</h3>
-        <p class="event-meta">9 October 2027 · Stirling, Perth</p>
+      <!-- Website -->
+      <div class="settings-accordion-item">
+        <button class="settings-accordion-header">
+          <span>Website</span>
+          <span class="settings-accordion-chevron">⌄</span>
+        </button>
+        <div class="settings-accordion-body">
+          <div class="settings-form-grid">
+            <label class="settings-checkbox-row">
+              <input id="settings-site-live" type="checkbox">
+              <span>Site is live</span>
+            </label>
+            <label>
+              <span>Default theme</span>
+              <select id="settings-default-theme">
+                <option value="system">Match system</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </label>
+            <label>
+              <span>Accent colour</span>
+              <input id="settings-accent-color" type="color" value="#2563eb">
+            </label>
+            <label class="settings-checkbox-row">
+              <input id="settings-show-countdown" type="checkbox">
+              <span>Show countdown</span>
+            </label>
+          </div>
+        </div>
       </div>
-      <p class="event-text">
-        A sunny Perth gathering with family and friends from near and far.
-        More information coming soon.
-      </p>
-    </article>
-  </section>
 
-  <!-- RSVP section -->
-  <section class="section" id="rsvp">
-    <h2>RSVP</h2>
-    <p class="section-intro">
-      We’d love to know your plans. Please reply by filling in the form below.
-    </p>
+      <!-- Branding -->
+      <div class="settings-accordion-item">
+        <button class="settings-accordion-header">
+          <span>Branding</span>
+          <span class="settings-accordion-chevron">⌄</span>
+        </button>
+        <div class="settings-accordion-body">
+          <div class="settings-form-grid">
+            <label>
+              <span>Logo URL</span>
+              <input id="settings-logo-url" type="url">
+            </label>
+            <label>
+              <span>Favicon URL</span>
+              <input id="settings-favicon-url" type="url">
+            </label>
+            <label>
+              <span>Typography</span>
+              <select id="settings-typography">
+                <option value="">Default</option>
+                <option value="serif">Serif</option>
+                <option value="sans">Sans-serif</option>
+                <option value="script">Script</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </div>
 
-    <form action="/rsvp-submit" method="POST" class="rsvp-form">
-      <input type="hidden" name="form-name" value="wedding-rsvp">
+      <!-- Social Links -->
+      <div class="settings-accordion-item">
+        <button class="settings-accordion-header">
+          <span>Social Links</span>
+          <span class="settings-accordion-chevron">⌄</span>
+        </button>
+        <div class="settings-accordion-body">
+          <div class="settings-form-grid">
+            <label>
+              <span>Instagram</span>
+              <input id="settings-social-instagram" type="url">
+            </label>
+            <label>
+              <span>Facebook</span>
+              <input id="settings-social-facebook" type="url">
+            </label>
+            <label>
+              <span>TikTok</span>
+              <input id="settings-social-tiktok" type="url">
+            </label>
+            <label>
+              <span>Website</span>
+              <input id="settings-social-website" type="url">
+            </label>
+          </div>
+        </div>
+      </div>
 
-      <label for="name">Full name</label>
-      <input id="name" type="text" name="name" required>
+      <!-- Advanced -->
+      <div class="settings-accordion-item">
+        <button class="settings-accordion-header">
+          <span>Advanced</span>
+          <span class="settings-accordion-chevron">⌄</span>
+        </button>
+        <div class="settings-accordion-body">
+          <div class="settings-form-grid">
+            <label>
+              <span>Custom CSS</span>
+              <textarea id="settings-custom-css" rows="4"></textarea>
+            </label>
+            <label>
+              <span>Custom JS</span>
+              <textarea id="settings-custom-js" rows="4"></textarea>
+            </label>
+            <label>
+              <span>Analytics ID</span>
+              <input id="settings-analytics-id" type="text">
+            </label>
+          </div>
+        </div>
+      </div>
 
-      <label for="email">Email address</label>
-      <input id="email" type="email" name="email" required>
+    </div>
 
-      <label for="phone">Phone number (optional)</label>
-      <input id="phone" type="tel" name="phone">
+    <div class="settings-footer">
+      <button id="save-settings" class="button primary">Save settings</button>
+      <span id="settings-status" class="settings-status"></span>
+    </div>
+  </div>
+</section>
 
-      <label for="event">Which celebration(s) are you replying for?</label>
-      <select id="event" name="event" required>
-        <option value="">Please select…</option>
-        <option value="LondonWedding">London Wedding – 13 February 2027</option>
-        <option value="LondonCelebration">London Celebration – 18 September 2027</option>
-        <option value="BothLondon">Both London events</option>
-        <option value="Perth">Perth – 9 October 2027</option>
-        <option value="All">All events</option>
-      </select>
 
-      <fieldset class="attendance">
-        <legend>Will you be attending?</legend>
-        <label class="radio-label">
-          <input type="radio" name="attending" value="yes" required>
-          Joyfully accepting
-        </label>
-        <label class="radio-label">
-          <input type="radio" name="attending" value="no" required>
-          Regretfully declining
-        </label>
-      </fieldset>
+        <!-- BUDGET SECTION -->
+        <section class="section" id="section-budget">
+          <div class="card">
+            <div class="card-header">
+              <h2>Budget & Cost Tracker</h2>
+              <p>Track all wedding-related expenses and compare against your planned budget.</p>
+              <button id="add-expense-btn" class="button primary" type="button">
+                Add expense
+              </button>
+            </div>
 
-      <label for="guests">Number of guests (including you)</label>
-      <input id="guests" type="number" name="guests" min="1" max="10">
+            <div class="table-wrapper">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Paid</th>
+                    <th>Date</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="budget-table-body">
+                  <tr>
+                    <td colspan="8" style="text-align:center; padding:12px; color:var(--text-muted);">
+                      Loading budget…
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-      <label for="message">Message (optional)</label>
-      <textarea id="message" name="message" rows="4" placeholder="Dietary needs, song requests, travel notes…"></textarea>
+          <!-- Budget Modal -->
+          <div id="budget-modal" class="modal hidden">
+            <div class="modal-backdrop"></div>
+            <div class="modal-dialog">
+              <div class="modal-header">
+                <h3>Expense</h3>
+              </div>
+              <div class="modal-body">
+                <input id="expense-id" type="hidden" />
+                <div class="form-grid">
+                  <label>
+                    <span>Category</span>
+                    <input id="expense-category" type="text" class="input" />
+                  </label>
+                  <label>
+                    <span>Description</span>
+                    <input id="expense-description" type="text" class="input" />
+                  </label>
+                  <label>
+                    <span>Amount</span>
+                    <input id="expense-amount" type="number" step="0.01" class="input" />
+                  </label>
+                  <label>
+                    <span>Date</span>
+                    <input id="expense-date" type="date" class="input" />
+                  </label>
+                  <label class="checkbox-row">
+                    <input id="expense-paid" type="checkbox" />
+                    <span>Paid</span>
+                  </label>
+                  <label>
+                    <span>Notes</span>
+                    <textarea id="expense-notes" class="input" rows="3"></textarea>
+                  </label>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button id="cancel-expense-btn" class="button secondary" type="button">
+                  Cancel
+                </button>
+                <button id="save-expense-btn" class="button primary" type="button">
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
 
-      <button type="submit" class="button primary">Submit RSVP</button>
-    </form>
+          <!-- Delete Expense Modal -->
+          <div id="delete-expense-modal" class="modal hidden">
+            <div class="modal-backdrop"></div>
+            <div class="modal-dialog">
+              <div class="modal-header">
+                <h3>Delete expense</h3>
+              </div>
+              <div class="modal-body">
+                <p>Are you sure you want to delete this expense? This cannot be undone.</p>
+              </div>
+              <div class="modal-footer">
+                <button id="cancel-delete-expense-btn" class="button secondary" type="button">
+                  Cancel
+                </button>
+                <button id="confirm-delete-expense-btn" class="button danger" type="button">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
 
-    <p class="contact-note">
-      Questions? Email us at <strong>rsvp@digitalcandy.win</strong>
-    </p>
-  </section>
+        <!-- PLANNER SECTION (placeholder for now) -->
+        <section class="section" id="section-planner">
+          <div class="card">
+            <div class="card-header">
+              <h2>Planner & Timeline</h2>
+              <p>Organise tasks, due dates and timelines for all events.</p>
+            </div>
+            <p style="color:var(--text-muted);">
+              Planner functionality will be wired up next — tasks, timelines and event-linked planning.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
 
-  <!-- More to come -->
-  <section class="section" id="more">
-    <h2>More to come</h2>
-    <p class="section-intro">
-      Travel tips, accommodation suggestions and more details will be added here closer to the date.
-    </p>
-  </section>
-
-  <!-- Footer with logo -->
-  <footer class="footer">
-    <img src="cb-logo-gold.png" alt="C+B Monogram" class="logo footer-logo">
-    <p>© 2027 Claire &amp; Brad Wedding · digitalcandy.win</p>
-  </footer>
-
-  <script>
-    // Burger menu logic
-    const burgerBtn = document.getElementById('burgerBtn');
-    const closeMenuBtn = document.getElementById('closeMenuBtn');
-    const sideMenu = document.getElementById('sideMenu');
-    const overlay = document.getElementById('overlay');
-    const menuLinks = document.querySelectorAll('.menu-link');
-
-    function openMenu() {
-      sideMenu.classList.add('open');
-      overlay.classList.add('visible');
-      document.body.classList.add('no-scroll');
-    }
-
-    function closeMenu() {
-      sideMenu.classList.remove('open');
-      overlay.classList.remove('visible');
-      document.body.classList.remove('no-scroll');
-    }
-
-    burgerBtn.addEventListener('click', openMenu);
-    closeMenuBtn.addEventListener('click', closeMenu);
-    overlay.addEventListener('click', closeMenu);
-
-    menuLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        // Smooth scroll handled by CSS; just close menu
-        closeMenu();
-      });
-    });
-
-    // Simple carousel logic (single carousel for now)
-    document.querySelectorAll('[data-carousel]').forEach(carousel => {
-      const images = carousel.querySelectorAll('.carousel-image');
-      const dots = carousel.querySelectorAll('.dot');
-      const prevBtn = carousel.querySelector('.prev');
-      const nextBtn = carousel.querySelector('.next');
-      let index = 0;
-
-      function showSlide(i) {
-        images.forEach((img, idx) => {
-          img.classList.toggle('active', idx === i);
-        });
-        dots.forEach((dot, idx) => {
-          dot.classList.toggle('active', idx === i);
-        });
-        index = i;
-      }
-
-      prevBtn.addEventListener('click', () => {
-        const newIndex = (index - 1 + images.length) % images.length;
-        showSlide(newIndex);
-      });
-
-      nextBtn.addEventListener('click', () => {
-        const newIndex = (index + 1) % images.length;
-        showSlide(newIndex);
-      });
-
-      dots.forEach((dot, idx) => {
-        dot.addEventListener('click', () => showSlide(idx));
-      });
-    });
-  </script>
+  <script src="./admin.js" defer></script>
 </body>
 </html>
