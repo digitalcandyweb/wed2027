@@ -1,155 +1,187 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <title>Wedding Admin</title>
+  <title>Wedding Admin Control Centre</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="./admin.css">
+  <link rel="stylesheet" href="./admin.css" />
 </head>
-
 <body>
-  <div class="app-shell">
-    <aside class="sidebar collapsed" id="sidebar">
-      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
-
+  <div class="admin-shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar collapsed">
       <div class="sidebar-header">
-        <div class="logo-circle">W</div>
+        <div class="sidebar-logo">
+          <span class="logo-mark">💍</span>
+          <span class="logo-text">Wedding Admin</span>
+        </div>
+        <button id="sidebar-toggle" class="icon-button" type="button" aria-label="Toggle sidebar">
+          ☰
+        </button>
       </div>
 
-      <div>
-        <div class="sidebar-section-label">Overview</div>
-        <ul class="nav-list">
-          <li class="nav-item active" data-section="dashboard">
-            <div class="nav-icon">⏱</div>
-            <span>Dashboard</span>
-          </li>
-          <li class="nav-item" data-section="rsvp">
-            <div class="nav-icon">👥</div>
-            <span>RSVP Manager</span>
-          </li>
-          <li class="nav-item" data-section="events">
-            <div class="nav-icon">📍</div>
-            <span>Events</span>
-          </li>
-          <li class="nav-item" data-section="edit">
-            <div class="nav-icon">📝</div>
-            <span>Edit Website Content</span>
-          </li>
-        </ul>
-      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Overview</div>
+        <div class="nav-item active" data-section="dashboard">
+          <span class="icon">📊</span>
+          <span class="label">Dashboard</span>
+        </div>
 
-      <div>
-        <div class="sidebar-section-label">Planning</div>
-        <ul class="nav-list">
-          <li class="nav-item" data-section="budget">
-            <div class="nav-icon">💸</div>
-            <span>Budget & Cost Tracker</span>
-          </li>
-          <li class="nav-item" data-section="planner">
-            <div class="nav-icon">📅</div>
-            <span>Planner & Timeline</span>
-          </li>
-        </ul>
-      </div>
+        <div class="nav-section-label">Guests & Events</div>
+        <div class="nav-item" data-section="rsvp">
+          <span class="icon">📨</span>
+          <span class="label">RSVP Manager</span>
+        </div>
+        <div class="nav-item" data-section="events">
+          <span class="icon">📅</span>
+          <span class="label">Events</span>
+        </div>
 
-      <div class="sidebar-footer">
-        <span class="pill">v0.3 admin</span>
-      </div>
+        <div class="nav-section-label">Content & Site</div>
+        <div class="nav-item" data-section="edit">
+          <span class="icon">📝</span>
+          <span class="label">Edit Website Content</span>
+        </div>
+        <div class="nav-item" data-section="settings">
+          <span class="icon">🛠️</span>
+          <span class="label">Global Settings</span>
+        </div>
+
+        <div class="nav-section-label">Planning & Budget</div>
+        <div class="nav-item" data-section="budget">
+          <span class="icon">💷</span>
+          <span class="label">Budget</span>
+        </div>
+        <div class="nav-item" data-section="planner">
+          <span class="icon">📋</span>
+          <span class="label">Planner</span>
+        </div>
+      </nav>
     </aside>
 
-    <main class="main">
+    <!-- MAIN AREA -->
+    <div class="main">
+      <!-- TOP BAR -->
       <header class="topbar">
         <div class="topbar-left">
-          <div class="topbar-title">
-            <span id="topbar-title-text">Wedding Admin Control Centre</span>
-            <span class="topbar-chip" id="topbar-chip-text">Dashboard</span>
+          <div class="topbar-chip">
+            <span id="topbar-chip-text">Dashboard</span>
           </div>
-          <div class="topbar-subtitle">
-            Central place to manage your wedding website, guests, budget and planning.
+          <div class="topbar-title-group">
+            <h1 id="content-title">Dashboard overview</h1>
+            <p id="content-subtitle">High-level view of attendance and events.</p>
           </div>
         </div>
 
         <div class="topbar-right">
-          <div class="theme-toggle" id="theme-toggle" data-mode="light" aria-label="Toggle dark mode">
-            <span class="theme-toggle-icon sun">☀️</span>
-            <span class="theme-toggle-icon moon">🌙</span>
-            <div class="theme-toggle-thumb">●</div>
-          </div>
+          <button id="theme-toggle" class="icon-button" type="button" data-mode="dark" aria-label="Toggle theme">
+            🌗
+          </button>
 
-          <div class="topbar-user" id="user-menu-toggle">
-            <div class="user-avatar">B</div>
-            <div>
-              <div style="font-size: 11px; font-weight: 500;">Brad</div>
-              <div style="font-size: 10px; color: var(--text-muted);">Admin</div>
+          <div class="user-menu-wrapper">
+            <button id="user-menu-toggle" class="user-pill" type="button">
+              <span class="user-avatar">B</span>
+              <span class="user-name">Brad</span>
+              <span class="user-chevron">⌄</span>
+            </button>
+            <div id="user-menu" class="user-menu">
+              <button type="button">View site</button>
+              <button type="button">Sign out</button>
             </div>
-          </div>
-
-          <div class="user-menu" id="user-menu">
-            <a href="https://dash.cloudflare.com/?to=/:account/access/apps" target="_blank" rel="noreferrer">
-              CloudFlare Admin Access
-            </a>
-            <a href="https://digitalcandy.win/">Return to main site</a>
-            <a href="/cdn-cgi/access/logout">Logout</a>
           </div>
         </div>
       </header>
 
-      <section class="content-card">
-        <div class="content-header">
-          <div class="content-header-left">
-            <div class="content-title" id="content-title">Dashboard overview</div>
-            <div class="content-subtitle" id="content-subtitle">
-              High-level view of attendance and events.
+      <!-- CONTENT AREA -->
+      <main class="content">
+        <!-- DASHBOARD SECTION -->
+        <section class="section active" id="section-dashboard">
+          <div class="grid grid-3">
+            <div class="card metric-card">
+              <div class="metric-label">Attending</div>
+              <div class="metric-value" id="dash-attending">0</div>
+            </div>
+            <div class="card metric-card">
+              <div class="metric-label">Not attending</div>
+              <div class="metric-value" id="dash-not-attending">0</div>
+            </div>
+            <div class="card metric-card">
+              <div class="metric-label">Events</div>
+              <div class="metric-value" id="dash-events-count">—</div>
             </div>
           </div>
 
-          <div class="content-header-right">
-            <div class="rsvp-summary" id="rsvp-summary" style="display:none;">
-              <span class="summary attending">Attending: <span id="summary-attending">0</span></span>
-              <span class="summary not-attending">Not attending: <span id="summary-not-attending">0</span></span>
+          <div class="card">
+            <div class="card-header">
+              <h2>Attendance by event</h2>
+              <p>Quick view of confirmed guests per event.</p>
+            </div>
+            <div id="dashboard-events" class="dashboard-events-grid">
+              <!-- Filled by JS -->
             </div>
           </div>
-        </div>
 
-        <div class="content-body">
-
-          <!-- DASHBOARD -->
-          <div class="section active" id="section-dashboard">
-            <div class="dashboard-grid">
-              <div class="dashboard-card">
-                <div class="gauge-label">Attending</div>
-                <div class="gauge-circle attending" id="dash-attending">0</div>
+          <div class="card">
+            <div class="card-header">
+              <h2>RSVP summary</h2>
+              <p>High-level overview of RSVP responses.</p>
+            </div>
+            <div class="summary-row">
+              <div class="summary-item">
+                <div class="summary-label">Attending</div>
+                <div class="summary-value" id="summary-attending">0</div>
               </div>
-              <div class="dashboard-card">
-                <div class="gauge-label">Not attending</div>
-                <div class="gauge-circle not-attending" id="dash-not-attending">0</div>
+              <div class="summary-item">
+                <div class="summary-label">Not attending</div>
+                <div class="summary-value" id="summary-not-attending">0</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RSVP MANAGER SECTION -->
+        <section class="section" id="section-rsvp">
+          <div class="card">
+            <div class="card-header">
+              <h2>RSVP Manager</h2>
+              <p>View, filter and export guest responses for all events.</p>
+            </div>
+
+            <div id="rsvp-summary" class="rsvp-summary-bar">
+              <div class="rsvp-summary-item">
+                <span class="label">Attending</span>
+                <span class="value" id="summary-attending">0</span>
+              </div>
+              <div class="rsvp-summary-item">
+                <span class="label">Not attending</span>
+                <span class="value" id="summary-not-attending">0</span>
               </div>
             </div>
 
-            <h3>Attendance by event</h3>
-            <div class="dashboard-events-grid" id="dashboard-events"></div>
-          </div>
-
-          <!-- RSVP -->
-          <div class="section" id="section-rsvp">
             <div class="rsvp-controls">
-              <input id="rsvp-search" type="text" placeholder="Search by name or email…" class="input" />
-              <select id="rsvp-event-filter" class="input"></select>
-              <select id="rsvp-attendance-filter" class="input">
-                <option value="">All statuses</option>
-                <option value="attending">Attending</option>
-                <option value="not_attending">Not attending</option>
-              </select>
-              <button id="rsvp-export" class="button secondary">Export CSV</button>
+              <div class="rsvp-filters">
+                <input
+                  id="rsvp-search"
+                  type="search"
+                  placeholder="Search by name or email…"
+                  class="input"
+                />
+                <select id="rsvp-event-filter" class="input">
+                  <option value="">All events</option>
+                </select>
+                <select id="rsvp-attendance-filter" class="input">
+                  <option value="">All statuses</option>
+                  <option value="attending">Attending</option>
+                  <option value="not_attending">Not attending</option>
+                </select>
+              </div>
+              <button id="rsvp-export" class="button secondary" type="button">
+                Export CSV
+              </button>
             </div>
 
-            <div class="rsvp-table-wrapper">
-              <table class="rsvp-table">
+            <div class="table-wrapper">
+              <table class="table">
                 <thead>
                   <tr>
                     <th>Guest</th>
@@ -157,22 +189,32 @@
                     <th>Event</th>
                     <th>Guests</th>
                     <th>Submitted</th>
-                    <th style="text-align:right;">Actions</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody id="rsvp-table-body">
-                  <tr><td colspan="6" class="rsvp-loading">Loading RSVPs…</td></tr>
+                  <tr>
+                    <td colspan="6" class="rsvp-loading">Loading RSVPs…</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
           </div>
+        </section>
 
-          <!-- EVENTS -->
-          <div class="section" id="section-events">
-            <button id="add-event-btn" class="button">Add Event</button>
+        <!-- EVENTS SECTION -->
+        <section class="section" id="section-events">
+          <div class="card">
+            <div class="card-header">
+              <h2>Events</h2>
+              <p>Manage event names, dates, locations and visibility.</p>
+              <button id="add-event-btn" class="button primary" type="button">
+                Add event
+              </button>
+            </div>
 
-            <div class="events-table-wrapper">
-              <table class="events-table">
+            <div class="table-wrapper">
+              <table class="table">
                 <thead>
                   <tr>
                     <th>Order</th>
@@ -184,22 +226,282 @@
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody id="events-table-body"></tbody>
+                <tbody id="events-table-body">
+                  <tr>
+                    <td colspan="7" style="text-align:center; padding:12px; color:var(--text-muted);">
+                      Loading events…
+                    </td>
+                  </tr>
+                </tbody>
               </table>
             </div>
           </div>
 
-          <!-- EDIT -->
-          <div class="section" id="section-edit">
-            <p>Manage hero text, event descriptions, travel info and more.</p>
+          <!-- Event Modal -->
+          <div id="event-modal" class="modal hidden">
+            <div class="modal-backdrop"></div>
+            <div class="modal-dialog">
+              <div class="modal-header">
+                <h3 id="event-modal-title">Add Event</h3>
+              </div>
+              <form id="event-form" class="modal-body">
+                <div class="form-grid">
+                  <label>
+                    <span>Name</span>
+                    <input name="name" type="text" class="input" required />
+                  </label>
+                  <label>
+                    <span>Date</span>
+                    <input name="date" type="date" class="input" />
+                  </label>
+                  <label>
+                    <span>Location</span>
+                    <input name="location" type="text" class="input" />
+                  </label>
+                  <label>
+                    <span>Venue</span>
+                    <input name="venue" type="text" class="input" />
+                  </label>
+                  <label class="checkbox-row">
+                    <input name="visible" type="checkbox" checked />
+                    <span>Visible on website</span>
+                  </label>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" id="event-cancel" class="button secondary">
+                    Cancel
+                  </button>
+                  <button type="submit" class="button primary">
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
+        </section>
 
-          <!-- BUDGET -->
-          <div class="section" id="section-budget">
-            <button id="add-expense-btn" class="button">Add Expense</button>
+        <!-- EDIT WEBSITE CONTENT SECTION -->
+        <section class="section" id="section-edit">
+          <div class="card">
+            <div class="card-header">
+              <h2>Edit Website Content</h2>
+              <p>Update hero text, event details, travel info and more without redeploying.</p>
+            </div>
+            <p style="color:var(--text-muted);">
+              Content editor wiring will be added once the main site structure is finalised.
+            </p>
+          </div>
+        </section>
 
-            <div class="budget-table-wrapper">
-              <table class="budget-table">
+        <!-- GLOBAL SETTINGS SECTION -->
+        <section class="section" id="section-settings">
+          <div class="card">
+            <div class="card-header">
+              <h2>Global Settings</h2>
+              <p>Configure wedding details, contact info, website behaviour and advanced options.</p>
+            </div>
+
+            <div class="accordion" id="settings-accordion">
+              <!-- Wedding Details -->
+              <div class="accordion-item">
+                <button class="accordion-header" type="button">
+                  <span>Wedding Details</span>
+                  <span class="chevron">⌄</span>
+                </button>
+                <div class="accordion-body">
+                  <div class="form-grid">
+                    <label>
+                      <span>Wedding title</span>
+                      <input id="settings-wedding-title" type="text" class="input" placeholder="Brad & Claire’s Wedding" />
+                    </label>
+                    <label>
+                      <span>Couple names</span>
+                      <input id="settings-couple-names" type="text" class="input" placeholder="Brad & Claire" />
+                    </label>
+                    <label>
+                      <span>London date</span>
+                      <input id="settings-date-london" type="date" class="input" />
+                    </label>
+                    <label>
+                      <span>Perth date</span>
+                      <input id="settings-date-perth" type="date" class="input" />
+                    </label>
+                    <label>
+                      <span>London timezone</span>
+                      <input id="settings-tz-london" type="text" class="input" placeholder="Europe/London" />
+                    </label>
+                    <label>
+                      <span>Perth timezone</span>
+                      <input id="settings-tz-perth" type="text" class="input" placeholder="Australia/Perth" />
+                    </label>
+                    <label>
+                      <span>Default RSVP deadline</span>
+                      <input id="settings-rsvp-deadline" type="date" class="input" />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact -->
+              <div class="accordion-item">
+                <button class="accordion-header" type="button">
+                  <span>Contact</span>
+                  <span class="chevron">⌄</span>
+                </button>
+                <div class="accordion-body">
+                  <div class="form-grid">
+                    <label>
+                      <span>Contact email</span>
+                      <input id="settings-contact-email" type="email" class="input" placeholder="hello@example.com" />
+                    </label>
+                    <label>
+                      <span>RSVP notification email</span>
+                      <input id="settings-rsvp-email" type="email" class="input" placeholder="rsvp@example.com" />
+                    </label>
+                    <label>
+                      <span>Contact phone (optional)</span>
+                      <input id="settings-contact-phone" type="tel" class="input" placeholder="+44…" />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Website -->
+              <div class="accordion-item">
+                <button class="accordion-header" type="button">
+                  <span>Website</span>
+                  <span class="chevron">⌄</span>
+                </button>
+                <div class="accordion-body">
+                  <div class="form-grid">
+                    <label class="checkbox-row">
+                      <input id="settings-site-live" type="checkbox" />
+                      <span>Site is live (disable to show maintenance page)</span>
+                    </label>
+                    <label>
+                      <span>Default theme</span>
+                      <select id="settings-default-theme" class="input">
+                        <option value="system">Match system</option>
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>Accent colour</span>
+                      <input id="settings-accent-color" type="color" class="input" value="#2563eb" />
+                    </label>
+                    <label class="checkbox-row">
+                      <input id="settings-show-countdown" type="checkbox" />
+                      <span>Show countdown on public site</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Branding -->
+              <div class="accordion-item">
+                <button class="accordion-header" type="button">
+                  <span>Branding</span>
+                  <span class="chevron">⌄</span>
+                </button>
+                <div class="accordion-body">
+                  <div class="form-grid">
+                    <label>
+                      <span>Logo URL</span>
+                      <input id="settings-logo-url" type="url" class="input" placeholder="https://…" />
+                    </label>
+                    <label>
+                      <span>Favicon URL</span>
+                      <input id="settings-favicon-url" type="url" class="input" placeholder="https://…" />
+                    </label>
+                    <label>
+                      <span>Typography</span>
+                      <select id="settings-typography" class="input">
+                        <option value="">Default</option>
+                        <option value="serif">Serif</option>
+                        <option value="sans">Sans-serif</option>
+                        <option value="script">Script</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Social Links -->
+              <div class="accordion-item">
+                <button class="accordion-header" type="button">
+                  <span>Social Links</span>
+                  <span class="chevron">⌄</span>
+                </button>
+                <div class="accordion-body">
+                  <div class="form-grid">
+                    <label>
+                      <span>Instagram</span>
+                      <input id="settings-social-instagram" type="url" class="input" placeholder="https://instagram.com/…" />
+                    </label>
+                    <label>
+                      <span>Facebook</span>
+                      <input id="settings-social-facebook" type="url" class="input" placeholder="https://facebook.com/…" />
+                    </label>
+                    <label>
+                      <span>TikTok</span>
+                      <input id="settings-social-tiktok" type="url" class="input" placeholder="https://tiktok.com/@…" />
+                    </label>
+                    <label>
+                      <span>Website</span>
+                      <input id="settings-social-website" type="url" class="input" placeholder="https://…" />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Advanced -->
+              <div class="accordion-item">
+                <button class="accordion-header" type="button">
+                  <span>Advanced</span>
+                  <span class="chevron">⌄</span>
+                </button>
+                <div class="accordion-body">
+                  <div class="form-grid">
+                    <label>
+                      <span>Custom CSS</span>
+                      <textarea id="settings-custom-css" class="input" rows="4" placeholder="/* CSS overrides for public site */"></textarea>
+                    </label>
+                    <label>
+                      <span>Custom JS</span>
+                      <textarea id="settings-custom-js" class="input" rows="4" placeholder="// JavaScript injected into public site"></textarea>
+                    </label>
+                    <label>
+                      <span>Analytics ID (optional)</span>
+                      <input id="settings-analytics-id" type="text" class="input" placeholder="G-XXXXXXX or similar" />
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-footer">
+              <button id="save-settings" class="button primary" type="button">
+                Save settings
+              </button>
+              <span id="settings-status" class="settings-status"></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- BUDGET SECTION -->
+        <section class="section" id="section-budget">
+          <div class="card">
+            <div class="card-header">
+              <h2>Budget & Cost Tracker</h2>
+              <p>Track all wedding-related expenses and compare against your planned budget.</p>
+              <button id="add-expense-btn" class="button primary" type="button">
+                Add expense
+              </button>
+            </div>
+
+            <div class="table-wrapper">
+              <table class="table">
                 <thead>
                   <tr>
                     <th>Order</th>
@@ -212,66 +514,99 @@
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody id="budget-table-body"></tbody>
+                <tbody id="budget-table-body">
+                  <tr>
+                    <td colspan="8" style="text-align:center; padding:12px; color:var(--text-muted);">
+                      Loading budget…
+                    </td>
+                  </tr>
+                </tbody>
               </table>
             </div>
           </div>
 
-          <!-- PLANNER -->
-          <div class="section" id="section-planner">
-            <h3>Planner & Timeline</h3>
-            <p>Organise tasks, due dates and timelines for all events.</p>
+          <!-- Budget Modal -->
+          <div id="budget-modal" class="modal hidden">
+            <div class="modal-backdrop"></div>
+            <div class="modal-dialog">
+              <div class="modal-header">
+                <h3>Expense</h3>
+              </div>
+              <div class="modal-body">
+                <input id="expense-id" type="hidden" />
+                <div class="form-grid">
+                  <label>
+                    <span>Category</span>
+                    <input id="expense-category" type="text" class="input" />
+                  </label>
+                  <label>
+                    <span>Description</span>
+                    <input id="expense-description" type="text" class="input" />
+                  </label>
+                  <label>
+                    <span>Amount</span>
+                    <input id="expense-amount" type="number" step="0.01" class="input" />
+                  </label>
+                  <label>
+                    <span>Date</span>
+                    <input id="expense-date" type="date" class="input" />
+                  </label>
+                  <label class="checkbox-row">
+                    <input id="expense-paid" type="checkbox" />
+                    <span>Paid</span>
+                  </label>
+                  <label>
+                    <span>Notes</span>
+                    <textarea id="expense-notes" class="input" rows="3"></textarea>
+                  </label>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button id="cancel-expense-btn" class="button secondary" type="button">
+                  Cancel
+                </button>
+                <button id="save-expense-btn" class="button primary" type="button">
+                  Save
+                </button>
+              </div>
+            </div>
           </div>
 
-        </div>
-      </section>
-    </main>
-  </div>
+          <!-- Delete Expense Modal -->
+          <div id="delete-expense-modal" class="modal hidden">
+            <div class="modal-backdrop"></div>
+            <div class="modal-dialog">
+              <div class="modal-header">
+                <h3>Delete expense</h3>
+              </div>
+              <div class="modal-body">
+                <p>Are you sure you want to delete this expense? This cannot be undone.</p>
+              </div>
+              <div class="modal-footer">
+                <button id="cancel-delete-expense-btn" class="button secondary" type="button">
+                  Cancel
+                </button>
+                <button id="confirm-delete-expense-btn" class="button danger" type="button">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
 
-  <!-- BUDGET MODALS -->
-  <div id="budget-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3 id="budget-modal-title">Add Expense</h3>
-      <input type="hidden" id="expense-id">
-      <label>Category</label><input id="expense-category">
-      <label>Description</label><input id="expense-description">
-      <label>Amount</label><input id="expense-amount" type="number" step="0.01">
-      <label>Date</label><input id="expense-date" type="date">
-      <label class="checkbox-row"><input type="checkbox" id="expense-paid"> Paid</label>
-      <label>Notes</label><textarea id="expense-notes"></textarea>
-      <div class="modal-actions">
-        <button id="save-expense-btn" class="button">Save</button>
-        <button id="cancel-expense-btn" class="button secondary">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="delete-expense-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Delete Expense?</h3>
-      <p>This cannot be undone.</p>
-      <div class="modal-actions">
-        <button id="confirm-delete-expense-btn" class="button danger-btn">Delete</button>
-        <button id="cancel-delete-expense-btn" class="button secondary">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- EVENT MODAL -->
-  <div id="event-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3 id="event-modal-title">Add Event</h3>
-      <form id="event-form">
-        <label>Event Name<input type="text" name="name" class="input" required></label>
-        <label>Date<input type="date" name="date" class="input" required></label>
-        <label>Location<input type="text" name="location" class="input" required></label>
-        <label>Venue<input type="text" name="venue" class="input"></label>
-        <label class="checkbox-row"><input type="checkbox" name="visible" checked> Visible on site</label>
-        <div class="modal-actions">
-          <button type="button" class="button secondary" id="event-cancel">Cancel</button>
-          <button type="submit" class="button" id="event-save">Save</button>
-        </div>
-      </form>
+        <!-- PLANNER SECTION (placeholder for now) -->
+        <section class="section" id="section-planner">
+          <div class="card">
+            <div class="card-header">
+              <h2>Planner & Timeline</h2>
+              <p>Organise tasks, due dates and timelines for all events.</p>
+            </div>
+            <p style="color:var(--text-muted);">
+              Planner functionality will be wired up next — tasks, timelines and event-linked planning.
+            </p>
+          </div>
+        </section>
+      </main>
     </div>
   </div>
 
