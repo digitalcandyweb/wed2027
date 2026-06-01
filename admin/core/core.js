@@ -76,12 +76,6 @@ async function loadSection(section) {
     const html = await htmlRes.text();
     container.innerHTML = html;
 
-    // Load JS module
-    const script = document.createElement("script");
-    script.src = `./js/${section}.js`;
-    script.type = "module";
-    document.body.appendChild(script);
-
   } catch (err) {
     container.innerHTML = `<p style="color:var(--danger);">Failed to load section: ${section}</p>`;
     console.error(err);
