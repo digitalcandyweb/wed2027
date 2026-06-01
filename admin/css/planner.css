@@ -1,0 +1,47 @@
+.planner-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.planner-table-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+}
+
+.planner-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.planner-table th,
+.planner-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.planner-task-title {
+  font-weight: 600;
+}
+
+.planner-task-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.planner-overdue {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.planner-empty,
+.planner-loading,
+.planner-error {
+  text-align: center;
+  padding: 12px;
+  color: var(--text-muted);
+}

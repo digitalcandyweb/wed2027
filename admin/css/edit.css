@@ -1,0 +1,8 @@
+.edit-placeholder {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 20px;
+  font-size: 14px;
+  line-height: 1.5;
+}

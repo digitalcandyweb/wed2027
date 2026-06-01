@@ -1,0 +1,36 @@
+<button id="add-event-btn" class="button">Add Event</button>
+
+<div class="events-table-wrapper">
+  <table class="events-table">
+    <thead>
+      <tr>
+        <th>Order</th>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Location</th>
+        <th>Visible</th>
+        <th>Notes</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="events-table-body"></tbody>
+  </table>
+</div>
+
+  <!-- EVENT MODAL -->
+  <div id="event-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="event-modal-title">Add Event</h3>
+      <form id="event-form">
+        <label>Event Name<input type="text" name="name" class="input" required></label>
+        <label>Date<input type="date" name="date" class="input" required></label>
+        <label>Location<input type="text" name="location" class="input" required></label>
+        <label>Venue<input type="text" name="venue" class="input"></label>
+        <label class="checkbox-row"><input type="checkbox" name="visible" checked> Visible on site</label>
+        <div class="modal-actions">
+          <button type="button" class="button secondary" id="event-cancel">Cancel</button>
+          <button type="submit" class="button" id="event-save">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>

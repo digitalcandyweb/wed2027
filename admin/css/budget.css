@@ -1,0 +1,19 @@
+.budget-table-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  margin-top: 10px;
+}
+
+.budget-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.budget-table th,
+.budget-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}

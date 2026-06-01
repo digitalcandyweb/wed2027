@@ -1,0 +1,98 @@
+<div class="planner-controls">
+  <button id="add-task-btn" class="button">Add Task</button>
+
+  <select id="planner-status-filter" class="input">
+    <option value="">All statuses</option>
+    <option value="todo">To do</option>
+    <option value="in_progress">In progress</option>
+    <option value="done">Done</option>
+  </select>
+
+  <select id="planner-assigned-filter" class="input">
+    <option value="">Assigned to</option>
+    <option value="brad">Brad</option>
+    <option value="claire">Claire</option>
+    <option value="both">Both</option>
+  </select>
+</div>
+
+<div class="planner-table-wrapper">
+  <table class="planner-table">
+    <thead>
+      <tr>
+        <th>Task</th>
+        <th>Due</th>
+        <th>Assigned</th>
+        <th>Priority</th>
+        <th>Status</th>
+        <th>Event</th>
+        <th style="text-align:right;">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="planner-table-body">
+      <tr><td colspan="7" class="planner-loading">Loading tasks…</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ADD / EDIT TASK MODAL -->
+<div id="planner-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3 id="planner-modal-title">Add Task</h3>
+
+    <input type="hidden" id="task-id">
+
+    <label>Task Title</label>
+    <input id="task-title" class="input">
+
+    <label>Description</label>
+    <textarea id="task-description" class="input"></textarea>
+
+    <label>Due Date</label>
+    <input id="task-due" type="date" class="input">
+
+    <label>Assigned To</label>
+    <select id="task-assigned" class="input">
+      <option value="brad">Brad</option>
+      <option value="claire">Claire</option>
+      <option value="both">Both</option>
+    </select>
+
+    <label>Priority</label>
+    <select id="task-priority" class="input">
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+    </select>
+
+    <label>Status</label>
+    <select id="task-status" class="input">
+      <option value="todo">To do</option>
+      <option value="in_progress">In progress</option>
+      <option value="done">Done</option>
+    </select>
+
+    <label>Linked Event</label>
+    <select id="task-event" class="input"></select>
+
+    <label>Notes</label>
+    <textarea id="task-notes" class="input"></textarea>
+
+    <div class="modal-actions">
+      <button id="save-task-btn" class="button">Save</button>
+      <button id="cancel-task-btn" class="button secondary">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div id="planner-delete-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Delete Task?</h3>
+    <p>This cannot be undone.</p>
+    <div class="modal-actions">
+      <button id="confirm-delete-task-btn" class="button danger-btn">Delete</button>
+      <button id="cancel-delete-task-btn" class="button secondary">Cancel</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+/* Core module container behaviour */
+#content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+}

@@ -1,0 +1,52 @@
+.rsvp-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.rsvp-table-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+}
+
+.rsvp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.rsvp-table th,
+.rsvp-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.rsvp-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.rsvp-tag.attending {
+  background: rgba(22, 163, 74, 0.12);
+  color: #16a34a;
+}
+
+.rsvp-tag.not-attending {
+  background: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
+}
+
+.rsvp-empty,
+.rsvp-loading,
+.rsvp-error {
+  text-align: center;
+  padding: 12px;
+  color: var(--text-muted);
+}
