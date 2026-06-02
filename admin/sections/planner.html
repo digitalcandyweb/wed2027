@@ -1,5 +1,5 @@
 <div class="planner-controls">
-	<button class="button add-btn">
+	<button id="add-task-btn" class="button add-btn">
 		<svg viewBox="0 0 20 20" fill="none">
 			<path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
 		</svg>
@@ -83,12 +83,13 @@
     <textarea id="task-notes" class="input"></textarea>
 
     <div class="modal-actions">
-	  <button class="button add-btn">
+	  <button id="save-task-btn" class="button save-btn">
 		<svg viewBox="0 0 20 20" fill="none">
 			<path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
 		</svg>
 	  </button>
-	  <button class="button cancel-btn">
+	  
+	  <button id="cancel-task-btn" class="button cancel-btn">
 		<svg viewBox="0 0 20 20" fill="none">
 			<path d="M5 5l10 10M15 5L5 15" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
 		</svg>
@@ -103,8 +104,7 @@
     <h3>Delete Task?</h3>
     <p>This cannot be undone.</p>
     <div class="modal-actions">
-      <button id="confirm-delete-task-btn" class="button danger-btn">Delete</button>
-	  <button class="button cancel-btn">
+      <button id="confirm-delete-task-btn" class="button cancel-btn">
 		<svg viewBox="0 0 20 20" fill="none">
 			<path d="M5 5l10 10M15 5L5 15" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
 		</svg>
