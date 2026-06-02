@@ -34,12 +34,18 @@
 }
 
 .button.add-btn {
+  background: var(--bg-elevated);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
   width: 32px;
   height: 32px;
-  padding: 6;
+  padding: 0;
   display: inline-flex;
-  align-items: left;
-  justify-content: left;
+  align-items: center;
+  justify-content: center;
+}
+.button.add-btn:hover {
+  background: var(--bg-soft);
 }
 
 .button:focus {
