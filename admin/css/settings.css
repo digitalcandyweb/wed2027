@@ -64,3 +64,15 @@
 .event-block-editor h4 {
   margin-bottom: 8px;
 }
+
+.settings-accordion,
+.settings-section-title,
+.event-block-editor h4 {
+  color: var(--text-main);
+}
+
+.settings-accordion i,
+.settings-accordion svg {
+  color: var(--text-main);
+  fill: var(--text-main);
+}
