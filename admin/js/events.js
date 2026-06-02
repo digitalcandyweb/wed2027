@@ -156,6 +156,13 @@ export function initEvents() {
   addBtn.addEventListener("click", openAdd);
   form.addEventListener("submit", saveEvent);
   cancelBtn.addEventListener("click", () => modal.classList.add("hidden"));
+  
+  cancelBtn.addEventListener("click", (e) => {
+  e.preventDefault(); // stop validation
+  eventModal.classList.add("hidden");
+  form.reset();
+});
+
 
   loadEvents();
 }
