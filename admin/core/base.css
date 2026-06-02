@@ -73,7 +73,7 @@ body {
   min-width: 140px;
 }
 
-/* GLOBAL BUTTONS */
+/* GLOBAL BUTTONS 
 .button {
   padding: 6px 12px;
   border-radius: 8px;
@@ -95,6 +95,7 @@ body {
   border: 1px solid var(--border-subtle);
   box-shadow: none;
 }
+*/
 
 /* UTILITY TAGS */
 .pill {
@@ -134,7 +135,9 @@ body {
    ACTION BUTTON VARIANTS
    ========================================= */
 
-.button {
+.button svg {
+  width: 16px;
+  height: 16px;
   padding: 6px 12px;
   border-radius: 8px;
   font-size: 13px;

@@ -90,3 +90,18 @@
 .section {
   padding: 20px;
 }
+
+.button.reset-btn {
+  background: var(--bg-elevated);
+  color: var(--danger-soft);
+  border: 1px solid var(--border-subtle);
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.button.reset-btn:hover {
+  background: var(--bg-soft);
+}
