@@ -46,3 +46,4 @@ export async function initDashboard() {
   } catch (err) {
     console.error("Dashboard failed to load", err);
   }
+}

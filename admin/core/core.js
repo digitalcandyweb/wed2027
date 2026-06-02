@@ -1,7 +1,7 @@
 // ===============================
 // IMPORT MODULE INIT FUNCTIONS
 // ===============================
-import { initDashboard } from "../js/dashboard.v2.js";
+import { initDashboard } from "../js/dashboard.js";
 import { initRSVP } from "../js/rsvp.js";
 import { initEvents } from "../js/events.js";
 import { initBudget } from "../js/budget.js";
