@@ -75,6 +75,14 @@ async function loadSection(section) {
     const htmlRes = await fetch(`./sections/${section}.html`);
     const html = await htmlRes.text();
     container.innerHTML = html;
+	
+    if (section === "dashboard") initDashboard();
+    if (section === "rsvp") initRSVP();
+    if (section === "events") initEvents();
+    if (section === "budget") initBudget();
+    if (section === "planner") initPlanner();
+    if (section === "settings") initSettings();
+    if (section === "edit") initEdit();
 
   } catch (err) {
     container.innerHTML = `<p style="color:var(--danger);">Failed to load section: ${section}</p>`;

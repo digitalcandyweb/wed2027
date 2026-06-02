@@ -1,153 +1,146 @@
 // EVENTS MANAGER MODULE
-const EventsManager = (() => {
-  let events = [];
+let events = [];
 
-  const tableBody = document.getElementById("events-table-body");
-  const addBtn = document.getElementById("add-event-btn");
+const tableBody = document.getElementById("events-table-body");
+const addBtn = document.getElementById("add-event-btn");
 
-  const modal = document.getElementById("event-modal");
-  const form = document.getElementById("event-form");
-  const cancelBtn = document.getElementById("event-cancel");
-  const modalTitle = document.getElementById("event-modal-title");
+const modal = document.getElementById("event-modal");
+const form = document.getElementById("event-form");
+const cancelBtn = document.getElementById("event-cancel");
+const modalTitle = document.getElementById("event-modal-title");
 
-  let editingId = null;
+let editingId = null;
 
-  async function loadEvents() {
-    if (!tableBody) return;
-    try {
-      const res = await fetch("/admin/api/events", { credentials: "include" });
-      const data = await res.json();
-      events = Array.isArray(data) ? data : [];
-      events.sort((a, b) => (a.order || 0) - (b.order || 0));
-      renderTable();
-    } catch (e) {
-      console.error("Failed to load events", e);
-    }
+async function loadEvents() {
+  if (!tableBody) return;
+  try {
+    const res = await fetch("/admin/api/events", { credentials: "include" });
+    const data = await res.json();
+    events = Array.isArray(data) ? data : [];
+    events.sort((a, b) => (a.order || 0) - (b.order || 0));
+    renderTable();
+  } catch (e) {
+    console.error("Failed to load events", e);
+  }
+}
+
+function renderTable() {
+  tableBody.innerHTML = "";
+  if (!events.length) {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td colspan="7" style="text-align:center; color:var(--text-muted); padding:12px;">No events configured yet.</td>`;
+    tableBody.appendChild(row);
+    return;
   }
 
-  function renderTable() {
-    tableBody.innerHTML = "";
-    if (!events.length) {
-      const row = document.createElement("tr");
-      row.innerHTML = `<td colspan="7" style="text-align:center; color:var(--text-muted); padding:12px;">No events configured yet.</td>`;
-      tableBody.appendChild(row);
-      return;
-    }
+  events.forEach(e => {
+    const row = document.createElement("tr");
 
-    events.forEach(e => {
-      const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${e.order ?? "—"}</td>
+      <td>${e.name}</td>
+      <td>${e.date}</td>
+      <td>${e.location}</td>
+      <td>${e.visible ? "Yes" : "No"}</td>
+      <td>${e.notes || "—"}</td>
+      <td>
+        <button class="small-btn" data-edit="${e.id}">Edit</button>
+        <button class="small-btn danger" data-delete="${e.id}">Delete</button>
+      </td>
+    `;
 
-      row.innerHTML = `
-        <td>${e.order ?? "—"}</td>
-        <td>${e.name}</td>
-        <td>${e.date}</td>
-        <td>${e.location}</td>
-        <td>${e.visible ? "Yes" : "No"}</td>
-        <td>${e.notes || "—"}</td>
-        <td>
-          <button class="small-btn" data-edit="${e.id}">Edit</button>
-          <button class="small-btn danger" data-delete="${e.id}">Delete</button>
-        </td>
-      `;
+    tableBody.appendChild(row);
+  });
 
-      tableBody.appendChild(row);
+  attachRowHandlers();
+}
+
+function attachRowHandlers() {
+  document.querySelectorAll("[data-edit]").forEach(btn => {
+    btn.addEventListener("click", () => openEdit(btn.dataset.edit));
+  });
+
+  document.querySelectorAll("[data-delete]").forEach(btn => {
+    btn.addEventListener("click", () => deleteEvent(btn.dataset.delete));
+  });
+}
+
+function openAdd() {
+  if (!modal || !form) return;
+  editingId = null;
+  modalTitle.textContent = "Add Event";
+  form.name.value = "";
+  form.date.value = "";
+  form.location.value = "";
+  form.venue.value = "";
+  form.visible.checked = true;
+  modal.classList.remove("hidden");
+}
+
+function openEdit(id) {
+  if (!modal || !form) return;
+  const e = events.find(ev => ev.id === id);
+  if (!e) return;
+
+  editingId = e.id;
+  modalTitle.textContent = "Edit Event";
+  form.name.value = e.name || "";
+  form.date.value = e.date || "";
+  form.location.value = e.location || "";
+  form.venue.value = e.venue || "";
+  form.visible.checked = e.visible !== false;
+  modal.classList.remove("hidden");
+}
+
+async function saveEvent(e) {
+  e.preventDefault();
+  if (!form) return;
+
+  const body = {
+    id: editingId,
+    name: form.name.value,
+    date: form.date.value,
+    location: form.location.value,
+    venue: form.venue.value,
+    visible: form.visible.checked
+  };
+
+  try {
+    await fetch("/admin/api/events/save", {
+      method: "POST",
+      body: JSON.stringify(body),
+      credentials: "include"
     });
-
-    attachRowHandlers();
+    modal.classList.add("hidden");
+    await loadEvents();
+  } catch (err) {
+    console.error("Failed to save event", err);
+    alert("Error saving event.");
   }
+}
 
-  function attachRowHandlers() {
-    document.querySelectorAll("[data-edit]").forEach(btn => {
-      btn.addEventListener("click", () => openEdit(btn.dataset.edit));
+async function deleteEvent(id) {
+  if (!id) return;
+  if (!confirm("Delete this event?")) return;
+
+  try {
+    await fetch(`/admin/api/events/delete/${encodeURIComponent(id)}`, {
+      method: "POST",
+      credentials: "include"
     });
-
-    document.querySelectorAll("[data-delete]").forEach(btn => {
-      btn.addEventListener("click", () => deleteEvent(btn.dataset.delete));
-    });
+    await loadEvents();
+  } catch (err) {
+    console.error("Failed to delete event", err);
+    alert("Error deleting event.");
   }
+}
 
-  function openAdd() {
-    if (!modal || !form) return;
-    editingId = null;
-    modalTitle.textContent = "Add Event";
-    form.name.value = "";
-    form.date.value = "";
-    form.location.value = "";
-    form.venue.value = "";
-    form.visible.checked = true;
-    modal.classList.remove("hidden");
-  }
+export function initEvents() {
+  if (!tableBody || !addBtn || !form || !modal) return;
 
-  function openEdit(id) {
-    if (!modal || !form) return;
-    const e = events.find(ev => ev.id === id);
-    if (!e) return;
+  addBtn.addEventListener("click", openAdd);
+  form.addEventListener("submit", saveEvent);
+  cancelBtn.addEventListener("click", () => modal.classList.add("hidden"));
 
-    editingId = e.id;
-    modalTitle.textContent = "Edit Event";
-    form.name.value = e.name || "";
-    form.date.value = e.date || "";
-    form.location.value = e.location || "";
-    form.venue.value = e.venue || "";
-    form.visible.checked = e.visible !== false;
-    modal.classList.remove("hidden");
-  }
-
-  async function saveEvent(e) {
-    e.preventDefault();
-    if (!form) return;
-
-    const body = {
-      id: editingId,
-      name: form.name.value,
-      date: form.date.value,
-      location: form.location.value,
-      venue: form.venue.value,
-      visible: form.visible.checked
-    };
-
-    try {
-      await fetch("/admin/api/events/save", {
-        method: "POST",
-        body: JSON.stringify(body),
-        credentials: "include"
-      });
-      modal.classList.add("hidden");
-      await loadEvents();
-    } catch (err) {
-      console.error("Failed to save event", err);
-      alert("Error saving event.");
-    }
-  }
-
-  async function deleteEvent(id) {
-    if (!id) return;
-    if (!confirm("Delete this event?")) return;
-
-    try {
-      await fetch(`/admin/api/events/delete/${encodeURIComponent(id)}`, {
-        method: "POST",
-        credentials: "include"
-      });
-      await loadEvents();
-    } catch (err) {
-      console.error("Failed to delete event", err);
-      alert("Error deleting event.");
-    }
-  }
-
-  function init() {
-    if (!tableBody || !addBtn || !form || !modal) return;
-
-    addBtn.addEventListener("click", openAdd);
-    form.addEventListener("submit", saveEvent);
-    cancelBtn.addEventListener("click", () => modal.classList.add("hidden"));
-
-    loadEvents();
-  }
-
-  return { init };
-})();
-
-// Auto-init when module loads
-EventsManager.init();
+  loadEvents();
+}

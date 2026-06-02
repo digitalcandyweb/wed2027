@@ -1,4 +1,4 @@
 // EDIT PAGE PLACEHOLDER
-(function () {
-  console.log("Edit module loaded (placeholder).");
-})();
+export function initEdit() {
+  console.log("Edit module loaded");
+}

@@ -32,7 +32,7 @@ function updateDashboard(rsvps, events) {
 }
 
 // Load data when dashboard loads
-(async function initDashboard() {
+export async function initDashboard() {
   try {
     const [rsvpRes, eventsRes] = await Promise.all([
       fetch("/admin/api/list", { credentials: "include" }),

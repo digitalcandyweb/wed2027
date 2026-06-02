@@ -208,7 +208,7 @@
   attendanceFilter.addEventListener("change", applyFilters);
   exportButton.addEventListener("click", exportCsv);
 
-  (async function init() {
+  export async function initRSVP() {
     await fetchEvents();
     await fetchRsvps();
   })();
