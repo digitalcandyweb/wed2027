@@ -1,5 +1,5 @@
 // Dashboard updater
-function updateDashboard(rsvps, events) {
+export function updateDashboard(rsvps, events) {
   const attending = rsvps.filter(r => r.attending === true).length;
   const notAttending = rsvps.filter(r => r.attending === false).length;
 
