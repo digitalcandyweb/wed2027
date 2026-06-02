@@ -165,11 +165,11 @@ function initAccordion() {
 }
 
 export function initSettings() {
-  eventBlocksContainer = document.getElementById("settings-event-blocks");
+  eventBlocksContainer = document.getElementById("event-blocks-container");
   initAccordion();
   loadEvents();
   loadSettings();
 
-  document.getElementById("settings-save").addEventListener("click", saveSettings);
+  document.getElementById("save-settings-btn").addEventListener("click", saveSettings);
   document.getElementById("settings-reset").addEventListener("click", resetSettings);
 }
