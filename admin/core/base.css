@@ -135,9 +135,7 @@ body {
    ACTION BUTTON VARIANTS
    ========================================= */
 
-.button svg {
-  width: 16px;
-  height: 16px;
+.button {
   padding: 6px 12px;
   border-radius: 8px;
   font-size: 13px;
@@ -147,6 +145,10 @@ body {
   cursor: pointer;
   border: none;
   transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+}
+.button svg {
+  width: 16px;
+  height: 16px;
 }
 .button:focus,
 .button:focus-visible {
