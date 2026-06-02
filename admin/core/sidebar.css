@@ -108,8 +108,8 @@
 
 .nav-item.active {
   background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
   color: var(--accent);
-  border-color: var(--accent-border);
 }
 
 .nav-icon {

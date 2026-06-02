@@ -76,3 +76,17 @@
   color: var(--text-main);
   fill: var(--text-main);
 }
+
+/* Unified card style */
+.card,
+.table-wrapper,
+.settings-section,
+.event-block-editor {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.section {
+  padding: 20px;
+}

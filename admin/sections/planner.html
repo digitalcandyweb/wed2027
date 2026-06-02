@@ -1,5 +1,9 @@
 <div class="planner-controls">
-  <button id="add-task-btn" class="button">Add Task</button>
+	<button class="button add-btn">
+		<svg viewBox="0 0 20 20" fill="none">
+			<path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+		</svg>
+	</button>
 
   <select id="planner-status-filter" class="input">
     <option value="">All statuses</option>
@@ -79,8 +83,16 @@
     <textarea id="task-notes" class="input"></textarea>
 
     <div class="modal-actions">
-      <button id="save-task-btn" class="button">Save</button>
-      <button id="cancel-task-btn" class="button secondary">Cancel</button>
+	  <button class="button add-btn">
+		<svg viewBox="0 0 20 20" fill="none">
+			<path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+		</svg>
+	  </button>
+	  <button class="button cancel-btn">
+		<svg viewBox="0 0 20 20" fill="none">
+			<path d="M5 5l10 10M15 5L5 15" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+		</svg>
+	  </button>
     </div>
   </div>
 </div>
@@ -92,7 +104,11 @@
     <p>This cannot be undone.</p>
     <div class="modal-actions">
       <button id="confirm-delete-task-btn" class="button danger-btn">Delete</button>
-      <button id="cancel-delete-task-btn" class="button secondary">Cancel</button>
+	  <button class="button cancel-btn">
+		<svg viewBox="0 0 20 20" fill="none">
+			<path d="M5 5l10 10M15 5L5 15" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+		</svg>
+	  </button>
     </div>
   </div>
 </div>

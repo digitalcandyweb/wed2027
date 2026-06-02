@@ -30,7 +30,12 @@
       <label class="checkbox-row"><input type="checkbox" id="expense-paid"> Paid</label>
       <label>Notes</label><textarea id="expense-notes"></textarea>
       <div class="modal-actions">
-        <button id="save-expense-btn" class="button">Save</button>
+        <button class="button save-btn">
+			<svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+			<path d="M7.5 13.5L4 10l1.4-1.4L7.5 10.7l7.1-7.1L16 5l-8.5 8.5z" fill="currentColor"/>
+			</svg>
+		  Save
+		</button>
         <button id="cancel-expense-btn" class="button secondary">Cancel</button>
       </div>
     </div>
@@ -41,8 +46,18 @@
       <h3>Delete Expense?</h3>
       <p>This cannot be undone.</p>
       <div class="modal-actions">
-        <button id="confirm-delete-expense-btn" class="button danger-btn">Delete</button>
-        <button id="cancel-delete-expense-btn" class="button secondary">Cancel</button>
+        <button class="button delete-btn">
+			<svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+				<path d="M6 7h1v9H6V7zm3 0h1v9H9V7zm3 0h1v9h-1V7z" fill="currentColor"/>
+				<path d="M3 5h14v1H3V5zm2-2h8v1H5V3zm2 3h6v11H7V6z" fill="currentColor"/>
+			</svg>
+		  Delete
+		</button>
+        <button class="button cancel-btn">
+			<svg viewBox="0 0 20 20" fill="none">
+				<path d="M5 5l10 10M15 5L5 15" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+			</svg>
+		</button>
       </div>
     </div>
   </div>
