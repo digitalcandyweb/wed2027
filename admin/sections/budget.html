@@ -34,13 +34,16 @@
       <label class="checkbox-row"><input type="checkbox" id="expense-paid"> Paid</label>
       <label>Notes</label><textarea id="expense-notes"></textarea>
       <div class="modal-actions">
-        <button id="save-expense-btn" class="button save-btn">
-			<svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-			<path d="M7.5 13.5L4 10l1.4-1.4L7.5 10.7l7.1-7.1L16 5l-8.5 8.5z" fill="currentColor"/>
-			</svg>
-		  Save
+		 <button id="add-expense-btn" class="button add-btn">
+		  <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+			<path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+		  </svg>
 		</button>
-        <button id="cancel-expense-btn" class="button secondary">Cancel</button>
+        <button id="cancel-expense-btn" type="button" class="button cancel-btn">
+		  <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+			<path d="M5 5l10 10M15 5L5 15" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+		  </svg>
+		</button>
       </div>
     </div>
   </div>

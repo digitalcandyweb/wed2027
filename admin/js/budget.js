@@ -195,5 +195,10 @@ export function initBudget() {
     cancelDeleteBtn.addEventListener("click", () => deleteModal.classList.add("hidden"));
   }
 
+  document.getElementById("cancel-expense-btn").addEventListener("click", () => {
+  budgetModal.classList.add("hidden");
+  budgetForm.reset();
+});
+
   loadBudget();
 }

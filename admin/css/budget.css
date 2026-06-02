@@ -17,3 +17,26 @@
   padding: 8px 10px;
   border-bottom: 1px solid var(--border-subtle);
 }
+
+.button.add-btn {
+  background: var(--accent); /* blue */
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+}
+
+.button.add-btn:hover {
+  background: #1d4ed8;
+}
+
+.button:focus {
+  outline: none;
+  box-shadow: none;
+}
