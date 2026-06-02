@@ -45,3 +45,13 @@
   padding: 12px;
   color: var(--text-muted);
 }
+.button.add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button:focus {
+  outline: none;
+  box-shadow: none;
+}

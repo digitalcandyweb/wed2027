@@ -92,8 +92,17 @@ function renderTable() {
       <td>${t.status}</td>
       <td>${getEventName(t.event)}</td>
       <td style="text-align:right;">
-        <button class="small-btn" data-edit="${t.id}">Edit</button>
-        <button class="small-btn danger" data-delete="${t.id}">Delete</button>
+        <button class="button edit-btn" data-edit="${t.id}">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+            <path d="M4 13.5V16h2.5l7.4-7.4-2.5-2.5L4 13.5zM17.3 6.3c.4-.4.4-1 0-1.4l-2.2-2.2a1 1 0 0 0-1.4 0l-1.8 1.8 3.6 3.6 1.8-1.8z" fill="currentColor"/>
+          </svg>
+        </button>
+        <button class="button delete-btn" data-delete="${t.id}">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+            <path d="M6 7h1v9H6V7zm3 0h1v9H9V7zm3 0h1v9h-1V7z" fill="currentColor"/>
+            <path d="M3 5h14v1H3V5zm2-2h8v1H5V3zm2 3h6v11H7V6z" fill="currentColor"/>
+          </svg>
+        </button>
       </td>
     `;
     tableBody.appendChild(row);
