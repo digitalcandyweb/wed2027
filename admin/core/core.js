@@ -1,4 +1,16 @@
 // ===============================
+// IMPORT MODULE INIT FUNCTIONS
+// ===============================
+import { initDashboard } from "../js/dashboard.js";
+import { initRSVP } from "../js/rsvp.js";
+import { initEvents } from "../js/events.js";
+import { initBudget } from "../js/budget.js";
+import { initPlanner } from "../js/planner.js";
+import { initSettings } from "../js/settings.js";
+import { initEdit } from "../js/edit.js";
+
+
+// ===============================
 // THEME TOGGLE
 // ===============================
 (function () {
@@ -66,16 +78,15 @@
 // ===============================
 // MODULE LOADER
 // ===============================
-async function loadSection(section) {
+export async function loadSection(section) {
   const container = document.getElementById("content");
   if (!container) return;
 
   try {
-    // Load HTML fragment
     const htmlRes = await fetch(`./sections/${section}.html`);
     const html = await htmlRes.text();
     container.innerHTML = html;
-	
+
     if (section === "dashboard") initDashboard();
     if (section === "rsvp") initRSVP();
     if (section === "events") initEvents();
@@ -138,6 +149,12 @@ async function loadSection(section) {
       subtitle: "Organise tasks, due dates and timelines.",
       chip: "Tasks & milestones",
       showSummary: false
+    },
+    settings: {
+      title: "Website Settings",
+      subtitle: "Configure site-wide options and event blocks.",
+      chip: "Configuration",
+      showSummary: false
     }
   };
 
@@ -145,11 +162,9 @@ async function loadSection(section) {
     item.addEventListener("click", () => {
       const section = item.getAttribute("data-section");
 
-      // Update active state
       navItems.forEach(i => i.classList.remove("active"));
       item.classList.add("active");
 
-      // Update titles
       const m = meta[section];
       if (m) {
         contentTitle.textContent = m.title;
@@ -158,7 +173,6 @@ async function loadSection(section) {
         rsvpSummary.style.display = m.showSummary ? "flex" : "none";
       }
 
-      // Load module
       loadSection(section);
     });
   });
