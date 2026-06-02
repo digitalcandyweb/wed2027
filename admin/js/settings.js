@@ -171,5 +171,5 @@ export function initSettings() {
   loadSettings();
 
   document.getElementById("save-settings-btn").addEventListener("click", saveSettings);
-  document.getElementById("settings-reset").addEventListener("click", resetSettings);
+  document.getElementById("settings-reset-btn").addEventListener("click", resetSettings);
 }
