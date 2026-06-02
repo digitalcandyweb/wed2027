@@ -46,9 +46,12 @@
   color: var(--text-muted);
 }
 .button.add-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  align-items: left;
+  justify-content: left;
 }
 
 .button:focus {

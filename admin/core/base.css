@@ -145,6 +145,11 @@ body {
   border: none;
   transition: background 150ms ease, color 150ms ease, transform 150ms ease;
 }
+.button:focus,
+.button:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
 
 /* Save Button */
 .button.save-btn {

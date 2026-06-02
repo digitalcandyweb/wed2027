@@ -34,12 +34,21 @@
 }
 
 .button.add-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  align-items: left;
+  justify-content: left;
 }
 
 .button:focus {
   outline: none;
   box-shadow: none;
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
