@@ -4,11 +4,12 @@ let allEvents = [];
 let allRsvps = [];
 let filteredRsvps = [];
 
-const tableBody = document.getElementById("rsvp-table-body");
-const searchInput = document.getElementById("rsvp-search");
-const eventFilter = document.getElementById("rsvp-event-filter");
-const attendanceFilter = document.getElementById("rsvp-attendance-filter");
-const exportButton = document.getElementById("rsvp-export");
+// DOM references (assigned later)
+let tableBody;
+let searchInput;
+let eventFilter;
+let attendanceFilter;
+let exportButton;
 
 async function fetchEvents() {
   try {
@@ -23,6 +24,8 @@ async function fetchEvents() {
 }
 
 function populateEventFilter() {
+  if (!eventFilter) return;
+
   eventFilter.innerHTML = "";
   const optAll = document.createElement("option");
   optAll.value = "";
@@ -39,7 +42,10 @@ function populateEventFilter() {
 
 async function fetchRsvps() {
   try {
-    tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-loading">Loading RSVPs…</td></tr>';
+    if (tableBody) {
+      tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-loading">Loading RSVPs…</td></tr>';
+    }
+
     const res = await fetch("/admin/api/list", { credentials: "include" });
     if (!res.ok) throw new Error("Failed to load RSVPs");
     const data = await res.json();
@@ -48,7 +54,9 @@ async function fetchRsvps() {
     updateDashboard(allRsvps, allEvents);
   } catch (err) {
     console.error(err);
-    tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-error">Error loading RSVPs.</td></tr>';
+    if (tableBody) {
+      tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-error">Error loading RSVPs.</td></tr>';
+    }
   }
 }
 
@@ -67,6 +75,8 @@ function formatDate(ts) {
 }
 
 function renderTable(rows) {
+  if (!tableBody) return;
+
   if (!rows.length) {
     tableBody.innerHTML = '<tr><td colspan="6" class="rsvp-empty">No RSVPs match your filters yet.</td></tr>';
     return;
@@ -103,9 +113,9 @@ function renderTable(rows) {
 }
 
 function applyFilters() {
-  const q = (searchInput.value || "").toLowerCase();
-  const ev = eventFilter.value;
-  const att = attendanceFilter.value;
+  const q = (searchInput?.value || "").toLowerCase();
+  const ev = eventFilter?.value;
+  const att = attendanceFilter?.value;
 
   filteredRsvps = allRsvps.filter(r => {
     const matchesSearch =
@@ -180,7 +190,37 @@ function exportCsv() {
   URL.revokeObjectURL(url);
 }
 
+function handleRowClick(e) {
+  const btn = e.target.closest("button[data-action]");
+  if (!btn) return;
+  const action = btn.getAttribute("data-action");
+  const id = btn.getAttribute("data-id");
+  if (action === "delete") {
+    deleteRsvp(id);
+  } else if (action === "view") {
+    const r = allRsvps.find(x => x.id === id);
+    if (!r) return;
+    const attending = r.attending === true ? "Attending" : "Not attending";
+    alert(
+      `Name: ${r.name || "—"}\n` +
+      `Email: ${r.email || "—"}\n` +
+      `Event: ${getEventName(r.event)}\n` +
+      `Guests: ${r.guests || "—"}\n` +
+      `Attending: ${attending}\n` +
+      `Submitted: ${formatDate(r.timestamp)}\n\n` +
+      (r.notes ? `Notes: ${r.notes}` : "")
+    );
+  }
+}
+
 export async function initRSVP() {
+  // DOM LOOKUPS MUST HAPPEN HERE
+  tableBody = document.getElementById("rsvp-table-body");
+  searchInput = document.getElementById("rsvp-search");
+  eventFilter = document.getElementById("rsvp-event-filter");
+  attendanceFilter = document.getElementById("rsvp-attendance-filter");
+  exportButton = document.getElementById("rsvp-export");
+
   await fetchEvents();
   await fetchRsvps();
 
@@ -189,26 +229,5 @@ export async function initRSVP() {
   attendanceFilter.addEventListener("change", applyFilters);
   exportButton.addEventListener("click", exportCsv);
 
-  tableBody.addEventListener("click", (e) => {
-    const btn = e.target.closest("button[data-action]");
-    if (!btn) return;
-    const action = btn.getAttribute("data-action");
-    const id = btn.getAttribute("data-id");
-    if (action === "delete") {
-      deleteRsvp(id);
-    } else if (action === "view") {
-      const r = allRsvps.find(x => x.id === id);
-      if (!r) return;
-      const attending = r.attending === true ? "Attending" : "Not attending";
-      alert(
-        `Name: ${r.name || "—"}\n` +
-        `Email: ${r.email || "—"}\n` +
-        `Event: ${getEventName(r.event)}\n` +
-        `Guests: ${r.guests || "—"}\n` +
-        `Attending: ${attending}\n` +
-        `Submitted: ${formatDate(r.timestamp)}\n\n` +
-        (r.notes ? `Notes: ${r.notes}` : "")
-      );
-    }
-  });
+  tableBody.addEventListener("click", handleRowClick);
 }
