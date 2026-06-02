@@ -1,13 +1,12 @@
 // EVENTS MANAGER MODULE
 let events = [];
 
-const tableBody = document.getElementById("events-table-body");
-const addBtn = document.getElementById("add-event-btn");
-
-const modal = document.getElementById("event-modal");
-const form = document.getElementById("event-form");
-const cancelBtn = document.getElementById("event-cancel");
-const modalTitle = document.getElementById("event-modal-title");
+let tableBody;
+let addBtn;
+let modal;
+let form;
+let cancelBtn;
+let modalTitle;
 
 let editingId = null;
 
@@ -136,6 +135,13 @@ async function deleteEvent(id) {
 }
 
 export function initEvents() {
+  tableBody = document.getElementById("events-table-body");
+  addBtn = document.getElementById("add-event-btn");
+  modal = document.getElementById("event-modal");
+  form = document.getElementById("event-form");
+  cancelBtn = document.getElementById("event-cancel");
+  modalTitle = document.getElementById("event-modal-title");
+
   if (!tableBody || !addBtn || !form || !modal) return;
 
   addBtn.addEventListener("click", openAdd);

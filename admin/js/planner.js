@@ -3,31 +3,31 @@ let tasks = [];
 let events = [];
 let taskToDelete = null;
 
-const tableBody = document.getElementById("planner-table-body");
-const addBtn = document.getElementById("add-task-btn");
+let tableBody;
+let addBtn;
 
-const modal = document.getElementById("planner-modal");
-const modalTitle = document.getElementById("planner-modal-title");
+let modal;
+let modalTitle;
 
-const idInput = document.getElementById("task-id");
-const titleInput = document.getElementById("task-title");
-const descInput = document.getElementById("task-description");
-const dueInput = document.getElementById("task-due");
-const assignedInput = document.getElementById("task-assigned");
-const priorityInput = document.getElementById("task-priority");
-const statusInput = document.getElementById("task-status");
-const eventInput = document.getElementById("task-event");
-const notesInput = document.getElementById("task-notes");
+let idInput;
+let titleInput;
+let descInput;
+let dueInput;
+let assignedInput;
+let priorityInput;
+let statusInput;
+let eventInput;
+let notesInput;
 
-const saveBtn = document.getElementById("save-task-btn");
-const cancelBtn = document.getElementById("cancel-task-btn");
+let saveBtn;
+let cancelBtn;
 
-const deleteModal = document.getElementById("planner-delete-modal");
-const confirmDeleteBtn = document.getElementById("confirm-delete-task-btn");
-const cancelDeleteBtn = document.getElementById("cancel-delete-task-btn");
+let deleteModal;
+let confirmDeleteBtn;
+let cancelDeleteBtn;
 
-const statusFilter = document.getElementById("planner-status-filter");
-const assignedFilter = document.getElementById("planner-assigned-filter");
+let statusFilter;
+let assignedFilter;
 
 async function loadEvents() {
   try {
@@ -35,6 +35,7 @@ async function loadEvents() {
     const data = await res.json();
     events = Array.isArray(data) ? data : [];
 
+    if (!eventInput) return;
     eventInput.innerHTML = `<option value="">None</option>`;
     events.forEach(ev => {
       const opt = document.createElement("option");
@@ -55,11 +56,14 @@ async function loadTasks() {
     renderTable();
   } catch (err) {
     console.error("Failed to load tasks", err);
-    tableBody.innerHTML = `<tr><td colspan="7" class="planner-error">Error loading tasks.</td></tr>`;
+    if (tableBody) {
+      tableBody.innerHTML = `<tr><td colspan="7" class="planner-error">Error loading tasks.</td></tr>`;
+    }
   }
 }
 
 function renderTable() {
+  if (!tableBody) return;
   tableBody.innerHTML = "";
 
   const filtered = tasks.filter(t => {
@@ -197,6 +201,32 @@ async function deleteTask() {
 }
 
 export function initPlanner() {
+  tableBody = document.getElementById("planner-table-body");
+  addBtn = document.getElementById("add-task-btn");
+
+  modal = document.getElementById("planner-modal");
+  modalTitle = document.getElementById("planner-modal-title");
+
+  idInput = document.getElementById("task-id");
+  titleInput = document.getElementById("task-title");
+  descInput = document.getElementById("task-description");
+  dueInput = document.getElementById("task-due");
+  assignedInput = document.getElementById("task-assigned");
+  priorityInput = document.getElementById("task-priority");
+  statusInput = document.getElementById("task-status");
+  eventInput = document.getElementById("task-event");
+  notesInput = document.getElementById("task-notes");
+
+  saveBtn = document.getElementById("save-task-btn");
+  cancelBtn = document.getElementById("cancel-task-btn");
+
+  deleteModal = document.getElementById("planner-delete-modal");
+  confirmDeleteBtn = document.getElementById("confirm-delete-task-btn");
+  cancelDeleteBtn = document.getElementById("cancel-delete-task-btn");
+
+  statusFilter = document.getElementById("planner-status-filter");
+  assignedFilter = document.getElementById("planner-assigned-filter");
+
   if (!tableBody || !addBtn || !modal) return;
 
   addBtn.addEventListener("click", openAdd);

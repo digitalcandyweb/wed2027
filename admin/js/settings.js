@@ -2,6 +2,8 @@
 let settings = {};
 let events = [];
 
+let eventBlocksContainer;
+
 async function loadEvents() {
   try {
     const res = await fetch("/admin/api/events", { credentials: "include" });
@@ -14,7 +16,8 @@ async function loadEvents() {
 }
 
 function renderEventBlocks() {
-  const container = document.getElementById("settings-event-blocks");
+  if (!eventBlocksContainer) return;
+  const container = eventBlocksContainer;
   container.innerHTML = "";
 
   if (!events.length) {
@@ -162,6 +165,7 @@ function initAccordion() {
 }
 
 export function initSettings() {
+  eventBlocksContainer = document.getElementById("settings-event-blocks");
   initAccordion();
   loadEvents();
   loadSettings();

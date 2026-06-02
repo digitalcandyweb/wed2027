@@ -1,24 +1,24 @@
 let expenses = [];
 let expenseToDelete = null;
 
-const tableBody = document.getElementById("budget-table-body");
-const addBtn = document.getElementById("add-expense-btn");
+let tableBody;
+let addBtn;
 
-const modal = document.getElementById("budget-modal");
-const idInput = document.getElementById("expense-id");
-const categoryInput = document.getElementById("expense-category");
-const descriptionInput = document.getElementById("expense-description");
-const amountInput = document.getElementById("expense-amount");
-const dateInput = document.getElementById("expense-date");
-const paidInput = document.getElementById("expense-paid");
-const notesInput = document.getElementById("expense-notes");
+let modal;
+let idInput;
+let categoryInput;
+let descriptionInput;
+let amountInput;
+let dateInput;
+let paidInput;
+let notesInput;
 
-const saveBtn = document.getElementById("save-expense-btn");
-const cancelBtn = document.getElementById("cancel-expense-btn");
+let saveBtn;
+let cancelBtn;
 
-const deleteModal = document.getElementById("delete-expense-modal");
-const confirmDeleteBtn = document.getElementById("confirm-delete-expense-btn");
-const cancelDeleteBtn = document.getElementById("cancel-delete-expense-btn");
+let deleteModal;
+let confirmDeleteBtn;
+let cancelDeleteBtn;
 
 async function loadBudget() {
   if (!tableBody) return;
@@ -155,6 +155,25 @@ async function deleteExpense() {
 }
 
 export function initBudget() {
+  tableBody = document.getElementById("budget-table-body");
+  addBtn = document.getElementById("add-expense-btn");
+
+  modal = document.getElementById("budget-modal");
+  idInput = document.getElementById("expense-id");
+  categoryInput = document.getElementById("expense-category");
+  descriptionInput = document.getElementById("expense-description");
+  amountInput = document.getElementById("expense-amount");
+  dateInput = document.getElementById("expense-date");
+  paidInput = document.getElementById("expense-paid");
+  notesInput = document.getElementById("expense-notes");
+
+  saveBtn = document.getElementById("save-expense-btn");
+  cancelBtn = document.getElementById("cancel-expense-btn");
+
+  deleteModal = document.getElementById("delete-expense-modal");
+  confirmDeleteBtn = document.getElementById("confirm-delete-expense-btn");
+  cancelDeleteBtn = document.getElementById("cancel-delete-expense-btn");
+
   if (!tableBody || !addBtn || !modal) return;
 
   addBtn.addEventListener("click", openAdd);
