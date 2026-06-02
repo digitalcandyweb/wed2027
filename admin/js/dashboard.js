@@ -45,5 +45,4 @@ export async function initDashboard() {
     updateDashboard(Array.isArray(rsvps) ? rsvps : [], Array.isArray(events) ? events : []);
   } catch (err) {
     console.error("Dashboard failed to load", err);
-	
   }
