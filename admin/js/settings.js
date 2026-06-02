@@ -165,7 +165,7 @@ function initAccordion() {
 }
 
 export function initSettings() {
-  eventBlocksContainer = document.getElementById("event-blocks-container");
+  eventBlocksContainer = document.getElementById("settings-event-blocks");
   initAccordion();
   loadEvents();
   loadSettings();
