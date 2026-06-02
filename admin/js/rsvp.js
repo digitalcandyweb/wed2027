@@ -1,3 +1,5 @@
+import { updateDashboard } from "./dashboard.js";
+
 // RSVP MANAGER MODULE
 
 let allEvents = [];
