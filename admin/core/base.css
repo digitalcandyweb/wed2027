@@ -142,10 +142,15 @@ input[type="checkbox"] {
   border: 1px solid var(--border-subtle);
   background: var(--bg-elevated);
   cursor: pointer;
+  font-size: 0;
 }
 
 .button:hover {
   background: var(--bg-soft);
+}
+
+.button::before {
+  font-size: 14px;
 }
 
 .button svg {
@@ -366,4 +371,14 @@ td .button + .button {
 .button.icon-only span,
 .button.icon-only .label {
   display: none;
+}
+
+.actions-col,
+td:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+
+td .button + .button {
+  margin-left: 6px;
 }
