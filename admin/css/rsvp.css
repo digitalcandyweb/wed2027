@@ -54,3 +54,10 @@
   text-align: right;
   white-space: nowrap;
 }
+
+.rsvp-empty {
+  text-align: centre;
+  padding: 40px 10px;
+  color: var(--text-muted);
+  font-style: italic;
+}

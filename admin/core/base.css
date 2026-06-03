@@ -141,6 +141,16 @@ input[type="checkbox"] {
   height: 100%;
 }
 
+.modal {
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.modal:not(.hidden) {
+  opacity: 1;
+  transform: scale(1);
+
 /* =========================================
    ACTION BUTTON VARIANTS
    ========================================= */
@@ -235,13 +245,94 @@ input[type="checkbox"] {
   justify-content: center;
 }
 
-.modal {
-  opacity: 0;
-  transform: scale(0.98);
-  transition: opacity 120ms ease, transform 120ms ease;
+
 }
 
-.modal:not(.hidden) {
-  opacity: 1;
-  transform: scale(1);
+
+/* =========================================
+   Global button icon system
+   ========================================= */
+
+/* Base spacing so text + icon never clash */
+.button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  border: none;
+  transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+/* ---------- Action icons ---------- */
+
+.button.add-btn::before {
+  content: "＋";
+  font-weight: 700;
+}
+
+.button.save-btn::before,
+.button.primary::before {
+  content: "✔";
+}
+
+.button.cancel-btn::before,
+.button.secondary::before {
+  content: "✕";
+}
+
+.button.edit-btn::before {
+  content: "✏";
+}
+
+.button.duplicate-btn::before,
+.button.add-btn[data-action="dup"]::before {
+  content: "⧉";
+}
+
+.button.delete-btn::before,
+.button.danger::before {
+  content: "🗑";
+}
+
+.button.export-btn::before,
+.button.download-btn::before,
+.button.ghost::before {
+  content: "⬇";
+}
+
+.button.reset-btn::before {
+  content: "↺";
+}
+
+.button.view-btn::before {
+  content: "👁";
+}
+
+/* ---------- Tables: spacing + consistency ---------- */
+
+td .button {
+  font-size: 12px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+td .button + .button {
+  margin-left: 6px;
+}
+
+/* ---------- Icon-only mode (mobile / dense UIs) ---------- */
+
+.button.icon-only {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  justify-content: centre;
+}
+
+.button.icon-only span,
+.button.icon-only .label {
+  display: none;
 }
