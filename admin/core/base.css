@@ -1,7 +1,6 @@
 /* =========================================
    BASE / GLOBAL THEME
    ========================================= */
-
 :root {
   --bg: #ffffff;
   --bg-elevated: #f7f7f8;
@@ -9,20 +8,15 @@
   --border-subtle: #e5e7eb;
   --text-main: #111827;
   --text-muted: #6b7280;
-
   --accent: #2563eb;
   --accent-soft: rgba(37, 99, 235, 0.08);
   --accent-border: rgba(37, 99, 235, 0.25);
-
   --danger: #dc2626;
   --danger-soft: #ef4444;
-
   --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.08);
-
   --radius-lg: 16px;
   --radius-md: 10px;
   --radius-pill: 999px;
-
   --transition-fast: 150ms ease-out;
 }
 
@@ -34,20 +28,15 @@
   --border-subtle: #1f2937;
   --text-main: #f9fafb;
   --text-muted: #9ca3af;
-
   --accent: #60a5fa;
   --accent-soft: rgba(96, 165, 250, 0.12);
   --accent-border: rgba(96, 165, 250, 0.35);
-
   --danger: #f97373;
-
   --shadow-soft: 0 22px 55px rgba(0, 0, 0, 0.6);
 }
 
 /* RESET */
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -62,8 +51,7 @@ body {
   background: radial-gradient(circle at top left, #111827 0, #020617 40%, #020617 100%);
 }
 
-th:last-child,
-td:last-child {
+th:last-child, td:last-child {
   text-align: right;
   white-space: nowrap;
 }
@@ -79,9 +67,7 @@ td:last-child {
   min-width: 140px;
 }
 
-input[type="checkbox"] {
-  transform: translateY(1px);
-}
+input[type="checkbox"] { transform: translateY(1px); }
 
 /* UTILITY TAGS */
 .pill {
@@ -93,21 +79,6 @@ input[type="checkbox"] {
   letter-spacing: 0.12em;
 }
 
-.small-btn {
-  padding: 4px 8px;
-  font-size: 12px;
-  cursor: pointer;
-  border-radius: 6px;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-elevated);
-  color: var(--text-main);
-}
-
-.small-btn.danger {
-  background: var(--danger);
-  color: white;
-}
-
 /* Core module container behaviour */
 #content {
   display: flex;
@@ -117,268 +88,60 @@ input[type="checkbox"] {
   height: 100%;
 }
 
-.modal {
-  opacity: 0;
-  transform: scale(0.98);
-  transition: opacity 120ms ease, transform 120ms ease;
-}
-
-.modal:not(.hidden) {
-  opacity: 1;
-  transform: scale(1);
-
 /* =========================================
-   ACTION BUTTON VARIANTS
+   BUTTONS (ICON-ONLY, CONSISTENT)
    ========================================= */
 
 .button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 32px;
   height: 32px;
   padding: 0;
   border-radius: 8px;
   border: 1px solid var(--border-subtle);
   background: var(--bg-elevated);
+  color: var(--text-main);
   cursor: pointer;
-  font-size: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast);
 }
 
-.button:hover {
-  background: var(--bg-soft);
-}
+.button:hover { background: var(--bg-soft); }
 
-.button::before {
-  font-size: 14px;
-}
-
-.button svg {
-  width: 16px;
-  height: 16px;
-}
-.button:focus,
-.button:focus-visible {
+.button:focus, .button:focus-visible {
   outline: none;
   box-shadow: none;
 }
 
-/* Save Button */
-.button.save-btn {
-  background: var(--accent);
-  color: white;
-}
-.button.save-btn:hover {
-  background: #1d4ed8;
-}
-
-/* Edit Button */
-.button.edit-btn {
-  background: #374151;
-  color: white;
-}
-.button.edit-btn:hover {
-  background: #1f2937;
-}
-
-/* Delete Button */
-.button.delete-btn {
-  background: var(--danger);
-  color: white;
-}
-.button.delete-btn:hover {
-  background: #b91c1c;
-}
-.button.delete-btn svg {
-  color: #fee2e2; /* soft red icon */
-}
-
-/* Export Button */
-.button.export-btn {
-  background: var(--bg-elevated);
-  color: var(--text-main);
-  border: 1px solid var(--border-subtle);
-}
-.button.export-btn:hover {
-  background: var(--bg-soft);
-}
-
-/* Cancel button */
-.button.cancel-btn {
-  background: var(--bg-elevated);
-  color: var(--danger-soft);
-  border: 1px solid var(--border-subtle);
-}
-.button.cancel-btn:hover {
-  background: var(--bg-soft);
-}
-
-/* Add button */
-.button.add-btn {
-  background: var(--bg-elevated);
-  color: var(--text-main);
-  border: 1px solid var(--border-subtle);
-}
-.button.add-btn:hover {
-  background: var(--bg-soft);
-}
-
-/* Icon inside buttons */
-.button i,
 .button svg {
-  font-size: 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-}
-
-
-/* =========================================
-   Global button icon system
-   ========================================= */
-
-/* Base spacing so text + icon never clash */
-.button {
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  border: none;
-  transition: background 150ms ease, color 150ms ease, transform 150ms ease;
-}
-
-/* ---------- Action icons ---------- */
-
-.button.add-btn::before {
-  content: "＋";
-  font-weight: 700;
-}
-
-.button.save-btn::before,
-.button.primary::before {
-  content: "✔";
-}
-
-.button.cancel-btn::before,
-.button.secondary::before {
-  content: "✕";
-}
-
-.button.edit-btn {
-  color: var(--text-muted);
-}
-
-.button.edit-btn::before {
-  content: "";
   width: 16px;
   height: 16px;
-  background-color: currentColor;
-  mask: url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
-<path d='M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'/>\
-</svg>") center / contain no-repeat;
+  display: block;
 }
 
-.button.dup-btn {
-  color: var(--accent);
-  border-color: var(--accent-soft);
-}
+/* Specific action colours */
+.button.add-btn { background: var(--accent); color: #fff; border-color: var(--accent-border); box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35); }
+.button.add-btn:hover { background: #1d4ed8; }
 
-.button.dup-btn::before {
-  content: "";
-  width: 16px;
-  height: 16px;
-  background-color: currentColor;
-  mask: url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
-<path d='M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z'/>\
-</svg>") center / contain no-repeat;
-}
+.button.save-btn { background: var(--accent); color: #fff; border-color: var(--accent-border); }
+.button.save-btn:hover { background: #1d4ed8; }
 
-.button.delete-btn {
-  color: var(--danger);
-  border-color: rgba(239,68,68,0.35);
-}
+.button.cancel-btn { background: var(--bg-elevated); color: var(--danger-soft); border-color: var(--border-subtle); }
+.button.cancel-btn:hover { background: var(--bg-soft); }
 
-.button.delete-btn:hover {
-  background: rgba(239,68,68,0.1);
-}
+.button.edit-btn { background: var(--bg-elevated); color: var(--text-muted); }
 
-.button.delete-btn::before {
-  content: "";
-  width: 16px;
-  height: 16px;
-  background-color: currentColor;
-  mask: url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
-<path d='M6 7h12l-1 14H7L6 7zm3-3h6l1 2H8l1-2z'/>\
-</svg>") center / contain no-repeat;
-}
+.button.dup-btn { background: var(--accent); color: #fff; border-color: var(--accent-border); }
+.button.dup-btn:hover { background: #1d4ed8; }
 
-.button.export-btn {
-  color: var(--text-main);
-}
+.button.delete-btn { background: var(--danger); color: #fff; border-color: rgba(239,68,68,0.45); }
+.button.delete-btn:hover { background: #b91c1c; }
 
-.button.export-btn::before,
-.button.download-btn::before,
-.button.ghost::before {
-  content: "";
-  width: 16px;
-  height: 16px;
-  background-color: currentColor;
-  mask: url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
-<path d='M5 20h14v-2H5v2zM12 2v12l4-4 1.4 1.4L12 17.8l-5.4-5.4L8 10l4 4V2h0z'/>\
-</svg>") center / contain no-repeat;
-}
+.button.export-btn { background: var(--bg-elevated); color: var(--text-main); border: 1px solid var(--border-subtle); }
 
+/* Table action spacing */
+td .button + .button { margin-left: 6px; }
 
-.button.reset-btn::before {
-  content: "↺";
-}
-
-.button.view-btn::before {
-  content: "👁";
-}
-
-/* ---------- Tables: spacing + consistency ---------- */
-
-td .button {
-  font-size: 12px;
-  padding: 6px 10px;
-  white-space: nowrap;
-}
-
-td .button + .button {
-  margin-left: 6px;
-}
-
-/* ---------- Icon-only mode (mobile / dense UIs) ---------- */
-
-.button.icon-only {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  justify-content: centre;
-}
-
-.button.icon-only span,
-.button.icon-only .label {
-  display: none;
-}
-
-.actions-col,
-td:last-child {
-  text-align: right;
-  white-space: nowrap;
-}
-
-td .button + .button {
-  margin-left: 6px;
-}
+/* Utility text */
+.muted { color: var(--text-muted); font-size: 13px; }

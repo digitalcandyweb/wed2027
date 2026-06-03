@@ -30,7 +30,7 @@ function renderTable() {
 
   if (!events.length) {
     const row = document.createElement('tr');
-    row.innerHTML = `<td colspan="7" class="muted">No events configured yet.</td>`;
+    row.innerHTML = `<td colspan="7" class="muted" style="text-align:center; padding:40px 10px;">No events configured yet.</td>`;
     tableBody.appendChild(row);
     return;
   }
@@ -45,9 +45,9 @@ function renderTable() {
       <td>${e.visible === false ? 'No' : 'Yes'}</td>
       <td>${escapeHtml(e.notes ?? '—')}</td>
       <td style="text-align:right; white-space:nowrap;">
-        <button class="button edit-btn" data-action="edit" data-id="${e.id}">Edit</button>
-        <button class="button add-btn" data-action="dup" data-id="${e.id}">Duplicate</button>
-        <button class="button delete-btn" data-action="del" data-id="${e.id}">Delete</button>
+        <button class="button edit-btn" data-action="edit" data-id="${e.id}" aria-label="Edit"><svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M3 14.5V17h2.5L15.6 6.9l-2.5-2.5L3 14.5z' fill='currentColor'/><path d='M16.7 5.8a.8.8 0 0 0 0-1.1l-1.4-1.4a.8.8 0 0 0-1.1 0l-1.1 1.1 2.5 2.5 1.1-1.1z' fill='currentColor'/></svg></button>
+        <button class="button dup-btn" data-action="dup" data-id="${e.id}" aria-label="Duplicate"><svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M7 3h9v11H7V3z' stroke='currentColor' stroke-width='2'/><path d='M4 6H3v11h9v-1' stroke='currentColor' stroke-width='2'/></svg></button>
+        <button class="button delete-btn" data-action="del" data-id="${e.id}" aria-label="Delete"><svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M6 7h1v9H6V7zm3 0h1v9H9V7zm3 0h1v9h-1V7z' fill='currentColor'/><path d='M3 5h14v1H3V5zm2-2h8v1H5V3zm2 3h6v11H7V6z' fill='currentColor'/></svg></button>
       </td>
     `;
     tableBody.appendChild(row);
@@ -72,8 +72,6 @@ function openEdit(id) {
   form.location.value = e.location ?? '';
   form.venue.value = e.venue ?? '';
   form.visible.checked = e.visible !== false;
-  // optional notes field if you add it later
-  if (form.notes) form.notes.value = e.notes ?? '';
   openModal(modal);
 }
 
@@ -87,7 +85,6 @@ async function saveEvent(ev) {
     venue: form.venue.value.trim(),
     visible: form.visible.checked
   };
-  if (form.notes) body.notes = form.notes.value.trim();
 
   await apiPost('/admin/api/events/save', body, { loadingLabel: 'Saving event…' });
   toast('Event saved', { type: 'success' });
@@ -130,7 +127,13 @@ function onTableClick(e) {
 }
 
 function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[c]));
 }
 
 export function initEvents() {

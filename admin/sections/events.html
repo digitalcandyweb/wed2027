@@ -1,9 +1,8 @@
-<button id="add-event-btn" class="button add-btn">
-  <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+<button id="add-event-btn" class="button add-btn" title="Add event" aria-label="Add event">
+  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
     <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
   </svg>
 </button>
-
 <div class="events-table-wrapper">
   <table class="events-table">
     <thead>
@@ -21,28 +20,28 @@
   </table>
 </div>
 
-  <!-- EVENT MODAL -->
-  <div id="event-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3 id="event-modal-title">Add Event</h3>
-      <form id="event-form">
-        <label>Event Name<input type="text" name="name" class="input" required></label>
-        <label>Date<input type="date" name="date" class="input" required></label>
-        <label>Location<input type="text" name="location" class="input" required></label>
-        <label>Venue<input type="text" name="venue" class="input"></label>
-        <label class="checkbox-row"><input type="checkbox" name="visible" checked> Visible on site</label>
-        <div class="modal-actions">
-          <button type="submit" class="button save-btn">
-			<svg viewBox="0 0 20 20" fill="none">
-				<path d="M7.5 13.5L4 10l1.4-1.4L7.5 10.7l7.1-7.1L16 5l-8.5 8.5z" fill="currentColor"/>
-			</svg>
-		</button>		
-          <button id="event-cancel" type="button" class="button cancel-btn">
-		  <svg viewBox="0 0 20 20" fill="none">
-			<path d="M5 5l10 10M15 5L5 15" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
-		  </svg>
-		  </button>
-        </div>
-      </form>
-    </div>
+<!-- EVENT MODAL -->
+<div id="event-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3 id="event-modal-title">Add Event</h3>
+    <form id="event-form">
+      <label>Event Name<input type="text" name="name" class="input" required></label>
+      <label>Date<input type="date" name="date" class="input" required></label>
+      <label>Location<input type="text" name="location" class="input" required></label>
+      <label>Venue<input type="text" name="venue" class="input"></label>
+      <label class="checkbox-row"><input type="checkbox" name="visible" checked> Visible on site</label>
+      <div class="modal-actions">
+        <button type="submit" class="button save-btn" title="Save" aria-label="Save">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M7.5 13.5L4 10l1.4-1.4L7.5 10.7l7.1-7.1L16 5l-8.5 8.5z" fill="currentColor"/>
+          </svg>
+        </button>
+        <button id="event-cancel" type="button" class="button cancel-btn" title="Cancel" aria-label="Cancel">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </form>
   </div>
+</div>

@@ -1,4 +1,4 @@
-.rsvp-controls {
+ .rsvp-controls {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -33,15 +33,8 @@
   font-size: 11px;
 }
 
-.rsvp-tag.attending {
-  background: rgba(22, 163, 74, 0.12);
-  color: #16a34a;
-}
-
-.rsvp-tag.not-attending {
-  background: rgba(220, 38, 38, 0.12);
-  color: #dc2626;
-}
+.rsvp-tag.attending { background: rgba(22, 163, 74, 0.12); color: #16a34a; }
+.rsvp-tag.not-attending { background: rgba(220, 38, 38, 0.12); color: #dc2626; }
 
 .rsvp-empty,
 .rsvp-loading,
@@ -50,14 +43,10 @@
   padding: 12px;
   color: var(--text-muted);
 }
-.actions-col {
-  text-align: right;
-  white-space: nowrap;
-}
 
 .rsvp-empty {
-  text-align: centre;
-  padding: 40px 10px;
-  color: var(--text-muted);
+  padding: 48px 16px;
   font-style: italic;
 }
+
+.actions-col { text-align: right; white-space: nowrap; }
