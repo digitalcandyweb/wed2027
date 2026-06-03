@@ -1,30 +1,71 @@
-/* RSVP */
-.rsvp-table-wrapper { border-radius: 10px; overflow: hidden; border: 1px solid var(--border-subtle); background: var(--bg-elevated); }
-.rsvp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.rsvp-table th, .rsvp-table td { padding: 8px 10px; border-bottom: 1px solid var(--border-subtle); }
+/* Tables wrappers */
+.rsvp-table-wrapper,
+.events-table-wrapper,
+.budget-table-wrapper,
+.planner-table-wrapper,
+.vendors-table-wrapper,
+.contacts-table-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  margin-top: 10px;
+}
 
-/* EVENTS */
-.events-table-wrapper { border-radius: 10px; overflow: hidden; border: 1px solid var(--border-subtle); background: var(--bg-elevated); margin-top: 10px; }
-.events-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.events-table th, .events-table td { padding: 8px 10px; border-bottom: 1px solid var(--border-subtle); }
+.rsvp-table,
+.events-table,
+.budget-table,
+.planner-table,
+.vendors-table,
+.contacts-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
 
-/* BUDGET */
-.budget-table-wrapper { border-radius: 10px; overflow: hidden; border: 1px solid var(--border-subtle); background: var(--bg-elevated); margin-top: 10px; }
-.budget-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.budget-table th, .budget-table td { padding: 8px 10px; border-bottom: 1px solid var(--border-subtle); }
+.rsvp-table th, .rsvp-table td,
+.events-table th, .events-table td,
+.budget-table th, .budget-table td,
+.planner-table th, .planner-table td,
+.vendors-table th, .vendors-table td,
+.contacts-table th, .contacts-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
 
-/* PLANNER (minimal) */
+/* Planner (minimal extras) */
 .planner-error, .planner-empty { text-align: center; padding: 12px; color: var(--text-muted); }
 .planner-task-title { font-weight: 600; }
 .planner-task-desc { font-size: 12px; color: var(--text-muted); }
 .planner-overdue { color: #dc2626; font-weight: 600; }
 
-/* VENDORS */
-.vendors-table-wrapper { border-radius: 10px; overflow: hidden; border: 1px solid var(--border-subtle); background: var(--bg-elevated); margin-top: 10px; }
-.vendors-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.vendors-table th, .vendors-table td { padding: 8px 10px; border-bottom: 1px solid var(--border-subtle); }
+/* --- Mobile friendliness: allow horizontal scroll for tables and modals --- */
+@media (max-width: 720px) {
+  .rsvp-table-wrapper,
+  .events-table-wrapper,
+  .budget-table-wrapper,
+  .planner-table-wrapper,
+  .vendors-table-wrapper,
+  .contacts-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 
-/* CONTACTS */
-.contacts-table-wrapper { border-radius: 10px; overflow: hidden; border: 1px solid var(--border-subtle); background: var(--bg-elevated); margin-top: 10px; }
-.contacts-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.contacts-table th, .contacts-table td { padding: 8px 10px; border-bottom: 1px solid var(--border-subtle); }
+  /* Give tables a minimum width so columns don't crush */
+  .rsvp-table { min-width: 720px; }
+  .events-table { min-width: 760px; }
+  .budget-table { min-width: 820px; }
+  .planner-table { min-width: 860px; }
+  .vendors-table { min-width: 760px; }
+  .contacts-table { min-width: 720px; }
+
+  /* Slightly smaller padding for dense tables */
+  .rsvp-table th, .rsvp-table td,
+  .events-table th, .events-table td,
+  .budget-table th, .budget-table td,
+  .planner-table th, .planner-table td,
+  .vendors-table th, .vendors-table td,
+  .contacts-table th, .contacts-table td {
+    padding: 8px 8px;
+  }
+}

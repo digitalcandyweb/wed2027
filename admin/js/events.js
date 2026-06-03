@@ -5,8 +5,10 @@ import { bus } from '../core/bus.js';
 let events = [];
 let vendors = [];
 let rsvps = [];
+let locations = [];
 
 let tableBody, addBtn, modal, form, cancelBtn, modalTitle, vendorsSelect;
+let locationSelect, locationCustomWrap;
 let editingId = null;
 
 const ICON_PENCIL = "<svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M3 14.5V17h2.5L15.6 6.9l-2.5-2.5L3 14.5z' fill='currentColor'/><path d='M16.7 5.8a.8.8 0 0 0 0-1.1l-1.4-1.4a.8.8 0 0 0-1.1 0l-1.1 1.1 2.5 2.5 1.1-1.1z' fill='currentColor'/></svg>";
@@ -24,6 +26,13 @@ async function loadVendors() {
   vendors = Array.isArray(data) ? data : [];
   vendors.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   populateVendorsSelect([]);
+}
+
+async function loadLocations() {
+  const data = await apiGet('/admin/api/locations', { loadingLabel: 'Loading locations…' });
+  locations = Array.isArray(data) ? data : [];
+  locations.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  populateLocationSelect();
 }
 
 async function loadRsvps() {
@@ -49,11 +58,42 @@ function selectedVendorIds() {
   return Array.from(vendorsSelect.selectedOptions).map(o => o.value);
 }
 
+function populateLocationSelect(selectedId) {
+  if (!locationSelect) return;
+  locationSelect.innerHTML = '';
+
+  const optNone = document.createElement('option');
+  optNone.value = '';
+  optNone.textContent = 'Select a location…';
+  locationSelect.appendChild(optNone);
+
+  locations.forEach(loc => {
+    const opt = document.createElement('option');
+    opt.value = loc.id;
+    opt.textContent = loc.name ?? loc.id;
+    locationSelect.appendChild(opt);
+  });
+
+  const optCustom = document.createElement('option');
+  optCustom.value = '__custom__';
+  optCustom.textContent = 'Custom…';
+  locationSelect.appendChild(optCustom);
+
+  if (selectedId) locationSelect.value = selectedId;
+}
+
+function onLocationChange() {
+  const v = locationSelect.value;
+  locationCustomWrap.style.display = (v === '__custom__') ? 'block' : 'none';
+}
+
 function countAttending(eventId) {
-  return rsvps.filter(r => r && r.event === eventId && r.attending === true).reduce((sum, r) => {
-    const g = typeof r.guests === 'number' ? r.guests : parseInt(r.guests ?? '1', 10);
-    return sum + (isNaN(g) ? 1 : g);
-  }, 0);
+  return rsvps
+    .filter(r => r && r.event === eventId && r.attending === true)
+    .reduce((sum, r) => {
+      const g = typeof r.guests === 'number' ? r.guests : parseInt(r.guests ?? '1', 10);
+      return sum + (isNaN(g) ? 1 : g);
+    }, 0);
 }
 
 function capacityLabel(eventObj) {
@@ -71,6 +111,14 @@ function capacityStyle(eventObj) {
   if (ratio >= 1) return 'color: var(--danger); font-weight:700;';
   if (ratio >= 0.85) return 'color: #f59e0b; font-weight:700;';
   return 'color: #16a34a; font-weight:700;';
+}
+
+function locationNameForEvent(e) {
+  if (e.locationId) {
+    const loc = locations.find(x => x.id === e.locationId);
+    if (loc && loc.name) return loc.name;
+  }
+  return e.location ?? '';
 }
 
 async function loadEvents() {
@@ -95,7 +143,7 @@ function renderTable() {
       <td>${e.order ?? (idx + 1)}</td>
       <td>${escapeHtml(e.name ?? '')}</td>
       <td>${e.date ? formatDate(e.date) : '—'}</td>
-      <td>${escapeHtml(e.location ?? '')}</td>
+      <td>${escapeHtml(locationNameForEvent(e))}</td>
       <td>${e.visible === false ? 'No' : 'Yes'}</td>
       <td style="${capacityStyle(e)}">${capacityLabel(e)}</td>
       <td style="text-align:right; white-space:nowrap;">
@@ -114,6 +162,9 @@ function openAdd() {
   form.reset();
   form.visible.checked = true;
   populateVendorsSelect([]);
+  populateLocationSelect('');
+  locationSelect.value = '';
+  onLocationChange();
   openModal(modal);
 }
 
@@ -141,24 +192,38 @@ function openEdit(id) {
   if (!e) return;
   editingId = e.id;
   modalTitle && (modalTitle.textContent = 'Edit Event');
+
   form.name.value = e.name ?? '';
   form.date.value = e.date ?? '';
-  form.location.value = e.location ?? '';
   form.venue.value = e.venue ?? '';
   form.capacity.value = (e.capacity === 0 || e.capacity) ? String(e.capacity) : '';
   form.visible.checked = e.visible !== false;
   form.timeline.value = timelineToText(e.timeline);
+
   populateVendorsSelect(e.vendorIds);
+
+  // Locations
+  populateLocationSelect(e.locationId || '');
+  locationSelect.value = e.locationId || (e.location ? '__custom__' : '');
+  form.location.value = e.location ?? '';
+  onLocationChange();
+
   openModal(modal);
 }
 
 async function saveEvent(ev) {
   ev.preventDefault();
+
+  const locChoice = locationSelect.value;
+  const locId = (locChoice && locChoice !== '__custom__') ? locChoice : null;
+  const locName = locId ? (locations.find(x => x.id === locId)?.name || '') : form.location.value.trim();
+
   const body = {
     id: editingId,
     name: form.name.value.trim(),
     date: form.date.value || null,
-    location: form.location.value.trim(),
+    locationId: locId,
+    location: locName,
     venue: form.venue.value.trim(),
     visible: form.visible.checked,
     capacity: form.capacity.value !== '' ? Number(form.capacity.value) : null,
@@ -206,13 +271,7 @@ function onTableClick(e) {
 }
 
 function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  }[c]));
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
 
 export async function initEvents() {
@@ -223,6 +282,8 @@ export async function initEvents() {
   cancelBtn = document.getElementById('event-cancel');
   modalTitle = document.getElementById('event-modal-title');
   vendorsSelect = document.getElementById('event-vendors');
+  locationSelect = document.getElementById('event-location-id');
+  locationCustomWrap = document.getElementById('event-location-custom-wrap');
 
   if (!tableBody || !addBtn || !modal || !form) return;
 
@@ -231,12 +292,20 @@ export async function initEvents() {
   form.addEventListener('submit', saveEvent);
   tableBody.addEventListener('click', onTableClick);
 
-  await Promise.all([loadVendors(), loadRsvps()]);
+  locationSelect?.addEventListener('change', onLocationChange);
+
+  await Promise.all([loadVendors(), loadLocations(), loadRsvps()]);
   await loadEvents();
 
   bus.on('vendors:updated', (v) => {
     vendors = Array.isArray(v) ? v : vendors;
     populateVendorsSelect(selectedVendorIds());
+  });
+
+  bus.on('locations:updated', (l) => {
+    locations = Array.isArray(l) ? l : locations;
+    populateLocationSelect(locationSelect?.value);
+    renderTable();
   });
 
   bus.on('rsvp:updated', (list) => {

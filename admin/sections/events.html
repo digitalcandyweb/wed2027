@@ -28,7 +28,15 @@
     <form id="event-form">
       <label>Event Name<input type="text" name="name" class="input" required></label>
       <label>Date<input type="date" name="date" class="input" required></label>
-      <label>Location<input type="text" name="location" class="input" required></label>
+
+      <label>Location
+        <select id="event-location-id" name="locationId" class="input"></select>
+      </label>
+
+      <div id="event-location-custom-wrap" style="display:none;">
+        <label>Custom location name<input type="text" name="location" class="input" placeholder="e.g. Stirling, Perth"></label>
+      </div>
+
       <label>Venue<input type="text" name="venue" class="input"></label>
       <label>Capacity (optional)<input type="number" name="capacity" class="input" min="0" placeholder="e.g. 80"></label>
 

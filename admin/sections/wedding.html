@@ -26,30 +26,73 @@
   <div class="settings-section">
     <button class="settings-accordion">Key Dates</button>
     <div class="settings-panel">
-      <label>London Ceremony Date</label>
-      <input id="wed-date-london" class="input" type="date">
+      <label>Engagement Date</label>
+      <input id="wed-date-engagement" class="input" type="date">
 
-      <label>London Celebration Date</label>
-      <input id="wed-date-london2" class="input" type="date">
+      <label>Wedding Date</label>
+      <input id="wed-date-wedding" class="input" type="date">
 
-      <label>Perth Celebration Date</label>
-      <input id="wed-date-perth" class="input" type="date">
+      <label>Celebration Date</label>
+      <input id="wed-date-celebration" class="input" type="date">
 
-      <p class="settings-hint">Dates can be referenced on the public site and in planning.</p>
+      <p class="settings-hint">These dates can be referenced on the public site and in planning.</p>
     </div>
   </div>
 
   <div class="settings-section">
     <button class="settings-accordion">Locations</button>
     <div class="settings-panel">
-      <label>London Location</label>
-      <input id="wed-loc-london" class="input" placeholder="Waltham Forest Town Hall">
+      <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+        <button id="add-location-btn" class="button add-btn" title="Add location" aria-label="Add location">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="settings-hint" style="margin:0;">Create reusable locations for events (name + maps + website).</div>
+      </div>
 
-      <label>Perth Location</label>
-      <input id="wed-loc-perth" class="input" placeholder="Stirling, Perth">
+      <div class="table-wrapper" style="overflow-x:auto; border-radius:10px; border:1px solid var(--border-subtle);">
+        <table class="vendors-table" style="min-width:720px;">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Google Maps URL</th>
+              <th>Website</th>
+              <th style="text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="locations-table-body"></tbody>
+        </table>
+      </div>
 
-      <label>General Notes (HTML allowed)</label>
+      <label style="margin-top:14px;">General Notes (HTML allowed)</label>
       <textarea id="wed-notes" class="input" style="min-height:120px;"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- LOCATION MODAL -->
+<div id="location-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3 id="location-modal-title">Add Location</h3>
+    <input type="hidden" id="location-id">
+
+    <label>Name</label>
+    <input id="location-name" class="input" placeholder="Waltham Forest Town Hall">
+
+    <label>Google Maps URL</label>
+    <input id="location-maps" class="input" placeholder="https://maps.google.com/...">
+
+    <label>Website</label>
+    <input id="location-website" class="input" placeholder="https://...">
+
+    <div class="modal-actions">
+      <button id="location-save" class="button save-btn" title="Save" aria-label="Save">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 13.5L4 10l1.4-1.4L7.5 10.7l7.1-7.1L16 5l-8.5 8.5z" fill="currentColor"/></svg>
+      </button>
+      <button id="location-cancel" class="button cancel-btn" title="Cancel" aria-label="Cancel">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
     </div>
   </div>
 </div>
