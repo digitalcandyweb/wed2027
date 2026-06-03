@@ -16,17 +16,17 @@
     <h2>Your Response</h2>
     <p>Please fill out the form below to let us know your plans.</p>
 
-    <form action="/rsvp-submit" method="POST" class="rsvp-form" id="rsvpForm">
+    <form action="/rsvp-submit" method="POST" class="rsvp-form" id="rsvpForm" novalidate>
       <input type="hidden" name="form-name" value="wedding-rsvp">
 
       <label for="name">Full Name</label>
-      <input id="name" type="text" name="name" required>
+      <input id="name" type="text" name="name" required autocomplete="name">
 
       <label for="email">Email Address</label>
-      <input id="email" type="email" name="email" required>
+      <input id="email" type="email" name="email" required autocomplete="email">
 
       <label for="phone">Phone number (optional)</label>
-      <input id="phone" type="tel" name="phone">
+      <input id="phone" type="tel" name="phone" autocomplete="tel">
 
       <label for="event">Which event are you replying for?</label>
       <select id="event" name="event" required>
@@ -46,7 +46,7 @@
       <textarea id="message" name="message" rows="4"></textarea>
 
       <button type="submit" class="button">Submit RSVP</button>
-      <p id="rsvpStatus" class="section-intro" style="display:none;"></p>
+      <p id="rsvpStatus" class="section-intro" style="display:none; margin-top:12px;"></p>
     </form>
 
     <p class="contact-note">If you have any questions, feel free to email us at <strong>rsvp@digitalcandy.win</strong></p>
@@ -61,24 +61,28 @@
   </footer>
 
   <script>
-    (async function hydrateRsvpEvents(){
+    async function hydrateRsvpEvents() {
       const select = document.getElementById('event');
       try {
         const res = await fetch('/api/events', { headers: { 'Accept': 'application/json' } });
+        if (!res.ok) throw new Error('Events fetch failed: ' + res.status);
         const data = await res.json();
         const events = Array.isArray(data) ? data : (data.events || []);
         select.innerHTML = '<option value="">Please select…</option>';
-        events.forEach(ev => {
+        for (const ev of events) {
           const opt = document.createElement('option');
           opt.value = ev.id;
-          opt.textContent = ev.date ? `${ev.name} – ${ev.date}` : (ev.name || ev.id);
+          const dateText = ev.date ? ` – ${ev.date}` : '';
+          opt.textContent = `${ev.name || ev.id}${dateText}`;
           select.appendChild(opt);
-        });
+        }
       } catch (e) {
         select.innerHTML = '<option value="">Unable to load events</option>';
         console.error(e);
       }
-    })();
+    }
+
+    hydrateRsvpEvents();
 
     document.getElementById('rsvpForm')?.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -94,10 +98,11 @@
           headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
           body
         });
-        const out = await res.json();
-        if (!res.ok) throw new Error(out?.error || 'Submit failed');
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(out?.error || `Submit failed (${res.status})`);
         status.textContent = 'Thank you! Your RSVP has been recorded.';
         form.reset();
+        await hydrateRsvpEvents();
       } catch (err) {
         status.textContent = 'Sorry — we could not submit your RSVP. Please try again.';
         console.error(err);

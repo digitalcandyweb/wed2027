@@ -21,8 +21,10 @@
     </ul>
   </nav>
 
+  <!-- Overlay when menu is open -->
   <div class="overlay" id="overlay"></div>
 
+  <!-- Top bar with burger -->
   <header class="top-bar">
     <button class="burger" id="burgerBtn" aria-label="Open menu">
       <span></span><span></span><span></span>
@@ -30,6 +32,7 @@
     <div class="top-bar-title">Claire & Brad</div>
   </header>
 
+  <!-- Hero / intro -->
   <section class="hero main-hero" id="top">
     <div class="hero-inner">
       <p class="eyebrow">Save the Date</p>
@@ -38,10 +41,10 @@
     </div>
   </section>
 
+  <!-- Events section (static for now) -->
   <section class="section" id="events">
     <h2>Our Events</h2>
 
-    <!-- NOTE: these cards are still static for now; next iteration will render from /api/events -->
     <article class="event-card">
       <div class="event-header">
         <h3>London Wedding</h3>
@@ -81,21 +84,22 @@
     </article>
   </section>
 
+  <!-- RSVP section -->
   <section class="section" id="rsvp">
     <h2>RSVP</h2>
     <p class="section-intro">We’d love to know your plans. Please reply by filling in the form below.</p>
 
-    <form action="/rsvp-submit" method="POST" class="rsvp-form" id="rsvpForm">
+    <form action="/rsvp-submit" method="POST" class="rsvp-form" id="rsvpForm" novalidate>
       <input type="hidden" name="form-name" value="wedding-rsvp">
 
       <label for="name">Full name</label>
-      <input id="name" type="text" name="name" required>
+      <input id="name" type="text" name="name" required autocomplete="name">
 
       <label for="email">Email address</label>
-      <input id="email" type="email" name="email" required>
+      <input id="email" type="email" name="email" required autocomplete="email">
 
       <label for="phone">Phone number (optional)</label>
-      <input id="phone" type="tel" name="phone">
+      <input id="phone" type="tel" name="phone" autocomplete="tel">
 
       <label for="event">Which event are you replying for?</label>
       <select id="event" name="event" required>
@@ -115,17 +119,19 @@
       <textarea id="message" name="message" rows="4" placeholder="Dietary needs, song requests, travel notes…"></textarea>
 
       <button type="submit" class="button primary">Submit RSVP</button>
-      <p id="rsvpStatus" class="section-intro" style="display:none;"></p>
+      <p id="rsvpStatus" class="section-intro" style="display:none; margin-top:12px;"></p>
     </form>
 
     <p class="contact-note">Questions? Email us at <strong>rsvp@digitalcandy.win</strong></p>
   </section>
 
+  <!-- More to come -->
   <section class="section" id="more">
     <h2>More to come</h2>
     <p class="section-intro">Travel tips, accommodation suggestions and more details will be added here closer to the date.</p>
   </section>
 
+  <!-- Footer -->
   <footer class="footer">
     <img src="cb-logo-gold.png" alt="C+B Monogram" class="logo footer-logo">
     <p>© 2027 Claire & Brad Wedding · digitalcandy.win</p>
@@ -155,7 +161,7 @@
     overlay.addEventListener('click', closeMenu);
     menuLinks.forEach(link => link.addEventListener('click', closeMenu));
 
-    // Carousel logic
+    // Carousel logic (single carousel for now)
     document.querySelectorAll('[data-carousel]').forEach(carousel => {
       const images = carousel.querySelectorAll('.carousel-image');
       const dots = carousel.querySelectorAll('.dot');
@@ -169,32 +175,37 @@
         index = i;
       }
 
-      prevBtn.addEventListener('click', () => showSlide((index - 1 + images.length) % images.length));
-      nextBtn.addEventListener('click', () => showSlide((index + 1) % images.length));
+      prevBtn?.addEventListener('click', () => showSlide((index - 1 + images.length) % images.length));
+      nextBtn?.addEventListener('click', () => showSlide((index + 1) % images.length));
       dots.forEach((dot, idx) => dot.addEventListener('click', () => showSlide(idx)));
     });
 
-    // Populate RSVP events from worker (ensures IDs match admin capacity tracking)
-    (async function hydrateRsvpEvents(){
+    // Populate RSVP events from Worker public endpoint
+    async function hydrateRsvpEvents() {
       const select = document.getElementById('event');
       try {
         const res = await fetch('/api/events', { headers: { 'Accept': 'application/json' } });
+        if (!res.ok) throw new Error('Events fetch failed: ' + res.status);
         const data = await res.json();
         const events = Array.isArray(data) ? data : (data.events || []);
+
         select.innerHTML = '<option value="">Please select…</option>';
-        events.forEach(ev => {
+        for (const ev of events) {
           const opt = document.createElement('option');
           opt.value = ev.id;
-          opt.textContent = ev.date ? `${ev.name} – ${ev.date}` : (ev.name || ev.id);
+          const dateText = ev.date ? ` – ${ev.date}` : '';
+          opt.textContent = `${ev.name || ev.id}${dateText}`;
           select.appendChild(opt);
-        });
+        }
       } catch (e) {
         select.innerHTML = '<option value="">Unable to load events</option>';
         console.error(e);
       }
-    })();
+    }
 
-    // Optional: Ajax submit (keeps you on page, still posts to /rsvp-submit)
+    hydrateRsvpEvents();
+
+    // AJAX submit (easier testing)
     document.getElementById('rsvpForm')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const form = e.currentTarget;
@@ -209,10 +220,12 @@
           headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
           body
         });
-        const out = await res.json();
-        if (!res.ok) throw new Error(out?.error || 'Submit failed');
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(out?.error || `Submit failed (${res.status})`);
         status.textContent = 'Thank you! Your RSVP has been recorded.';
         form.reset();
+        // Re-hydrate events because reset clears select
+        await hydrateRsvpEvents();
       } catch (err) {
         status.textContent = 'Sorry — we could not submit your RSVP. Please try again.';
         console.error(err);
