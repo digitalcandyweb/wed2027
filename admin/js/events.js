@@ -8,33 +8,39 @@ let vendors = [];
 let tableBody, addBtn, modal, form, cancelBtn, modalTitle, vendorsSelect;
 let editingId = null;
 
+const ICON_PENCIL = "<svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M3 14.5V17h2.5L15.6 6.9l-2.5-2.5L3 14.5z' fill='currentColor'/><path d='M16.7 5.8a.8.8 0 0 0 0-1.1l-1.4-1.4a.8.8 0 0 0-1.1 0l-1.1 1.1 2.5 2.5 1.1-1.1z' fill='currentColor'/></svg>";
+const ICON_COPY = "<svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M7 3h9v11H7V3z' stroke='currentColor' stroke-width='2'/><path d='M4 6H3v11h9v-1' stroke='currentColor' stroke-width='2'/></svg>";
+const ICON_BIN = "<svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M6 7h1v9H6V7zm3 0h1v9H9V7zm3 0h1v9h-1V7z' fill='currentColor'/><path d='M3 5h14v1H3V5zm2-2h8v1H5V3zm2 3h6v11H7V6z' fill='currentColor'/></svg>";
+
 function formatDate(iso) {
   if (!iso) return '—';
-  try {
-    const d = new Date(iso);
-    return isNaN(d) ? iso : d.toLocaleDateString();
-  } catch {
-    return iso;
-  }
+  const d = new Date(iso);
+  return isNaN(d) ? String(iso) : d.toLocaleDateString();
 }
 
 async function loadVendors() {
   const data = await apiGet('/admin/api/vendors', { loadingLabel: 'Loading vendors…' });
   vendors = Array.isArray(data) ? data : [];
   vendors.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  populateVendorsSelect();
+  populateVendorsSelect([]);
 }
 
-function populateVendorsSelect(selectedIds = []) {
+function populateVendorsSelect(selectedIds) {
   if (!vendorsSelect) return;
+  const selected = new Set(Array.isArray(selectedIds) ? selectedIds : []);
   vendorsSelect.innerHTML = '';
   vendors.forEach(v => {
     const opt = document.createElement('option');
     opt.value = v.id;
     opt.textContent = v.name ?? v.id;
-    if (selectedIds.includes(v.id)) opt.selected = true;
+    opt.selected = selected.has(v.id);
     vendorsSelect.appendChild(opt);
   });
+}
+
+function selectedVendorIds() {
+  if (!vendorsSelect) return [];
+  return Array.from(vendorsSelect.selectedOptions).map(o => o.value);
 }
 
 async function loadEvents() {
@@ -48,62 +54,52 @@ async function loadEvents() {
 
 function renderTable() {
   tableBody.innerHTML = '';
-
   if (!events.length) {
-    const row = document.createElement('tr');
-    row.innerHTML = `<td colspan="7" class="muted" style="text-align:center; padding:40px 10px;">No events configured yet.</td>`;
-    tableBody.appendChild(row);
+    tableBody.innerHTML = `<tr><td colspan="7" class="muted" style="text-align:center; padding:40px 10px;">No events configured yet.</td></tr>`;
     return;
   }
 
   events.forEach((e, idx) => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
+    const tr = document.createElement('tr');
+    const cap = (e.capacity === 0 || e.capacity) ? Number(e.capacity) : '—';
+    tr.innerHTML = `
       <td>${e.order ?? (idx + 1)}</td>
       <td>${escapeHtml(e.name ?? '')}</td>
       <td>${e.date ? formatDate(e.date) : '—'}</td>
       <td>${escapeHtml(e.location ?? '')}</td>
       <td>${e.visible === false ? 'No' : 'Yes'}</td>
-      <td>${(e.capacity != null && e.capacity !== '') ? Number(e.capacity) : '—'}</td>
+      <td>${cap}</td>
       <td style="text-align:right; white-space:nowrap;">
-        <button class="button edit-btn" data-action="edit" data-id="${e.id}" aria-label="Edit"><svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M3 14.5V17h2.5L15.6 6.9l-2.5-2.5L3 14.5z' fill='currentColor'/><path d='M16.7 5.8a.8.8 0 0 0 0-1.1l-1.4-1.4a.8.8 0 0 0-1.1 0l-1.1 1.1 2.5 2.5 1.1-1.1z' fill='currentColor'/></svg></button>
-        <button class="button dup-btn" data-action="dup" data-id="${e.id}" aria-label="Duplicate"><svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M7 3h9v11H7V3z' stroke='currentColor' stroke-width='2'/><path d='M4 6H3v11h9v-1' stroke='currentColor' stroke-width='2'/></svg></button>
-        <button class="button delete-btn" data-action="del" data-id="${e.id}" aria-label="Delete"><svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M6 7h1v9H6V7zm3 0h1v9H9V7zm3 0h1v9h-1V7z' fill='currentColor'/><path d='M3 5h14v1H3V5zm2-2h8v1H5V3zm2 3h6v11H7V6z' fill='currentColor'/></svg></button>
+        <button class="button edit-btn" data-action="edit" data-id="${e.id}" aria-label="Edit">${ICON_PENCIL}</button>
+        <button class="button dup-btn" data-action="dup" data-id="${e.id}" aria-label="Duplicate">${ICON_COPY}</button>
+        <button class="button delete-btn" data-action="del" data-id="${e.id}" aria-label="Delete">${ICON_BIN}</button>
       </td>
     `;
-    tableBody.appendChild(row);
+    tableBody.appendChild(tr);
   });
 }
 
 function openAdd() {
   editingId = null;
-  if (modalTitle) modalTitle.textContent = 'Add Event';
+  modalTitle && (modalTitle.textContent = 'Add Event');
   form.reset();
   form.visible.checked = true;
   populateVendorsSelect([]);
   openModal(modal);
 }
 
-function openEdit(id) {
-  const e = events.find(ev => ev.id === id);
-  if (!e) return;
-  editingId = e.id;
-  if (modalTitle) modalTitle.textContent = 'Edit Event';
-  form.name.value = e.name ?? '';
-  form.date.value = e.date ?? '';
-  form.location.value = e.location ?? '';
-  form.venue.value = e.venue ?? '';
-  form.capacity.value = e.capacity ?? '';
-  form.visible.checked = e.visible !== false;
-  form.timeline.value = Array.isArray(e.timeline) ? e.timeline.map(x => (typeof x === 'string' ? x : `${x.time || ''}${x.time ? ' - ' : ''}${x.label || ''}`)).join('
-') : (e.timelineText || '');
-  populateVendorsSelect(Array.isArray(e.vendorIds) ? e.vendorIds : []);
-  openModal(modal);
+function timelineToText(timeline) {
+  if (!Array.isArray(timeline)) return '';
+  return timeline.map(item => {
+    if (typeof item === 'string') return item;
+    const time = item && item.time ? String(item.time) : '';
+    const label = item && item.label ? String(item.label) : '';
+    return time ? `${time} - ${label}`.trim() : label;
+  }).join('\n');
 }
 
 function parseTimeline(text) {
-  const lines = String(text || '').split('
-').map(l => l.trim()).filter(Boolean);
+  const lines = String(text || '').split('\n').map(l => l.trim()).filter(Boolean);
   return lines.map(line => {
     const m = line.match(/^([0-2]?\d:[0-5]\d)\s*-\s*(.+)$/);
     if (m) return { time: m[1], label: m[2] };
@@ -111,9 +107,20 @@ function parseTimeline(text) {
   });
 }
 
-function selectedVendorIds() {
-  if (!vendorsSelect) return [];
-  return Array.from(vendorsSelect.selectedOptions).map(o => o.value);
+function openEdit(id) {
+  const e = events.find(ev => ev.id === id);
+  if (!e) return;
+  editingId = e.id;
+  modalTitle && (modalTitle.textContent = 'Edit Event');
+  form.name.value = e.name ?? '';
+  form.date.value = e.date ?? '';
+  form.location.value = e.location ?? '';
+  form.venue.value = e.venue ?? '';
+  form.capacity.value = (e.capacity === 0 || e.capacity) ? String(e.capacity) : '';
+  form.visible.checked = e.visible !== false;
+  form.timeline.value = timelineToText(e.timeline);
+  populateVendorsSelect(e.vendorIds);
+  openModal(modal);
 }
 
 async function saveEvent(ev) {
@@ -147,14 +154,13 @@ async function deleteEvent(id) {
 async function duplicateEvent(id) {
   const original = events.find(e => e.id === id);
   if (!original) return;
-
+  const maxOrder = events.reduce((m, x) => Math.max(m, Number(x.order ?? 0)), 0);
   const copy = {
     ...original,
     id: crypto.randomUUID(),
     name: `${original.name ?? 'Event'} (copy)`,
-    order: (events.length ? Math.max(...events.map(x => x.order ?? 0)) : 0) + 1
+    order: maxOrder + 1
   };
-
   await apiPost('/admin/api/events/save', copy, { loadingLabel: 'Duplicating event…' });
   toast('Event duplicated', { type: 'success' });
   await loadEvents();
@@ -199,6 +205,7 @@ export async function initEvents() {
   await loadVendors();
   await loadEvents();
 
+  // If vendors update elsewhere, refresh select
   bus.on('vendors:updated', (v) => {
     vendors = Array.isArray(v) ? v : vendors;
     populateVendorsSelect(selectedVendorIds());
