@@ -9,6 +9,12 @@ import { initPlanner } from "../js/planner.js";
 import { initSettings } from "../js/settings.js";
 import { initEdit } from "../js/edit.js";
 
+// Shared UI + mobile nav
+import { initUI } from "./ui.js";
+import { initMobileNav } from "./mobile-nav.js";
+
+initUI();
+initMobileNav();
 
 // ===============================
 // THEME TOGGLE
@@ -16,6 +22,7 @@ import { initEdit } from "../js/edit.js";
 (function () {
   const root = document.documentElement;
   const toggle = document.getElementById("theme-toggle");
+  if (!toggle) return;
 
   function applyTheme(mode) {
     root.setAttribute("data-theme", mode);
@@ -39,13 +46,13 @@ import { initEdit } from "../js/edit.js";
   });
 })();
 
-
 // ===============================
 // USER MENU
 // ===============================
 (function () {
   const toggle = document.getElementById("user-menu-toggle");
   const menu = document.getElementById("user-menu");
+  if (!toggle || !menu) return;
 
   toggle.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -60,20 +67,17 @@ import { initEdit } from "../js/edit.js";
   });
 })();
 
-
 // ===============================
-// SIDEBAR COLLAPSE
+// SIDEBAR COLLAPSE (desktop)
 // ===============================
 (function () {
   const sidebar = document.querySelector(".sidebar");
   const toggle = document.getElementById("sidebar-toggle");
   if (!sidebar || !toggle) return;
-
   toggle.addEventListener("click", () => {
     sidebar.classList.toggle("collapsed");
   });
 })();
-
 
 // ===============================
 // MODULE LOADER
@@ -94,89 +98,60 @@ export async function loadSection(section) {
     if (section === "planner") initPlanner();
     if (section === "settings") initSettings();
     if (section === "edit") initEdit();
-
   } catch (err) {
     container.innerHTML = `<p style="color:var(--danger);">Failed to load section: ${section}</p>`;
     console.error(err);
   }
 }
 
-
 // ===============================
 // NAVIGATION + TITLE UPDATES
 // ===============================
 (function () {
   const navItems = document.querySelectorAll(".nav-item");
-
   const contentTitle = document.getElementById("content-title");
   const contentSubtitle = document.getElementById("content-subtitle");
   const topbarChip = document.getElementById("topbar-chip-text");
   const rsvpSummary = document.getElementById("rsvp-summary");
 
   const meta = {
-    dashboard: {
-      title: "Dashboard overview",
-      subtitle: "High-level view of attendance and events.",
-      chip: "Dashboard",
-      showSummary: false
-    },
-    rsvp: {
-      title: "RSVP Manager",
-      subtitle: "View, filter and export guest responses for all events.",
-      chip: "Guests & responses",
-      showSummary: true
-    },
-    events: {
-      title: "Events",
-      subtitle: "Manage event names, dates, locations and visibility.",
-      chip: "Event configuration",
-      showSummary: false
-    },
-    edit: {
-      title: "Edit Website Content",
-      subtitle: "Update hero text, event details, travel info and more.",
-      chip: "Copy & layout",
-      showSummary: false
-    },
-    budget: {
-      title: "Budget & Cost Tracker",
-      subtitle: "Track all wedding-related expenses.",
-      chip: "Money & commitments",
-      showSummary: false
-    },
-    planner: {
-      title: "Planner & Timeline",
-      subtitle: "Organise tasks, due dates and timelines.",
-      chip: "Tasks & milestones",
-      showSummary: false
-    },
-    settings: {
-      title: "Website Settings",
-      subtitle: "Configure site-wide options and event blocks.",
-      chip: "Configuration",
-      showSummary: false
-    }
+    dashboard: { title: "Dashboard overview", subtitle: "High-level view of attendance and events.", chip: "Dashboard", showSummary: false },
+    rsvp: { title: "RSVP Manager", subtitle: "View, filter and export guest responses for all events.", chip: "Guests & responses", showSummary: true },
+    events: { title: "Events", subtitle: "Manage event names, dates, locations and visibility.", chip: "Event configuration", showSummary: false },
+    edit: { title: "Edit Website Content", subtitle: "Update hero text, event details, travel info and more.", chip: "Copy & layout", showSummary: false },
+    budget: { title: "Budget & Cost Tracker", subtitle: "Track all wedding-related expenses.", chip: "Money & commitments", showSummary: false },
+    planner: { title: "Planner & Timeline", subtitle: "Organise tasks, due dates and timelines.", chip: "Tasks & milestones", showSummary: false },
+    settings: { title: "Website Settings", subtitle: "Configure site-wide options and event blocks.", chip: "Configuration", showSummary: false }
   };
 
   navItems.forEach(item => {
+    // make nav items keyboard focusable
+    item.setAttribute('tabindex', '0');
+
     item.addEventListener("click", () => {
       const section = item.getAttribute("data-section");
-
       navItems.forEach(i => i.classList.remove("active"));
       item.classList.add("active");
 
       const m = meta[section];
       if (m) {
-        contentTitle.textContent = m.title;
-        contentSubtitle.textContent = m.subtitle;
-        topbarChip.textContent = m.chip;
-        rsvpSummary.style.display = m.showSummary ? "flex" : "none";
+        if (contentTitle) contentTitle.textContent = m.title;
+        if (contentSubtitle) contentSubtitle.textContent = m.subtitle;
+        if (topbarChip) topbarChip.textContent = m.chip;
+        if (rsvpSummary) rsvpSummary.style.display = m.showSummary ? "flex" : "none";
       }
 
       loadSection(section);
     });
+
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        item.click();
+      }
+    });
   });
 
-  // ⭐ Load dashboard by default
+  // Load dashboard by default
   loadSection("dashboard");
 })();

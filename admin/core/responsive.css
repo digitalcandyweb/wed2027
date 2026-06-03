@@ -1,10 +1,63 @@
 /* =========================================
-   RESPONSIVE
-   ========================================= */
+ RESPONSIVE
+ ========================================= */
+
+/* Hide mobile nav button by default (desktop) */
+#mobile-nav-toggle { display: none; }
+#mobile-nav-overlay { display: none; }
 
 @media (max-width: 900px) {
+  /* Turn sidebar into an off-canvas drawer instead of hiding it */
   .sidebar {
+    display: flex; /* overrides previous display:none */
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    height: 100vh;
+    z-index: 3000;
+    transform: translateX(-110%);
+    transition: transform var(--transition-fast);
+    width: 260px;
+    max-width: 85vw;
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* Hide desktop collapse button on mobile (use topbar hamburger) */
+  .sidebar-toggle {
     display: none;
+  }
+
+  /* Mobile overlay */
+  #mobile-nav-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(2px);
+    z-index: 2999;
+    display: none;
+  }
+
+  body.nav-open #mobile-nav-overlay {
+    display: block;
+  }
+
+  body.nav-open {
+    overflow: hidden;
+  }
+
+  /* Show hamburger in topbar on mobile */
+  #mobile-nav-toggle {
+    display: inline-flex;
+    width: 34px;
+    height: 34px;
+    align-items: centre;
+    justify-content: centre;
+    border-radius: 10px;
+    padding: 0;
   }
 
   .main {
@@ -15,6 +68,7 @@
     padding: 14px 14px 16px;
   }
 
+  /* keep your existing RSVP table column hiding */
   .rsvp-table {
     font-size: 12px;
   }
@@ -26,3 +80,4 @@
     display: none;
   }
 }
+``
