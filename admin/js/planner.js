@@ -97,10 +97,17 @@ function renderTable() {
             <path d="M4 13.5V16h2.5l7.4-7.4-2.5-2.5L4 13.5zM17.3 6.3c.4-.4.4-1 0-1.4l-2.2-2.2a1 1 0 0 0-1.4 0l-1.8 1.8 3.6 3.6 1.8-1.8z" fill="currentColor"/>
           </svg>
         </button>
+
         <button class="button delete-btn" data-delete="${t.id}">
           <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
             <path d="M6 7h1v9H6V7zm3 0h1v9H9V7zm3 0h1v9h-1V7z" fill="currentColor"/>
             <path d="M3 5h14v1H3V5zm2-2h8v1H5V3zm2 3h6v11H7V6z" fill="currentColor"/>
+          </svg>
+        </button>
+
+        <button class="button duplicate-btn" data-duplicate="${t.id}">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+            <path d="M4 4h9v9H4V4zm3 3h9v9H7V7z" stroke="currentColor" stroke-width="2"/>
           </svg>
         </button>
       </td>
@@ -110,6 +117,7 @@ function renderTable() {
 
   attachRowHandlers();
 }
+
 
 function getEventName(id) {
   const ev = events.find(e => e.id === id);
@@ -124,7 +132,12 @@ function attachRowHandlers() {
   document.querySelectorAll("[data-delete]").forEach(btn => {
     btn.addEventListener("click", () => openDelete(btn.dataset.delete));
   });
+
+  document.querySelectorAll("[data-duplicate]").forEach(btn => {
+    btn.addEventListener("click", () => duplicateTask(btn.dataset.duplicate));
+  });
 }
+
 
 function openAdd() {
   idInput.value = "";
@@ -139,7 +152,12 @@ function openAdd() {
 
   modalTitle.textContent = "Add Task";
   modal.classList.remove("hidden");
+
+  setTimeout(() => {
+    modal.querySelector("input, textarea, select")?.focus();
+  }, 10);
 }
+
 
 function openEdit(id) {
   const t = tasks.find(x => x.id === id);
@@ -157,13 +175,28 @@ function openEdit(id) {
 
   modalTitle.textContent = "Edit Task";
   modal.classList.remove("hidden");
+
+  setTimeout(() => {
+    modal.querySelector("input, textarea, select")?.focus();
+  }, 10);
 }
-function duplicateItem(item) {
-  const copy = { ...item, id: crypto.randomUUID() };
-  items.push(copy);
-  saveItems();
+
+
+function duplicateTask(id) {
+  const original = tasks.find(t => t.id === id);
+  if (!original) return;
+
+  const copy = {
+    ...original,
+    id: crypto.randomUUID(),
+    order: tasks.length + 1
+  };
+
+  tasks.push(copy);
+  saveTasks();
   renderTable();
 }
+
 function openDelete(id) {
   taskToDelete = id;
   deleteModal.classList.remove("hidden");

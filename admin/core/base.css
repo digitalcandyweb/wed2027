@@ -73,6 +73,10 @@ body {
   min-width: 140px;
 }
 
+input[type="checkbox"] {
+  transform: translateY(1px);
+}
+
 /* GLOBAL BUTTONS 
 .button {
   padding: 6px 12px;
@@ -223,4 +227,15 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.modal {
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.modal:not(.hidden) {
+  opacity: 1;
+  transform: scale(1);
 }
