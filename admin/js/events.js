@@ -38,7 +38,7 @@ function renderTable() {
     row.innerHTML = `
       <td>${e.order ?? "—"}</td>
       <td>${e.name}</td>
-      <td>${e.date}</td>
+	  <td>${e.date ? formatDate(e.date) : "—"}</td>
       <td>${e.location}</td>
       <td>${e.visible ? "Yes" : "No"}</td>
       <td>${e.notes || "—"}</td>
@@ -107,7 +107,7 @@ async function saveEvent(e) {
   const body = {
     id: editingId,
     name: form.name.value,
-    date: form.date.value,
+    date: form.date.value || null,
     location: form.location.value,
     venue: form.venue.value,
     visible: form.visible.checked

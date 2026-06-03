@@ -61,3 +61,13 @@
   align-items: center;
   margin-bottom: 10px;
 }
+.modal {
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.modal:not(.hidden) {
+  opacity: 1;
+  transform: scale(1);
+}
