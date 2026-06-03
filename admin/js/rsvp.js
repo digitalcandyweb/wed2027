@@ -39,6 +39,7 @@ async function fetchRsvps() {
   allRsvps = Array.isArray(data) ? data : [];
   applyFilters();
   updateDashboard(allRsvps, allEvents);
+  bus.emit('rsvp:updated', allRsvps);
 }
 
 function getEventName(id) {
@@ -67,8 +68,9 @@ function renderTable(rows) {
       <td>${typeof r.guests === 'number' ? r.guests : escapeHtml(r.guests ?? '—')}</td>
       <td>${formatDate(r.timestamp)}</td>
       <td style="text-align:right; white-space:nowrap;">
-        <button class="button edit-btn" data-action="view" data-id="${r.id}" aria-label="View"><svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M10 4c4.5 0 7.7 4.2 8 6-.3 1.8-3.5 6-8 6S2.3 11.8 2 10c.3-1.8 3.5-6 8-6z' stroke='currentColor' stroke-width='2'/><circle cx='10' cy='10' r='2' fill='currentColor'/></svg></button>
-        <button class="button delete-btn" data-action="delete" data-id="${r.id}" aria-label="Delete"><svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M6 7h1v9H6V7zm3 0h1v9H9V7zm3 0h1v9h-1V7z' fill='currentColor'/><path d='M3 5h14v1H3V5zm2-2h8v1H5V3zm2 3h6v11H7V6z' fill='currentColor'/></svg></button>
+        <button class="button delete-btn" data-action="delete" data-id="${r.id}" aria-label="Delete">
+          <svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M6 7h1v9H6V7zm3 0h1v9H9V7zm3 0h1v9h-1V7z' fill='currentColor'/><path d='M3 5h14v1H3V5zm2-2h8v1H5V3zm2 3h6v11H7V6z' fill='currentColor'/></svg>
+        </button>
       </td>
     `;
     tableBody.appendChild(tr);
@@ -104,6 +106,7 @@ async function deleteRsvp(id) {
   allRsvps = allRsvps.filter(r => r.id !== id);
   applyFilters();
   updateDashboard(allRsvps, allEvents);
+  bus.emit('rsvp:updated', allRsvps);
 }
 
 function exportCsv() {
@@ -112,7 +115,6 @@ function exportCsv() {
 
   const header = ['id','name','email','event','guests','attending','timestamp'];
   const lines = [header.join(',')];
-
   rows.forEach(r => {
     const line = [
       r.id ?? '',
@@ -143,30 +145,7 @@ function handleRowClick(e) {
   if (!btn) return;
   const action = btn.dataset.action;
   const id = btn.dataset.id;
-
   if (action === 'delete') deleteRsvp(id);
-
-  if (action === 'view') {
-    const r = allRsvps.find(x => x.id === id);
-    if (!r) return;
-    const attending = r.attending === true ? 'Attending' : 'Not attending';
-    alert(
-      `Name: ${r.name ?? '—'}
-` +
-      `Email: ${r.email ?? '—'}
-` +
-      `Event: ${getEventName(r.event)}
-` +
-      `Guests: ${r.guests ?? '—'}
-` +
-      `Attending: ${attending}
-` +
-      `Submitted: ${formatDate(r.timestamp)}
-
-` +
-      (r.notes ? `Notes: ${r.notes}` : '')
-    );
-  }
 }
 
 function escapeHtml(s) {

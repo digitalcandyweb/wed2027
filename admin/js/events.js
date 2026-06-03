@@ -4,6 +4,7 @@ import { bus } from '../core/bus.js';
 
 let events = [];
 let vendors = [];
+let rsvps = [];
 
 let tableBody, addBtn, modal, form, cancelBtn, modalTitle, vendorsSelect;
 let editingId = null;
@@ -25,6 +26,11 @@ async function loadVendors() {
   populateVendorsSelect([]);
 }
 
+async function loadRsvps() {
+  const data = await apiGet('/admin/api/list', { loadingLabel: 'Loading RSVPs…' });
+  rsvps = Array.isArray(data) ? data : [];
+}
+
 function populateVendorsSelect(selectedIds) {
   if (!vendorsSelect) return;
   const selected = new Set(Array.isArray(selectedIds) ? selectedIds : []);
@@ -41,6 +47,30 @@ function populateVendorsSelect(selectedIds) {
 function selectedVendorIds() {
   if (!vendorsSelect) return [];
   return Array.from(vendorsSelect.selectedOptions).map(o => o.value);
+}
+
+function countAttending(eventId) {
+  return rsvps.filter(r => r && r.event === eventId && r.attending === true).reduce((sum, r) => {
+    const g = typeof r.guests === 'number' ? r.guests : parseInt(r.guests ?? '1', 10);
+    return sum + (isNaN(g) ? 1 : g);
+  }, 0);
+}
+
+function capacityLabel(eventObj) {
+  const attending = countAttending(eventObj.id);
+  const cap = (eventObj.capacity === 0 || eventObj.capacity) ? Number(eventObj.capacity) : null;
+  if (!cap) return `${attending}`;
+  return `${attending} / ${cap}`;
+}
+
+function capacityStyle(eventObj) {
+  const cap = (eventObj.capacity === 0 || eventObj.capacity) ? Number(eventObj.capacity) : null;
+  if (!cap) return '';
+  const attending = countAttending(eventObj.id);
+  const ratio = cap ? (attending / cap) : 0;
+  if (ratio >= 1) return 'color: var(--danger); font-weight:700;';
+  if (ratio >= 0.85) return 'color: #f59e0b; font-weight:700;';
+  return 'color: #16a34a; font-weight:700;';
 }
 
 async function loadEvents() {
@@ -61,14 +91,13 @@ function renderTable() {
 
   events.forEach((e, idx) => {
     const tr = document.createElement('tr');
-    const cap = (e.capacity === 0 || e.capacity) ? Number(e.capacity) : '—';
     tr.innerHTML = `
       <td>${e.order ?? (idx + 1)}</td>
       <td>${escapeHtml(e.name ?? '')}</td>
       <td>${e.date ? formatDate(e.date) : '—'}</td>
       <td>${escapeHtml(e.location ?? '')}</td>
       <td>${e.visible === false ? 'No' : 'Yes'}</td>
-      <td>${cap}</td>
+      <td style="${capacityStyle(e)}">${capacityLabel(e)}</td>
       <td style="text-align:right; white-space:nowrap;">
         <button class="button edit-btn" data-action="edit" data-id="${e.id}" aria-label="Edit">${ICON_PENCIL}</button>
         <button class="button dup-btn" data-action="dup" data-id="${e.id}" aria-label="Duplicate">${ICON_COPY}</button>
@@ -202,12 +231,16 @@ export async function initEvents() {
   form.addEventListener('submit', saveEvent);
   tableBody.addEventListener('click', onTableClick);
 
-  await loadVendors();
+  await Promise.all([loadVendors(), loadRsvps()]);
   await loadEvents();
 
-  // If vendors update elsewhere, refresh select
   bus.on('vendors:updated', (v) => {
     vendors = Array.isArray(v) ? v : vendors;
     populateVendorsSelect(selectedVendorIds());
+  });
+
+  bus.on('rsvp:updated', (list) => {
+    rsvps = Array.isArray(list) ? list : rsvps;
+    renderTable();
   });
 }

@@ -3,6 +3,8 @@ import { openModal, closeModal, toast } from '../core/ui.js';
 import { bus } from '../core/bus.js';
 
 let vendors = [];
+let events = [];
+
 let tableBody, addBtn;
 let modal, deleteModal;
 let modalTitle;
@@ -22,10 +24,23 @@ async function loadVendors() {
   bus.emit('vendors:updated', vendors);
 }
 
+async function loadEvents() {
+  const data = await apiGet('/admin/api/events', { loadingLabel: 'Loading events…' });
+  events = Array.isArray(data) ? data : [];
+  events.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+}
+
+function assignedEventNames(vendorId) {
+  const names = events
+    .filter(e => Array.isArray(e.vendorIds) && e.vendorIds.includes(vendorId))
+    .map(e => e.name ?? e.id);
+  return names.length ? names.join(', ') : '—';
+}
+
 function render() {
   tableBody.innerHTML = '';
   if (!vendors.length) {
-    tableBody.innerHTML = `<tr><td colspan="5" class="muted" style="text-align:center; padding:40px 10px;">No vendors added yet.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="6" class="muted" style="text-align:center; padding:40px 10px;">No vendors added yet.</td></tr>`;
     return;
   }
 
@@ -36,6 +51,7 @@ function render() {
       <td>${escapeHtml(v.category ?? '')}</td>
       <td>${escapeHtml(v.email ?? '—')}</td>
       <td>${escapeHtml(v.phone ?? '—')}</td>
+      <td>${escapeHtml(assignedEventNames(v.id))}</td>
       <td style="text-align:right; white-space:nowrap;">
         <button class="button edit-btn" data-action="edit" data-id="${v.id}" aria-label="Edit">${ICON_PENCIL}</button>
         <button class="button dup-btn" data-action="dup" data-id="${v.id}" aria-label="Duplicate">${ICON_COPY}</button>
@@ -91,7 +107,8 @@ async function save() {
 async function duplicate(id) {
   const v = vendors.find(x => x.id === id);
   if (!v) return;
-  const copy = { ...v, id: crypto.randomUUID(), name: `${v.name ?? 'Vendor'} (copy)`, order: (vendors.length ? Math.max(...vendors.map(x => x.order ?? 0)) : 0) + 1 };
+  const maxOrder = vendors.reduce((m, x) => Math.max(m, Number(x.order ?? 0)), 0);
+  const copy = { ...v, id: crypto.randomUUID(), name: `${v.name ?? 'Vendor'} (copy)`, order: maxOrder + 1 };
   await apiPost('/admin/api/vendors/save', copy, { loadingLabel: 'Duplicating vendor…' });
   toast('Vendor duplicated', { type: 'success' });
   await loadVendors();
@@ -125,7 +142,7 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
 
-export function initVendors() {
+export async function initVendors() {
   tableBody = document.getElementById('vendors-table-body');
   addBtn = document.getElementById('add-vendor-btn');
 
@@ -157,5 +174,11 @@ export function initVendors() {
 
   tableBody.addEventListener('click', onTableClick);
 
-  loadVendors();
+  await loadEvents();
+  await loadVendors();
+
+  bus.on('events:updated', (evs) => {
+    events = Array.isArray(evs) ? evs : events;
+    render();
+  });
 }

@@ -1,8 +1,20 @@
-<button id="add-contact-btn" class="button add-btn" title="Add contact" aria-label="Add contact">
-  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-    <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  </svg>
-</button>
+<div style="display:flex; gap:8px; align-items:center;">
+  <button id="add-contact-btn" class="button add-btn" title="Add contact" aria-label="Add contact">
+    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
+
+  <button id="import-contacts-btn" class="button export-btn" title="Import contacts CSV" aria-label="Import contacts CSV">
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M10 17V8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M7 11l3-3 3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="4" y="3" width="12" height="3" fill="currentColor"/>
+    </svg>
+  </button>
+
+  <input id="contacts-import-file" type="file" accept=".csv,text/csv" style="display:none;" />
+</div>
 
 <div class="contacts-table-wrapper">
   <table class="contacts-table">
@@ -17,6 +29,10 @@
     </thead>
     <tbody id="contacts-table-body"></tbody>
   </table>
+</div>
+
+<div class="muted" style="margin-top:6px;">
+  Import CSV headers: name, role, email, phone, notes (notes optional).
 </div>
 
 <div id="contact-modal" class="modal hidden">

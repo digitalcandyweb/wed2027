@@ -3,7 +3,8 @@ import { openModal, closeModal, toast } from '../core/ui.js';
 import { bus } from '../core/bus.js';
 
 let contacts = [];
-let tableBody, addBtn;
+
+let tableBody, addBtn, importBtn, importFile;
 let modal, deleteModal;
 let modalTitle;
 let idEl, nameEl, roleEl, emailEl, phoneEl, notesEl;
@@ -88,7 +89,8 @@ async function save() {
 async function duplicate(id) {
   const c = contacts.find(x => x.id === id);
   if (!c) return;
-  const copy = { ...c, id: crypto.randomUUID(), name: `${c.name ?? 'Contact'} (copy)`, order: (contacts.length ? Math.max(...contacts.map(x => x.order ?? 0)) : 0) + 1 };
+  const maxOrder = contacts.reduce((m, x) => Math.max(m, Number(x.order ?? 0)), 0);
+  const copy = { ...c, id: crypto.randomUUID(), name: `${c.name ?? 'Contact'} (copy)`, order: maxOrder + 1 };
   await apiPost('/admin/api/contacts/save', copy, { loadingLabel: 'Duplicating contact…' });
   toast('Contact duplicated', { type: 'success' });
   await loadContacts();
@@ -118,13 +120,145 @@ function onTableClick(e) {
   if (action === 'del') askDelete(id);
 }
 
+function parseCsv(text) {
+  const out = [];
+  let row = [];
+  let field = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const next = text[i + 1];
+
+    if (inQuotes) {
+      if (ch === '"' && next === '"') {
+        field += '"';
+        i++;
+      } else if (ch === '"') {
+        inQuotes = false;
+      } else {
+        field += ch;
+      }
+      continue;
+    }
+
+    if (ch === '"') {
+      inQuotes = true;
+      continue;
+    }
+
+    if (ch === ',') {
+      row.push(field);
+      field = '';
+      continue;
+    }
+
+    if (ch === '\n') {
+      row.push(field);
+      field = '';
+      // trim CR
+      row = row.map(v => (v.endsWith('\r') ? v.slice(0, -1) : v));
+      // ignore empty trailing lines
+      if (row.some(v => String(v).trim() !== '')) out.push(row);
+      row = [];
+      continue;
+    }
+
+    field += ch;
+  }
+
+  row.push(field);
+  row = row.map(v => (v.endsWith('\r') ? v.slice(0, -1) : v));
+  if (row.some(v => String(v).trim() !== '')) out.push(row);
+  return out;
+}
+
+function normaliseHeader(h) {
+  return String(h || '').trim().toLowerCase();
+}
+
+async function importContactsFromCsv(file) {
+  const text = await file.text();
+  const rows = parseCsv(text);
+  if (!rows.length) {
+    toast('CSV is empty', { type: 'warn' });
+    return;
+  }
+
+  const headers = rows[0].map(normaliseHeader);
+  const idx = {
+    name: headers.indexOf('name'),
+    role: headers.indexOf('role'),
+    email: headers.indexOf('email'),
+    phone: headers.indexOf('phone'),
+    notes: headers.indexOf('notes')
+  };
+
+  if (idx.name === -1) {
+    toast('CSV must include a name column', { type: 'error' });
+    return;
+  }
+
+  const maxOrder = contacts.reduce((m, x) => Math.max(m, Number(x.order ?? 0)), 0);
+  let order = maxOrder;
+  const newItems = [];
+
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    const name = (r[idx.name] ?? '').trim();
+    if (!name) continue;
+
+    const item = {
+      id: crypto.randomUUID(),
+      name,
+      role: idx.role >= 0 ? String(r[idx.role] ?? '').trim() : '',
+      email: idx.email >= 0 ? String(r[idx.email] ?? '').trim() : '',
+      phone: idx.phone >= 0 ? String(r[idx.phone] ?? '').trim() : '',
+      notes: idx.notes >= 0 ? String(r[idx.notes] ?? '').trim() : '',
+      order: ++order
+    };
+
+    newItems.push(item);
+  }
+
+  if (!newItems.length) {
+    toast('No rows imported (check CSV values)', { type: 'warn' });
+    return;
+  }
+
+  // save each item (spreads writes, avoids hot-key patterns)
+  for (const item of newItems) {
+    await apiPost('/admin/api/contacts/save', item, { loadingLabel: 'Importing contacts…' });
+  }
+
+  toast(`Imported ${newItems.length} contact(s)`, { type: 'success' });
+  await loadContacts();
+}
+
+function onImportClick() {
+  importFile.value = '';
+  importFile.click();
+}
+
+async function onImportFileChange() {
+  const file = importFile.files && importFile.files[0];
+  if (!file) return;
+  if (!String(file.name || '').toLowerCase().endsWith('.csv')) {
+    toast('Please choose a .csv file', { type: 'warn' });
+    return;
+  }
+  await importContactsFromCsv(file);
+}
+
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
 
-export function initContacts() {
+export async function initContacts() {
   tableBody = document.getElementById('contacts-table-body');
   addBtn = document.getElementById('add-contact-btn');
+  importBtn = document.getElementById('import-contacts-btn');
+  importFile = document.getElementById('contacts-import-file');
 
   modal = document.getElementById('contact-modal');
   deleteModal = document.getElementById('contact-delete-modal');
@@ -145,6 +279,9 @@ export function initContacts() {
   if (!tableBody || !addBtn) return;
 
   addBtn.addEventListener('click', openAdd);
+  importBtn?.addEventListener('click', onImportClick);
+  importFile?.addEventListener('change', onImportFileChange);
+
   saveBtn?.addEventListener('click', save);
   cancelBtn?.addEventListener('click', () => closeModal(modal));
 
