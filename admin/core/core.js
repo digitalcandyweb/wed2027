@@ -8,6 +8,9 @@ import { initBudget } from "../js/budget.js";
 import { initPlanner } from "../js/planner.js";
 import { initSettings } from "../js/settings.js";
 import { initEdit } from "../js/edit.js";
+import { initWedding } from "../js/wedding.js";
+import { initVendors } from "../js/vendors.js";
+import { initContacts } from "../js/contacts.js";
 
 // Shared UI + mobile nav
 import { initUI } from "./ui.js";
@@ -94,10 +97,13 @@ export async function loadSection(section) {
     if (section === "dashboard") initDashboard();
     if (section === "rsvp") initRSVP();
     if (section === "events") initEvents();
+    if (section === "wedding") initWedding();
+    if (section === "vendors") initVendors();
+    if (section === "contacts") initContacts();
+    if (section === "edit") initEdit();
+    if (section === "settings") initSettings();
     if (section === "budget") initBudget();
     if (section === "planner") initPlanner();
-    if (section === "settings") initSettings();
-    if (section === "edit") initEdit();
   } catch (err) {
     container.innerHTML = `<p style="color:var(--danger);">Failed to load section: ${section}</p>`;
     console.error(err);
@@ -118,14 +124,16 @@ export async function loadSection(section) {
     dashboard: { title: "Dashboard overview", subtitle: "High-level view of attendance and events.", chip: "Dashboard", showSummary: false },
     rsvp: { title: "RSVP Manager", subtitle: "View, filter and export guest responses for all events.", chip: "Guests & responses", showSummary: true },
     events: { title: "Events", subtitle: "Manage event names, dates, locations and visibility.", chip: "Event configuration", showSummary: false },
+    wedding: { title: "Wedding Settings", subtitle: "Couple details, key dates and contact information.", chip: "Wedding", showSummary: false },
+    vendors: { title: "Vendors", subtitle: "Track suppliers, contracts, and assignments.", chip: "Vendors", showSummary: false },
+    contacts: { title: "Contacts", subtitle: "Contacts list for guests, family, and vendors.", chip: "Contacts", showSummary: false },
     edit: { title: "Edit Website Content", subtitle: "Update hero text, event details, travel info and more.", chip: "Copy & layout", showSummary: false },
+    settings: { title: "Site Settings", subtitle: "Configure site-wide options and event blocks.", chip: "Configuration", showSummary: false },
     budget: { title: "Budget & Cost Tracker", subtitle: "Track all wedding-related expenses.", chip: "Money & commitments", showSummary: false },
-    planner: { title: "Planner & Timeline", subtitle: "Organise tasks, due dates and timelines.", chip: "Tasks & milestones", showSummary: false },
-    settings: { title: "Website Settings", subtitle: "Configure site-wide options and event blocks.", chip: "Configuration", showSummary: false }
+    planner: { title: "Planner & Timeline", subtitle: "Organise tasks, due dates and timelines.", chip: "Tasks & milestones", showSummary: false }
   };
 
   navItems.forEach(item => {
-    // make nav items keyboard focusable
     item.setAttribute('tabindex', '0');
 
     item.addEventListener("click", () => {
@@ -152,6 +160,5 @@ export async function loadSection(section) {
     });
   });
 
-  // Load dashboard by default
   loadSection("dashboard");
 })();

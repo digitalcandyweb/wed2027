@@ -1,0 +1,73 @@
+<div class="section-header" style="display:flex; align-items:center; justify-content:space-between;">
+  <div>
+    <div style="font-weight:600;">Vendors</div>
+    <div class="muted">Add and manage suppliers. Link vendors to events later.</div>
+  </div>
+  <button id="add-vendor-btn" class="button add-btn" title="Add vendor" aria-label="Add vendor">
+    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+</div>
+
+<div class="vendors-table-wrapper">
+  <table class="vendors-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th style="text-align:right;">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="vendors-table-body"></tbody>
+  </table>
+</div>
+
+<div id="vendor-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3 id="vendor-modal-title">Add Vendor</h3>
+    <input type="hidden" id="vendor-id">
+
+    <label>Name</label>
+    <input id="vendor-name" class="input">
+
+    <label>Category</label>
+    <input id="vendor-category" class="input" placeholder="Venue / Catering / Photography">
+
+    <label>Email</label>
+    <input id="vendor-email" class="input" type="email">
+
+    <label>Phone</label>
+    <input id="vendor-phone" class="input">
+
+    <label>Website</label>
+    <input id="vendor-website" class="input" placeholder="https://">
+
+    <label>Notes</label>
+    <textarea id="vendor-notes" class="input" style="min-height:110px;"></textarea>
+
+    <div class="modal-actions">
+      <button id="vendor-save" class="button save-btn" title="Save" aria-label="Save">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 13.5L4 10l1.4-1.4L7.5 10.7l7.1-7.1L16 5l-8.5 8.5z" fill="currentColor"/></svg>
+      </button>
+      <button id="vendor-cancel" class="button cancel-btn" title="Cancel" aria-label="Cancel">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="vendor-delete-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Delete Vendor?</h3>
+    <p>This cannot be undone.</p>
+    <div class="modal-actions">
+      <button id="vendor-confirm-delete" class="button delete-btn" title="Delete" aria-label="Delete">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6 7h1v9H6V7zm3 0h1v9H9V7zm3 0h1v9h-1V7z" fill="currentColor"/><path d="M3 5h14v1H3V5zm2-2h8v1H5V3zm2 3h6v11H7V6z" fill="currentColor"/></svg>
+      </button>
+      <button id="vendor-cancel-delete" class="button cancel-btn" title="Cancel" aria-label="Cancel">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>

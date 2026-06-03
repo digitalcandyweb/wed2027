@@ -173,3 +173,13 @@
   color: #dc2626;
   font-weight: 600;
 }
+
+/* VENDORS */
+.vendors-table-wrapper { border-radius: 10px; overflow: hidden; border: 1px solid var(--border-subtle); background: var(--bg-elevated); margin-top: 10px; }
+.vendors-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.vendors-table th, .vendors-table td { padding: 8px 10px; border-bottom: 1px solid var(--border-subtle); }
+
+/* CONTACTS */
+.contacts-table-wrapper { border-radius: 10px; overflow: hidden; border: 1px solid var(--border-subtle); background: var(--bg-elevated); margin-top: 10px; }
+.contacts-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.contacts-table th, .contacts-table td { padding: 8px 10px; border-bottom: 1px solid var(--border-subtle); }

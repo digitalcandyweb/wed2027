@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Wedding Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -26,57 +25,32 @@
   <link rel="stylesheet" href="./css/planner.css">
   <link rel="stylesheet" href="./css/settings.css">
   <link rel="stylesheet" href="./css/edit.css">
-
 </head>
-
 <body>
   <div class="app-shell">
     <aside class="sidebar collapsed" id="sidebar">
       <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
-
       <div>
         <div class="sidebar-section-label">Overview</div>
         <ul class="nav-list">
-          <li class="nav-item active" data-section="dashboard">
-            <div class="nav-icon">⏱</div>
-            <span>Dashboard</span>
-          </li>
-          <li class="nav-item" data-section="rsvp">
-            <div class="nav-icon">👥</div>
-            <span>RSVP Manager</span>
-          </li>
-          <li class="nav-item" data-section="events">
-            <div class="nav-icon">📍</div>
-            <span>Events</span>
-          </li>
-          <li class="nav-item" data-section="edit">
-            <div class="nav-icon">📝</div>
-            <span>Edit Website Content</span>
-          </li>
-		  <li class="nav-item" data-section="settings">
-		  <div class="nav-icon">⚙️</div>
-          <span>Settings</span>
-		  </li>
+          <li class="nav-item active" data-section="dashboard"><div class="nav-icon">⏱</div><span>Dashboard</span></li>
+          <li class="nav-item" data-section="rsvp"><div class="nav-icon">👥</div><span>RSVP Manager</span></li>
+          <li class="nav-item" data-section="events"><div class="nav-icon">📍</div><span>Events</span></li>
+          <li class="nav-item" data-section="wedding"><div class="nav-icon">💍</div><span>Wedding Settings</span></li>
+          <li class="nav-item" data-section="vendors"><div class="nav-icon">🏷️</div><span>Vendors</span></li>
+          <li class="nav-item" data-section="contacts"><div class="nav-icon">📇</div><span>Contacts</span></li>
+          <li class="nav-item" data-section="edit"><div class="nav-icon">📝</div><span>Edit Website Content</span></li>
+          <li class="nav-item" data-section="settings"><div class="nav-icon">⚙️</div><span>Site Settings</span></li>
         </ul>
       </div>
-
       <div>
         <div class="sidebar-section-label">Planning</div>
         <ul class="nav-list">
-          <li class="nav-item" data-section="budget">
-            <div class="nav-icon">💸</div>
-            <span>Budget & Cost Tracker</span>
-          </li>
-          <li class="nav-item" data-section="planner">
-            <div class="nav-icon">📅</div>
-            <span>Planner & Timeline</span>
-          </li>
+          <li class="nav-item" data-section="budget"><div class="nav-icon">💸</div><span>Budget & Cost Tracker</span></li>
+          <li class="nav-item" data-section="planner"><div class="nav-icon">📅</div><span>Planner & Timeline</span></li>
         </ul>
       </div>
-
-      <div class="sidebar-footer">
-        <span class="pill">v0.3 admin</span>
-      </div>
+      <div class="sidebar-footer"><span class="pill">v0.4 admin</span></div>
     </aside>
 
     <main class="main">
@@ -86,18 +60,14 @@
             <span id="topbar-title-text">Wedding Admin Control Centre</span>
             <span class="topbar-chip" id="topbar-chip-text">Dashboard</span>
           </div>
-          <div class="topbar-subtitle">
-            Central place to manage your wedding website, guests, budget and planning.
-          </div>
+          <div class="topbar-subtitle">Central place to manage your wedding website, guests, budget and planning.</div>
         </div>
-
         <div class="topbar-right">
           <div class="theme-toggle" id="theme-toggle" data-mode="light" aria-label="Toggle dark mode">
             <span class="theme-toggle-icon sun">☀️</span>
             <span class="theme-toggle-icon moon">🌙</span>
             <div class="theme-toggle-thumb">●</div>
           </div>
-
           <div class="topbar-user" id="user-menu-toggle">
             <div class="user-avatar">B</div>
             <div>
@@ -105,11 +75,8 @@
               <div style="font-size: 10px; color: var(--text-muted);">Admin</div>
             </div>
           </div>
-
           <div class="user-menu" id="user-menu">
-            <a href="https://dash.cloudflare.com/?to=/:account/access/apps" target="_blank" rel="noreferrer">
-              CloudFlare Admin Access
-            </a>
+            <a href="https://dash.cloudflare.com/?to=/:account/access/apps" target="_blank" rel="noreferrer">CloudFlare Admin Access</a>
             <a href="https://digitalcandy.win/">Return to main site</a>
             <a href="/cdn-cgi/access/logout">Logout</a>
           </div>
@@ -120,11 +87,8 @@
         <div class="content-header">
           <div class="content-header-left">
             <div class="content-title" id="content-title">Dashboard overview</div>
-            <div class="content-subtitle" id="content-subtitle">
-              High-level view of attendance and events.
-            </div>
+            <div class="content-subtitle" id="content-subtitle">High-level view of attendance and events.</div>
           </div>
-
           <div class="content-header-right">
             <div class="rsvp-summary" id="rsvp-summary" style="display:none;">
               <span class="summary attending">Attending: <span id="summary-attending">0</span></span>
@@ -132,15 +96,11 @@
             </div>
           </div>
         </div>
-
-        <!-- ⭐ NEW: Dynamic content container -->
         <div id="content" class="content-body"></div>
-
       </section>
     </main>
   </div>
 
   <script type="module" src="./core/core.js"></script>
-  
 </body>
 </html>
