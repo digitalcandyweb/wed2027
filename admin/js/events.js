@@ -126,7 +126,12 @@ async function saveEvent(e) {
     alert("Error saving event.");
   }
 }
-
+function duplicateItem(item) {
+  const copy = { ...item, id: crypto.randomUUID() };
+  items.push(copy);
+  saveItems();
+  renderTable();
+}
 async function deleteEvent(id) {
   if (!id) return;
   if (!confirm("Delete this event?")) return;

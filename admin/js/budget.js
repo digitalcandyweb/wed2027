@@ -146,7 +146,12 @@ async function saveExpense() {
     alert("Error saving expense.");
   }
 }
-
+function duplicateItem(item) {
+  const copy = { ...item, id: crypto.randomUUID() };
+  items.push(copy);
+  saveItems();
+  renderTable();
+}
 async function deleteExpense() {
   if (!expenseToDelete) return;
 

@@ -158,7 +158,12 @@ function openEdit(id) {
   modalTitle.textContent = "Edit Task";
   modal.classList.remove("hidden");
 }
-
+function duplicateItem(item) {
+  const copy = { ...item, id: crypto.randomUUID() };
+  items.push(copy);
+  saveItems();
+  renderTable();
+}
 function openDelete(id) {
   taskToDelete = id;
   deleteModal.classList.remove("hidden");
