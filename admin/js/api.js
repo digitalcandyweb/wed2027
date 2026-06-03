@@ -1,11 +1,6 @@
 import { showLoading, hideLoading, toast } from '../core/ui.js';
 
 // Shared API wrapper for admin modules
-// - includes credentials (Cloudflare Access)
-// - JSON parsing
-// - global loading overlay
-// - consistent error handling
-
 export async function apiGet(url, { loadingLabel = 'Loading…' } = {}) {
   return apiRequest(url, { method: 'GET' }, loadingLabel);
 }

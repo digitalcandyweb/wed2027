@@ -1,291 +1,220 @@
-// PLANNER MODULE
+import { apiGet, apiPost } from './api.js';
+import { openModal, closeModal, toast } from '../core/ui.js';
+import { bus } from '../core/bus.js';
+
 let tasks = [];
 let events = [];
 let taskToDelete = null;
 
-let tableBody;
-let addBtn;
-
-let modal;
-let modalTitle;
-
-let idInput;
-let titleInput;
-let descInput;
-let dueInput;
-let assignedInput;
-let priorityInput;
-let statusInput;
-let eventInput;
-let notesInput;
-
-let saveBtn;
-let cancelBtn;
-
-let deleteModal;
-let confirmDeleteBtn;
-let cancelDeleteBtn;
-
-let statusFilter;
-let assignedFilter;
+let tableBody, addBtn, modal, modalTitle;
+let idInput, titleInput, descInput, dueInput, assignedInput, priorityInput, statusInput, eventInput, notesInput;
+let saveBtn, cancelBtn;
+let deleteModal, confirmDeleteBtn, cancelDeleteBtn;
+let statusFilter, assignedFilter;
 
 async function loadEvents() {
-  try {
-    const res = await fetch("/admin/api/events", { credentials: "include" });
-    const data = await res.json();
-    events = Array.isArray(data) ? data : [];
+  const data = await apiGet('/admin/api/events', { loadingLabel: 'Loading events…' });
+  events = Array.isArray(data) ? data : [];
+  events.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
-    if (!eventInput) return;
+  if (eventInput) {
     eventInput.innerHTML = `<option value="">None</option>`;
     events.forEach(ev => {
-      const opt = document.createElement("option");
+      const opt = document.createElement('option');
       opt.value = ev.id;
-      opt.textContent = ev.name;
+      opt.textContent = ev.name ?? ev.id;
       eventInput.appendChild(opt);
     });
-  } catch (err) {
-    console.error("Failed to load events", err);
   }
 }
 
 async function loadTasks() {
-  try {
-    const res = await fetch("/admin/api/planner", { credentials: "include" });
-    const data = await res.json();
-    tasks = Array.isArray(data) ? data : [];
-    renderTable();
-  } catch (err) {
-    console.error("Failed to load tasks", err);
-    if (tableBody) {
-      tableBody.innerHTML = `<tr><td colspan="7" class="planner-error">Error loading tasks.</td></tr>`;
-    }
-  }
+  if (!tableBody) return;
+  const data = await apiGet('/admin/api/planner', { loadingLabel: 'Loading tasks…' });
+  tasks = Array.isArray(data) ? data : [];
+  tasks.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  renderTable();
+}
+
+function getEventName(id) {
+  const ev = events.find(e => e.id === id);
+  return ev ? ev.name : '—';
 }
 
 function renderTable() {
   if (!tableBody) return;
-  tableBody.innerHTML = "";
+  const statusVal = statusFilter?.value || '';
+  const assignedVal = assignedFilter?.value || '';
 
   const filtered = tasks.filter(t => {
-    const matchStatus = !statusFilter.value || t.status === statusFilter.value;
-    const matchAssigned = !assignedFilter.value || t.assigned === assignedFilter.value;
+    const matchStatus = !statusVal || t.status === statusVal;
+    const matchAssigned = !assignedVal || t.assigned === assignedVal;
     return matchStatus && matchAssigned;
   });
 
+  tableBody.innerHTML = '';
   if (!filtered.length) {
-    tableBody.innerHTML = `<tr><td colspan="7" class="planner-empty">No tasks match your filters.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="7" class="muted">No tasks match your filters.</td></tr>`;
     return;
   }
 
   filtered.forEach(t => {
-    const overdue = t.due && new Date(t.due) < new Date() && t.status !== "done";
-
-    const row = document.createElement("tr");
+    const overdue = t.due && new Date(t.due) < new Date() && t.status !== 'done';
+    const row = document.createElement('tr');
     row.innerHTML = `
-      <td>
-        <div class="planner-task-title">${t.title}</div>
-        <div class="planner-task-desc">${t.description || ""}</div>
-      </td>
-      <td class="${overdue ? "planner-overdue" : ""}">${t.due || "—"}</td>
-      <td>${t.assigned}</td>
-      <td>${t.priority}</td>
-      <td>${t.status}</td>
-      <td>${getEventName(t.event)}</td>
-      <td style="text-align:right;">
-        <button class="button edit-btn" data-edit="${t.id}">
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-            <path d="M4 13.5V16h2.5l7.4-7.4-2.5-2.5L4 13.5zM17.3 6.3c.4-.4.4-1 0-1.4l-2.2-2.2a1 1 0 0 0-1.4 0l-1.8 1.8 3.6 3.6 1.8-1.8z" fill="currentColor"/>
-          </svg>
-        </button>
-
-        <button class="button delete-btn" data-delete="${t.id}">
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-            <path d="M6 7h1v9H6V7zm3 0h1v9H9V7zm3 0h1v9h-1V7z" fill="currentColor"/>
-            <path d="M3 5h14v1H3V5zm2-2h8v1H5V3zm2 3h6v11H7V6z" fill="currentColor"/>
-          </svg>
-        </button>
-
-        <button class="button duplicate-btn" data-duplicate="${t.id}">
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-            <path d="M4 4h9v9H4V4zm3 3h9v9H7V7z" stroke="currentColor" stroke-width="2"/>
-          </svg>
-        </button>
+      <td>${escapeHtml(t.title ?? '')}${overdue ? ' <span class="pill" style="border-color:var(--danger);color:var(--danger);">Overdue</span>' : ''}</td>
+      <td>${t.due ?? '—'}</td>
+      <td>${escapeHtml(t.assigned ?? '—')}</td>
+      <td>${escapeHtml(t.priority ?? '—')}</td>
+      <td>${escapeHtml(t.status ?? '—')}</td>
+      <td>${escapeHtml(getEventName(t.event))}</td>
+      <td style="text-align:right; white-space:nowrap;">
+        <button class="button edit-btn" data-action="edit" data-id="${t.id}">Edit</button>
+        <button class="button add-btn" data-action="dup" data-id="${t.id}">Duplicate</button>
+        <button class="button delete-btn" data-action="del" data-id="${t.id}">Delete</button>
       </td>
     `;
     tableBody.appendChild(row);
   });
-
-  attachRowHandlers();
 }
-
-
-function getEventName(id) {
-  const ev = events.find(e => e.id === id);
-  return ev ? ev.name : "—";
-}
-
-function attachRowHandlers() {
-  document.querySelectorAll("[data-edit]").forEach(btn => {
-    btn.addEventListener("click", () => openEdit(btn.dataset.edit));
-  });
-
-  document.querySelectorAll("[data-delete]").forEach(btn => {
-    btn.addEventListener("click", () => openDelete(btn.dataset.delete));
-  });
-
-  document.querySelectorAll("[data-duplicate]").forEach(btn => {
-    btn.addEventListener("click", () => duplicateTask(btn.dataset.duplicate));
-  });
-}
-
 
 function openAdd() {
-  idInput.value = "";
-  titleInput.value = "";
-  descInput.value = "";
-  dueInput.value = "";
-  assignedInput.value = "brad";
-  priorityInput.value = "medium";
-  statusInput.value = "todo";
-  eventInput.value = "";
-  notesInput.value = "";
-
-  modalTitle.textContent = "Add Task";
-  modal.classList.remove("hidden");
-
-  setTimeout(() => {
-    modal.querySelector("input, textarea, select")?.focus();
-  }, 10);
+  if (modalTitle) modalTitle.textContent = 'Add Task';
+  idInput.value = '';
+  titleInput.value = '';
+  descInput.value = '';
+  dueInput.value = '';
+  assignedInput.value = 'brad';
+  priorityInput.value = 'medium';
+  statusInput.value = 'todo';
+  eventInput.value = '';
+  notesInput.value = '';
+  openModal(modal);
 }
-
 
 function openEdit(id) {
   const t = tasks.find(x => x.id === id);
   if (!t) return;
-
+  if (modalTitle) modalTitle.textContent = 'Edit Task';
   idInput.value = t.id;
-  titleInput.value = t.title;
-  descInput.value = t.description;
-  dueInput.value = t.due;
-  assignedInput.value = t.assigned;
-  priorityInput.value = t.priority;
-  statusInput.value = t.status;
-  eventInput.value = t.event || "";
-  notesInput.value = t.notes || "";
-
-  modalTitle.textContent = "Edit Task";
-  modal.classList.remove("hidden");
-
-  setTimeout(() => {
-    modal.querySelector("input, textarea, select")?.focus();
-  }, 10);
-}
-
-
-function duplicateTask(id) {
-  const original = tasks.find(t => t.id === id);
-  if (!original) return;
-
-  const copy = {
-    ...original,
-    id: crypto.randomUUID(),
-    order: tasks.length + 1
-  };
-
-  tasks.push(copy);
-  saveTasks();
-  renderTable();
-}
-
-function openDelete(id) {
-  taskToDelete = id;
-  deleteModal.classList.remove("hidden");
+  titleInput.value = t.title ?? '';
+  descInput.value = t.description ?? '';
+  dueInput.value = t.due ?? '';
+  assignedInput.value = t.assigned ?? 'brad';
+  priorityInput.value = t.priority ?? 'medium';
+  statusInput.value = t.status ?? 'todo';
+  eventInput.value = t.event ?? '';
+  notesInput.value = t.notes ?? '';
+  openModal(modal);
 }
 
 async function saveTask() {
   const body = {
     id: idInput.value || null,
-    title: titleInput.value,
-    description: descInput.value,
-    due: dueInput.value,
+    title: titleInput.value.trim(),
+    description: descInput.value.trim(),
+    due: dueInput.value || null,
     assigned: assignedInput.value,
     priority: priorityInput.value,
     status: statusInput.value,
     event: eventInput.value || null,
-    notes: notesInput.value
+    notes: notesInput.value.trim()
   };
 
-  try {
-    await fetch("/admin/api/planner/save", {
-      method: "POST",
-      body: JSON.stringify(body),
-      credentials: "include"
-    });
+  await apiPost('/admin/api/planner/save', body, { loadingLabel: 'Saving task…' });
+  toast('Task saved', { type: 'success' });
+  closeModal(modal);
+  await loadTasks();
+}
 
-    modal.classList.add("hidden");
-    await loadTasks();
-  } catch (err) {
-    console.error("Failed to save task", err);
-    alert("Error saving task.");
-  }
+function openDelete(id) {
+  taskToDelete = id;
+  openModal(deleteModal);
 }
 
 async function deleteTask() {
   if (!taskToDelete) return;
-
-  try {
-    await fetch(`/admin/api/planner/delete/${encodeURIComponent(taskToDelete)}`, {
-      method: "POST",
-      credentials: "include"
-    });
-
-    deleteModal.classList.add("hidden");
-    await loadTasks();
-  } catch (err) {
-    console.error("Failed to delete task", err);
-    alert("Error deleting task.");
-  }
+  await apiPost(`/admin/api/planner/delete/${encodeURIComponent(taskToDelete)}`, {}, { loadingLabel: 'Deleting task…' });
+  toast('Task deleted', { type: 'success' });
+  closeModal(deleteModal);
+  taskToDelete = null;
+  await loadTasks();
 }
 
-export function initPlanner() {
-  tableBody = document.getElementById("planner-table-body");
-  addBtn = document.getElementById("add-task-btn");
+async function duplicateTask(id) {
+  const original = tasks.find(t => t.id === id);
+  if (!original) return;
+  const copy = {
+    ...original,
+    id: crypto.randomUUID(),
+    title: `${original.title ?? 'Task'} (copy)`,
+    order: (tasks.length ? Math.max(...tasks.map(x => x.order ?? 0)) : 0) + 1
+  };
+  await apiPost('/admin/api/planner/save', copy, { loadingLabel: 'Duplicating task…' });
+  toast('Task duplicated', { type: 'success' });
+  await loadTasks();
+}
 
-  modal = document.getElementById("planner-modal");
-  modalTitle = document.getElementById("planner-modal-title");
+function onTableClick(e) {
+  const btn = e.target.closest('button[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+  if (action === 'edit') openEdit(id);
+  if (action === 'del') openDelete(id);
+  if (action === 'dup') duplicateTask(id);
+}
 
-  idInput = document.getElementById("task-id");
-  titleInput = document.getElementById("task-title");
-  descInput = document.getElementById("task-description");
-  dueInput = document.getElementById("task-due");
-  assignedInput = document.getElementById("task-assigned");
-  priorityInput = document.getElementById("task-priority");
-  statusInput = document.getElementById("task-status");
-  eventInput = document.getElementById("task-event");
-  notesInput = document.getElementById("task-notes");
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
 
-  saveBtn = document.getElementById("save-task-btn");
-  cancelBtn = document.getElementById("cancel-task-btn");
+export async function initPlanner() {
+  tableBody = document.getElementById('planner-table-body');
+  addBtn = document.getElementById('add-task-btn');
+  modal = document.getElementById('planner-modal');
+  modalTitle = document.getElementById('planner-modal-title');
 
-  deleteModal = document.getElementById("planner-delete-modal");
-  confirmDeleteBtn = document.getElementById("confirm-delete-task-btn");
-  cancelDeleteBtn = document.getElementById("cancel-delete-task-btn");
+  idInput = document.getElementById('task-id');
+  titleInput = document.getElementById('task-title');
+  descInput = document.getElementById('task-description');
+  dueInput = document.getElementById('task-due');
+  assignedInput = document.getElementById('task-assigned');
+  priorityInput = document.getElementById('task-priority');
+  statusInput = document.getElementById('task-status');
+  eventInput = document.getElementById('task-event');
+  notesInput = document.getElementById('task-notes');
 
-  statusFilter = document.getElementById("planner-status-filter");
-  assignedFilter = document.getElementById("planner-assigned-filter");
+  saveBtn = document.getElementById('save-task-btn');
+  cancelBtn = document.getElementById('cancel-task-btn');
+
+  deleteModal = document.getElementById('planner-delete-modal');
+  confirmDeleteBtn = document.getElementById('confirm-delete-task-btn');
+  cancelDeleteBtn = document.getElementById('cancel-delete-task-btn');
+
+  statusFilter = document.getElementById('planner-status-filter');
+  assignedFilter = document.getElementById('planner-assigned-filter');
 
   if (!tableBody || !addBtn || !modal) return;
 
-  addBtn.addEventListener("click", openAdd);
-  saveBtn.addEventListener("click", saveTask);
-  cancelBtn.addEventListener("click", () => modal.classList.add("hidden"));
+  addBtn.addEventListener('click', openAdd);
+  saveBtn?.addEventListener('click', saveTask);
+  cancelBtn?.addEventListener('click', () => closeModal(modal));
 
-  confirmDeleteBtn.addEventListener("click", deleteTask);
-  cancelDeleteBtn.addEventListener("click", () => deleteModal.classList.add("hidden"));
+  confirmDeleteBtn?.addEventListener('click', deleteTask);
+  cancelDeleteBtn?.addEventListener('click', () => closeModal(deleteModal));
 
-  statusFilter.addEventListener("change", renderTable);
-  assignedFilter.addEventListener("change", renderTable);
+  statusFilter?.addEventListener('change', renderTable);
+  assignedFilter?.addEventListener('change', renderTable);
 
-  loadEvents();
-  loadTasks();
+  tableBody.addEventListener('click', onTableClick);
+
+  await loadEvents();
+  await loadTasks();
+
+  // cross-talk: refresh events in dropdown when Events module changes
+  bus.on('events:updated', async () => {
+    await loadEvents();
+    renderTable();
+  });
 }

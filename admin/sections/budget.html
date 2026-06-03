@@ -1,8 +1,10 @@
-<button id="add-expense-btn" class="button add-btn">
+<button id="add-expense-btn" class="button add-btn" title="Add expense">
   <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
     <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
   </svg>
 </button>
+
+<span class="pill" style="align-self:flex-start;">Sorted by order</span>
 
 <div class="budget-table-wrapper">
   <table class="budget-table">
@@ -15,56 +17,69 @@
         <th>Paid</th>
         <th>Date</th>
         <th>Notes</th>
-        <th>Actions</th>
+        <th style="text-align:right;">Actions</th>
       </tr>
     </thead>
     <tbody id="budget-table-body"></tbody>
   </table>
 </div>
 
-  <!-- BUDGET MODALS -->
-  <div id="budget-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3 id="budget-modal-title">Add Expense</h3>
-      <input type="hidden" id="expense-id">
-      <label>Category</label><input id="expense-category">
-      <label>Description</label><input id="expense-description">
-      <label>Amount</label><input id="expense-amount" type="number" step="0.01">
-      <label>Date</label><input id="expense-date" type="date">
-      <label class="checkbox-row"><input type="checkbox" id="expense-paid"> Paid</label>
-      <label>Notes</label><textarea id="expense-notes"></textarea>
-      <div class="modal-actions">
-		 <button id="add-expense-btn" class="button add-btn">
-		  <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-			<path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-		  </svg>
-		</button>
-        <button id="cancel-expense-btn" type="button" class="button cancel-btn">
-		  <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-			<path d="M5 5l10 10M15 5L5 15" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
-		  </svg>
-		</button>
-      </div>
-    </div>
-  </div>
+<!-- ADD / EDIT MODAL -->
+<div id="budget-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3 id="budget-modal-title">Add Expense</h3>
+    <input type="hidden" id="expense-id">
 
-  <div id="delete-expense-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Delete Expense?</h3>
-      <p>This cannot be undone.</p>
-      <div class="modal-actions">
-        <button id="confirm-delete-expense-btn" class="button delete-btn">
-			<svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-				<path d="M6 7h1v9H6V7zm3 0h1v9H9V7zm3 0h1v9h-1V7z" fill="currentColor"/>
-				<path d="M3 5h14v1H3V5zm2-2h8v1H5V3zm2 3h6v11H7V6z" fill="currentColor"/>
-			</svg>
-		  Delete
-		</button>
-        <button id="cancel-delete-expense-btn" class="button cancel-btn">
-			<svg viewBox="0 0 20 20" fill="none">
-				<path d="M5 5l10 10M15 5L5 15" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
-			</svg>
-		</button>
-      </div>
+    <label>Category</label>
+    <input id="expense-category" class="input">
+
+    <label>Description</label>
+    <input id="expense-description" class="input">
+
+    <label>Amount</label>
+    <input id="expense-amount" class="input" type="number" step="0.01">
+
+    <label>Date</label>
+    <input id="expense-date" class="input" type="date">
+
+    <label class="checkbox-row"><input type="checkbox" id="expense-paid"> Paid</label>
+
+    <label>Notes</label>
+    <textarea id="expense-notes" class="input"></textarea>
+
+    <div class="modal-actions">
+      <button id="save-expense-btn" class="button save-btn" type="button" title="Save">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <path d="M7.5 13.5L4 10l1.4-1.4L7.5 10.7l7.1-7.1L16 5l-8.5 8.5z" fill="currentColor"/>
+        </svg>
+      </button>
+      <button id="cancel-expense-btn" type="button" class="button cancel-btn" title="Cancel">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <path d="M5 5l10 10M15 5L5 15" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
     </div>
   </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div id="delete-expense-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Delete Expense?</h3>
+    <p>This cannot be undone.</p>
+    <div class="modal-actions">
+      <button id="confirm-delete-expense-btn" class="button delete-btn" type="button">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <path d="M6 7h1v9H6V7zm3 0h1v9H9V7zm3 0h1v9h-1V7z" fill="currentColor"/>
+          <path d="M3 5h14v1H3V5zm2-2h8v1H5V3zm2 3h6v11H7V6z" fill="currentColor"/>
+        </svg>
+        Delete
+      </button>
+      <button id="cancel-delete-expense-btn" class="button cancel-btn" type="button">
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M5 5l10 10M15 5L5 15" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
