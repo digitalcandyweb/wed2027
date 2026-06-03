@@ -106,7 +106,7 @@ function ensureToastRoot() {
 
   const style = document.createElement('style');
   style.textContent = `
-    #toast-root{position:fixed;right:14px;top:14px;z-index:7000;display:flex;flex-direction:column;gap:10px;max-width:360px}
+	#toast-root {position:fixed;left:14px;bottom:14px;z-index:7000;display:flex;flex-direction:column;gap:10px;max-width:360px;}
     .toast{display:grid;grid-template-columns:10px 1fr 24px;gap:10px;align-items:center;
       background:var(--bg-elevated,#fff);color:var(--text-main,#111);border:1px solid var(--border-subtle,#ddd);
       border-radius:12px;padding:10px 12px;box-shadow:var(--shadow-soft,0 14px 30px rgba(0,0,0,.12));

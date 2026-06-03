@@ -1,37 +1,51 @@
 /* =========================================
- RESPONSIVE
+ RESPONSIVE (mobile nav drawer)
  ========================================= */
 
-/* Hide mobile nav button by default (desktop) */
+/* Mobile controls hidden on desktop */
 #mobile-nav-toggle { display: none; }
 #mobile-nav-overlay { display: none; }
 
 @media (max-width: 900px) {
-  /* Turn sidebar into an off-canvas drawer instead of hiding it */
-  .sidebar {
-    display: flex; /* overrides previous display:none */
+  /* IMPORTANT:
+     Your HTML starts with <aside class="sidebar collapsed"...>
+     On mobile, we must override collapsed so the drawer is full width.
+  */
+  .sidebar,
+  .sidebar.collapsed {
+    display: flex;              /* overrides previous display:none */
     position: fixed;
     left: 0;
     top: 0;
     bottom: 0;
     height: 100vh;
+    width: 260px;               /* full drawer width */
+    max-width: 85vw;
+    padding: 20px 18px;         /* undo collapsed padding */
     z-index: 3000;
     transform: translateX(-110%);
     transition: transform var(--transition-fast);
-    width: 260px;
-    max-width: 85vw;
   }
 
+  /* Undo collapsed hiding rules on mobile */
+  .sidebar.collapsed .sidebar-section-label,
+  .sidebar.collapsed .nav-item span,
+  .sidebar.collapsed .sidebar-footer {
+    display: block;
+  }
+  .sidebar.collapsed .sidebar-header {
+    justify-content: flex-start;
+  }
+
+  /* Drawer open state */
   .sidebar.mobile-open {
     transform: translateX(0);
   }
 
-  /* Hide desktop collapse button on mobile (use topbar hamburger) */
-  .sidebar-toggle {
-    display: none;
-  }
+  /* Hide desktop collapse toggle on mobile */
+  .sidebar-toggle { display: none; }
 
-  /* Mobile overlay */
+  /* Overlay behind drawer */
   #mobile-nav-overlay {
     position: fixed;
     inset: 0;
@@ -41,38 +55,25 @@
     display: none;
   }
 
-  body.nav-open #mobile-nav-overlay {
-    display: block;
-  }
+  body.nav-open #mobile-nav-overlay { display: block; }
+  body.nav-open { overflow: hidden; }
 
-  body.nav-open {
-    overflow: hidden;
-  }
-
-  /* Show hamburger in topbar on mobile */
+  /* Show hamburger button (in topbar-left) */
   #mobile-nav-toggle {
     display: inline-flex;
     width: 34px;
     height: 34px;
-    align-items: centre;
-    justify-content: centre;
+    align-items: center;
+    justify-content: center;
     border-radius: 10px;
     padding: 0;
   }
 
-  .main {
-    padding: 14px 14px 18px;
-  }
+  .main { padding: 14px 14px 18px; }
+  .content-card { padding: 14px 14px 16px; }
 
-  .content-card {
-    padding: 14px 14px 16px;
-  }
-
-  /* keep your existing RSVP table column hiding */
-  .rsvp-table {
-    font-size: 12px;
-  }
-
+  /* keep your RSVP table column hiding */
+  .rsvp-table { font-size: 12px; }
   .rsvp-table th:nth-child(3),
   .rsvp-table td:nth-child(3),
   .rsvp-table th:nth-child(5),
@@ -80,4 +81,3 @@
     display: none;
   }
 }
-``
