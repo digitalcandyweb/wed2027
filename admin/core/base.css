@@ -83,30 +83,6 @@ input[type="checkbox"] {
   transform: translateY(1px);
 }
 
-/* GLOBAL BUTTONS 
-.button {
-  padding: 6px 12px;
-  border-radius: 8px;
-  background: var(--accent);
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
-  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
-}
-
-.button.secondary {
-  background: var(--bg-elevated);
-  color: var(--text-main);
-  border: 1px solid var(--border-subtle);
-  box-shadow: none;
-}
-*/
-
 /* UTILITY TAGS */
 .pill {
   border-radius: var(--radius-pill);
@@ -156,16 +132,22 @@ input[type="checkbox"] {
    ========================================= */
 
 .button {
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 13px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
   cursor: pointer;
-  border: none;
-  transition: background 150ms ease, color 150ms ease, transform 150ms ease;
 }
+
+.button:hover {
+  background: var(--bg-soft);
+}
+
 .button svg {
   width: 16px;
   height: 16px;
@@ -283,25 +265,74 @@ input[type="checkbox"] {
   content: "✕";
 }
 
+.button.edit-btn {
+  color: var(--text-muted);
+}
+
 .button.edit-btn::before {
-  content: "✏";
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  mask: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
+<path d='M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'/>\
+</svg>") center / contain no-repeat;
 }
 
-.button.duplicate-btn::before,
-.button.add-btn[data-action="dup"]::before {
-  content: "⧉";
+.button.dup-btn {
+  color: var(--accent);
+  border-color: var(--accent-soft);
 }
 
-.button.delete-btn::before,
-.button.danger::before {
-  content: "🗑";
+.button.dup-btn::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  mask: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
+<path d='M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z'/>\
+</svg>") center / contain no-repeat;
+}
+
+.button.delete-btn {
+  color: var(--danger);
+  border-color: rgba(239,68,68,0.35);
+}
+
+.button.delete-btn:hover {
+  background: rgba(239,68,68,0.1);
+}
+
+.button.delete-btn::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  mask: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
+<path d='M6 7h12l-1 14H7L6 7zm3-3h6l1 2H8l1-2z'/>\
+</svg>") center / contain no-repeat;
+}
+
+.button.export-btn {
+  color: var(--text-main);
 }
 
 .button.export-btn::before,
 .button.download-btn::before,
 .button.ghost::before {
-  content: "⬇";
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  mask: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
+<path d='M5 20h14v-2H5v2zM12 2v12l4-4 1.4 1.4L12 17.8l-5.4-5.4L8 10l4 4V2h0z'/>\
+</svg>") center / contain no-repeat;
 }
+
 
 .button.reset-btn::before {
   content: "↺";
