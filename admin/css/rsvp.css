@@ -50,3 +50,7 @@
   padding: 12px;
   color: var(--text-muted);
 }
+.actions-col {
+  text-align: right;
+  white-space: nowrap;
+}

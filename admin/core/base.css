@@ -62,6 +62,11 @@ body {
   background: radial-gradient(circle at top left, #111827 0, #020617 40%, #020617 100%);
 }
 
+th:last-child,
+td:last-child {
+  text-align: right;
+  white-space: nowrap;
+
 /* GLOBAL INPUTS */
 .input {
   padding: 6px 10px;
