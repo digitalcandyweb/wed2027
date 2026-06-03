@@ -66,6 +66,7 @@ th:last-child,
 td:last-child {
   text-align: right;
   white-space: nowrap;
+}
 
 /* GLOBAL INPUTS */
 .input {
