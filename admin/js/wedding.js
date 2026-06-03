@@ -6,6 +6,16 @@ let coupleEl, emailEl, phoneEl;
 let dateLondonEl, dateLondon2El, datePerthEl;
 let locLondonEl, locPerthEl, notesEl;
 
+function initAccordion() {
+  document.querySelectorAll('.settings-accordion').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('active');
+      const panel = btn.nextElementSibling;
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    });
+  });
+}
+
 async function loadWedding() {
   const data = await apiGet('/admin/api/wedding', { loadingLabel: 'Loading wedding settings…' });
   const w = data || {};
@@ -45,16 +55,6 @@ async function resetWedding() {
   await apiPost('/admin/api/wedding/reset', {}, { loadingLabel: 'Restoring defaults…' });
   toast('Wedding settings reset', { type: 'success' });
   await loadWedding();
-}
-
-function initAccordion() {
-  document.querySelectorAll('.settings-accordion').forEach(btn => {
-    btn.addEventListener('click', () => {
-      btn.classList.toggle('active');
-      const panel = btn.nextElementSibling;
-      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-    });
-  });
 }
 
 export function initWedding() {

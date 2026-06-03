@@ -100,10 +100,10 @@ export async function loadSection(section) {
     if (section === "wedding") initWedding();
     if (section === "vendors") initVendors();
     if (section === "contacts") initContacts();
-    if (section === "edit") initEdit();
-    if (section === "settings") initSettings();
     if (section === "budget") initBudget();
     if (section === "planner") initPlanner();
+    if (section === "settings") initSettings();
+    if (section === "edit") initEdit();
   } catch (err) {
     container.innerHTML = `<p style="color:var(--danger);">Failed to load section: ${section}</p>`;
     console.error(err);
@@ -123,14 +123,14 @@ export async function loadSection(section) {
   const meta = {
     dashboard: { title: "Dashboard overview", subtitle: "High-level view of attendance and events.", chip: "Dashboard", showSummary: false },
     rsvp: { title: "RSVP Manager", subtitle: "View, filter and export guest responses for all events.", chip: "Guests & responses", showSummary: true },
-    events: { title: "Events", subtitle: "Manage event names, dates, locations and visibility.", chip: "Event configuration", showSummary: false },
-    wedding: { title: "Wedding Settings", subtitle: "Couple details, key dates and contact information.", chip: "Wedding", showSummary: false },
-    vendors: { title: "Vendors", subtitle: "Track suppliers, contracts, and assignments.", chip: "Vendors", showSummary: false },
-    contacts: { title: "Contacts", subtitle: "Contacts list for guests, family, and vendors.", chip: "Contacts", showSummary: false },
-    edit: { title: "Edit Website Content", subtitle: "Update hero text, event details, travel info and more.", chip: "Copy & layout", showSummary: false },
-    settings: { title: "Site Settings", subtitle: "Configure site-wide options and event blocks.", chip: "Configuration", showSummary: false },
+    events: { title: "Events", subtitle: "Manage event timelines, capacity, and vendor assignments.", chip: "Event manager", showSummary: false },
+    wedding: { title: "Wedding Settings", subtitle: "Couple details, key dates and contact info.", chip: "Wedding", showSummary: false },
+    vendors: { title: "Vendors", subtitle: "Manage suppliers and assign them to events.", chip: "Vendors", showSummary: false },
+    contacts: { title: "Contacts", subtitle: "Contact list for family, friends, and suppliers.", chip: "Contacts", showSummary: false },
     budget: { title: "Budget & Cost Tracker", subtitle: "Track all wedding-related expenses.", chip: "Money & commitments", showSummary: false },
-    planner: { title: "Planner & Timeline", subtitle: "Organise tasks, due dates and timelines.", chip: "Tasks & milestones", showSummary: false }
+    planner: { title: "Planner & Timeline", subtitle: "Organise tasks, due dates and timelines.", chip: "Tasks & milestones", showSummary: false },
+    settings: { title: "Site Settings", subtitle: "Configure site-wide options and event blocks.", chip: "Configuration", showSummary: false },
+    edit: { title: "Edit Website Content", subtitle: "Update hero text, event details, travel info and more.", chip: "Copy & layout", showSummary: false }
   };
 
   navItems.forEach(item => {

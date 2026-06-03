@@ -3,7 +3,9 @@ import { openModal, closeModal, toast } from '../core/ui.js';
 import { bus } from '../core/bus.js';
 
 let events = [];
-let tableBody, addBtn, modal, form, cancelBtn, modalTitle;
+let vendors = [];
+
+let tableBody, addBtn, modal, form, cancelBtn, modalTitle, vendorsSelect;
 let editingId = null;
 
 function formatDate(iso) {
@@ -14,6 +16,25 @@ function formatDate(iso) {
   } catch {
     return iso;
   }
+}
+
+async function loadVendors() {
+  const data = await apiGet('/admin/api/vendors', { loadingLabel: 'Loading vendors…' });
+  vendors = Array.isArray(data) ? data : [];
+  vendors.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  populateVendorsSelect();
+}
+
+function populateVendorsSelect(selectedIds = []) {
+  if (!vendorsSelect) return;
+  vendorsSelect.innerHTML = '';
+  vendors.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v.id;
+    opt.textContent = v.name ?? v.id;
+    if (selectedIds.includes(v.id)) opt.selected = true;
+    vendorsSelect.appendChild(opt);
+  });
 }
 
 async function loadEvents() {
@@ -43,7 +64,7 @@ function renderTable() {
       <td>${e.date ? formatDate(e.date) : '—'}</td>
       <td>${escapeHtml(e.location ?? '')}</td>
       <td>${e.visible === false ? 'No' : 'Yes'}</td>
-      <td>${escapeHtml(e.notes ?? '—')}</td>
+      <td>${(e.capacity != null && e.capacity !== '') ? Number(e.capacity) : '—'}</td>
       <td style="text-align:right; white-space:nowrap;">
         <button class="button edit-btn" data-action="edit" data-id="${e.id}" aria-label="Edit"><svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M3 14.5V17h2.5L15.6 6.9l-2.5-2.5L3 14.5z' fill='currentColor'/><path d='M16.7 5.8a.8.8 0 0 0 0-1.1l-1.4-1.4a.8.8 0 0 0-1.1 0l-1.1 1.1 2.5 2.5 1.1-1.1z' fill='currentColor'/></svg></button>
         <button class="button dup-btn" data-action="dup" data-id="${e.id}" aria-label="Duplicate"><svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M7 3h9v11H7V3z' stroke='currentColor' stroke-width='2'/><path d='M4 6H3v11h9v-1' stroke='currentColor' stroke-width='2'/></svg></button>
@@ -59,6 +80,7 @@ function openAdd() {
   if (modalTitle) modalTitle.textContent = 'Add Event';
   form.reset();
   form.visible.checked = true;
+  populateVendorsSelect([]);
   openModal(modal);
 }
 
@@ -71,8 +93,27 @@ function openEdit(id) {
   form.date.value = e.date ?? '';
   form.location.value = e.location ?? '';
   form.venue.value = e.venue ?? '';
+  form.capacity.value = e.capacity ?? '';
   form.visible.checked = e.visible !== false;
+  form.timeline.value = Array.isArray(e.timeline) ? e.timeline.map(x => (typeof x === 'string' ? x : `${x.time || ''}${x.time ? ' - ' : ''}${x.label || ''}`)).join('
+') : (e.timelineText || '');
+  populateVendorsSelect(Array.isArray(e.vendorIds) ? e.vendorIds : []);
   openModal(modal);
+}
+
+function parseTimeline(text) {
+  const lines = String(text || '').split('
+').map(l => l.trim()).filter(Boolean);
+  return lines.map(line => {
+    const m = line.match(/^([0-2]?\d:[0-5]\d)\s*-\s*(.+)$/);
+    if (m) return { time: m[1], label: m[2] };
+    return { time: '', label: line };
+  });
+}
+
+function selectedVendorIds() {
+  if (!vendorsSelect) return [];
+  return Array.from(vendorsSelect.selectedOptions).map(o => o.value);
 }
 
 async function saveEvent(ev) {
@@ -83,7 +124,10 @@ async function saveEvent(ev) {
     date: form.date.value || null,
     location: form.location.value.trim(),
     venue: form.venue.value.trim(),
-    visible: form.visible.checked
+    visible: form.visible.checked,
+    capacity: form.capacity.value !== '' ? Number(form.capacity.value) : null,
+    vendorIds: selectedVendorIds(),
+    timeline: parseTimeline(form.timeline.value)
   };
 
   await apiPost('/admin/api/events/save', body, { loadingLabel: 'Saving event…' });
@@ -136,13 +180,14 @@ function escapeHtml(s) {
   }[c]));
 }
 
-export function initEvents() {
+export async function initEvents() {
   tableBody = document.getElementById('events-table-body');
   addBtn = document.getElementById('add-event-btn');
   modal = document.getElementById('event-modal');
   form = document.getElementById('event-form');
   cancelBtn = document.getElementById('event-cancel');
   modalTitle = document.getElementById('event-modal-title');
+  vendorsSelect = document.getElementById('event-vendors');
 
   if (!tableBody || !addBtn || !modal || !form) return;
 
@@ -151,5 +196,11 @@ export function initEvents() {
   form.addEventListener('submit', saveEvent);
   tableBody.addEventListener('click', onTableClick);
 
-  loadEvents();
+  await loadVendors();
+  await loadEvents();
+
+  bus.on('vendors:updated', (v) => {
+    vendors = Array.isArray(v) ? v : vendors;
+    populateVendorsSelect(selectedVendorIds());
+  });
 }

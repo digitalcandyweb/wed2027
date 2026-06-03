@@ -3,6 +3,7 @@
     <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
   </svg>
 </button>
+
 <div class="events-table-wrapper">
   <table class="events-table">
     <thead>
@@ -12,8 +13,8 @@
         <th>Date</th>
         <th>Location</th>
         <th>Visible</th>
-        <th>Notes</th>
-        <th>Actions</th>
+        <th>Capacity</th>
+        <th style="text-align:right;">Actions</th>
       </tr>
     </thead>
     <tbody id="events-table-body"></tbody>
@@ -29,17 +30,23 @@
       <label>Date<input type="date" name="date" class="input" required></label>
       <label>Location<input type="text" name="location" class="input" required></label>
       <label>Venue<input type="text" name="venue" class="input"></label>
+      <label>Capacity (optional)<input type="number" name="capacity" class="input" min="0" placeholder="e.g. 80"></label>
+
+      <label>Assign Vendors</label>
+      <select id="event-vendors" class="input" multiple style="min-height:110px;"></select>
+      <p class="settings-hint">Hold Ctrl / Cmd to select multiple vendors.</p>
+
+      <label>Event Timeline (one per line, e.g. 14:00 - Ceremony)</label>
+      <textarea name="timeline" class="input" style="min-height:110px;" placeholder="14:00 - Guests arrive\n14:30 - Ceremony\n15:00 - Photos"></textarea>
+
       <label class="checkbox-row"><input type="checkbox" name="visible" checked> Visible on site</label>
+
       <div class="modal-actions">
         <button type="submit" class="button save-btn" title="Save" aria-label="Save">
-          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <path d="M7.5 13.5L4 10l1.4-1.4L7.5 10.7l7.1-7.1L16 5l-8.5 8.5z" fill="currentColor"/>
-          </svg>
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 13.5L4 10l1.4-1.4L7.5 10.7l7.1-7.1L16 5l-8.5 8.5z" fill="currentColor"/></svg>
         </button>
         <button id="event-cancel" type="button" class="button cancel-btn" title="Cancel" aria-label="Cancel">
-          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
       </div>
     </form>
