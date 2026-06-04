@@ -77,3 +77,108 @@ tr.empty td.empty {
   color: var(--text-muted);
   font-style: italic;
 }
+
+
+/* =========================================================
+   Locations modal (shared admin section styling)
+   File: admin/core/sections.css
+   ========================================================= */
+
+#location-modal {
+  overflow: hidden;
+}
+
+/* Make modal-content the scroll container */
+#location-modal .modal-content {
+  max-width: 640px;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 0; /* allow pinned header to span full width */
+}
+
+/* Pin the modal title while scrolling */
+#location-modal #location-modal-title {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 16px 16px 12px;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Locations form layout: 1-column, clean rhythm */
+#location-form {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 18px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Critical overflow fix for grid children */
+#location-form > * {
+  min-width: 0;
+}
+
+#location-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 500;
+}
+
+#location-form input,
+#location-form textarea,
+#location-form select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+#location-form textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+/* Actions row */
+#location-form .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* Modern dark scrollbar (WebKit) */
+#location-modal .modal-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+#location-modal .modal-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+}
+
+#location-modal .modal-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.25),
+    rgba(255, 255, 255, 0.15)
+  );
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+#location-modal .modal-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.35),
+    rgba(255, 255, 255, 0.25)
+  );
+}
