@@ -58,6 +58,27 @@
     </div>
   </div>
 
+<!-- ADMIN PERMISSIONS -->
+  <div class="settings-section">
+    <button class="settings-accordion">Admin Permissions</button>
+	<div class="settings-panel">
+		<p class="settings-hint">
+		 Control who can access the Admin area. One email per line. Changes take effect immediately.
+		</p>
+
+		<label>Admin Emails (full access)</label>
+		<textarea id="set-admin-emails" class="input" style="height:120px;" placeholder="brad@example.com"></textarea>
+
+		<label>Limited Emails (Budget + Planner only)</label>
+		<textarea id="set-limited-emails" class="input" style="height:120px;" placeholder="wife@example.com"></textarea>
+
+		<label class="checkbox-row">
+		 <input type="checkbox" id="set-rbac-enabled" checked>
+		 Enable role-based permissions (RBAC)
+		</label>
+	</div>
+  </div>
+
   <!-- TRAVEL -->
   <div class="settings-section">
     <button class="settings-accordion">Travel Information</button>

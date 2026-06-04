@@ -53,8 +53,21 @@ function renderEventBlocks() {
   });
 }
 
+function splitEmails(text) {
+  return String(text || '').split(/\r?\n|,/).map(s => s.trim().toLowerCase()).filter(Boolean);
+}
+
+function joinEmails(list) {
+  return Array.isArray(list) ? list.join('\n') : '';
+}
+
 async function loadSettings() {
   const data = await apiGet('/admin/api/settings', { loadingLabel: 'Loading settings…' });
+  const rbac = settings.adminAccess || {};
+  setVal('set-rbac-enabled', rbac.enabled !== false); // default true
+  setVal('set-admin-emails', joinEmails(rbac.adminEmails));
+  setVal('set-limited-emails', joinEmails(rbac.limitedEmails));
+
   settings = data || {};
 
   setVal('set-site-title', settings.siteTitle);
@@ -81,27 +94,46 @@ async function loadSettings() {
 
 async function saveSettings() {
   const body = {
+    ...(settings || {}), // preserve any existing keys
     siteTitle: getVal('set-site-title'),
     footerText: getVal('set-footer-text'),
     accent: getVal('set-accent'),
-
     heroTitle: getVal('set-hero-title'),
     heroSubtitle: getVal('set-hero-subtitle'),
     heroDescription: getVal('set-hero-description'),
-
     travelOverview: getVal('set-travel-overview'),
     travelAirports: getVal('set-travel-airports'),
     travelTransport: getVal('set-travel-transport'),
-
     accomOverview: getVal('set-accom-overview'),
     accomHotels: getVal('set-accom-hotels'),
-
     faq: getVal('set-faq'),
     custom1: getVal('set-custom-1'),
     custom2: getVal('set-custom-2'),
-
     eventBlocks: {}
   };
+
+  // RBAC config
+  const enabledEl = document.getElementById('set-rbac-enabled');
+  body.adminAccess = {
+    enabled: enabledEl ? enabledEl.checked : true,
+    adminEmails: splitEmails(getVal('set-admin-emails')),
+    limitedEmails: splitEmails(getVal('set-limited-emails'))
+  };
+
+  // Preserve your existing eventBlocks behaviour
+  events.forEach(ev => {
+    body.eventBlocks[ev.id] = {
+      description: document.querySelector(`.event-desc[data-id="${ev.id}"]`)?.value || '',
+      schedule: document.querySelector(`.event-schedule[data-id="${ev.id}"]`)?.value || '',
+      notes: document.querySelector(`.event-notes[data-id="${ev.id}"]`)?.value || ''
+    };
+  });
+
+  await apiPost('/admin/api/settings/save', body, { loadingLabel: 'Saving settings…' });
+  toast('Settings saved', { type: 'success' });
+  settings = body;
+}
+
 
   events.forEach(ev => {
     body.eventBlocks[ev.id] = {
@@ -134,7 +166,7 @@ function initAccordion() {
 }
 
 function setVal(id, val) {
-  const el = document.getElementById(id);
+  const el = document.getElementById('set-rbac-enabled').checked = (rbac.enabled !== false);;
   if (el) el.value = val ?? '';
 }
 

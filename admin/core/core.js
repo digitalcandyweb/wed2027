@@ -120,6 +120,11 @@ export async function loadSection(section, { force = false } = {}) {
   const container = document.getElementById("content");
   if (!container || !section) return;
 
+  // ✅ Guard FIRST
+  if (!isSectionAllowed(section)) {
+    container.innerHTML = `<p style="color:var(--danger);">You do not have access to this section.</p>`;
+    return;
+  }
   if (!force && section === currentSection) return;
   currentSection = section;
 
@@ -190,6 +195,11 @@ export async function loadSection(section, { force = false } = {}) {
       }
 
       loadSection(section);
+		if (!isSectionAllowed(section)) {
+		 const container = document.getElementById("content");
+		if (container) container.innerHTML = `<p style="color:var(--danger);">You do not have access to this section.</p>`;
+		 return;
+		}
     });
 
     item.addEventListener('keydown', (e) => {
@@ -197,9 +207,20 @@ export async function loadSection(section, { force = false } = {}) {
         e.preventDefault();
         item.click();
       }
+      }
     });
   });
 
+(async () => {
+  await loadRole();
+  applyNavPermissions();
+
+  // If limited, land them straight on Budget (or Planner)
+  if (currentRole === 'limited') {
+    loadSection('budget');
+    return;
+  }
   loadSection("dashboard");
+})();
 })();
 
