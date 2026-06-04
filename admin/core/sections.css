@@ -166,3 +166,7 @@ tr.empty td.empty {
 #location-modal .modal-content::-webkit-scrollbar-thumb:hover {
   background: rgba(255,255,255,.32);
 }
+
+
+tr.dragging { opacity: 0.6; }
+.drag-handle:active { cursor: grabbing; }

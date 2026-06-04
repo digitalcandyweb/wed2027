@@ -15,6 +15,7 @@ let unsubLocations = null;
 let unsubRsvps = null;
 let dndBound = false;
 let draggedRow = null;
+let dragArmed = false;
 
 
 const ICON_PENCIL = "<svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M3 14.5V17h2.5L15.6 6.9l-2.5-2.5L3 14.5z' fill='currentColor'/><path d='M16.7 5.8a.8.8 0 0 0 0-1.1l-1.4-1.4a.8.8 0 0 0-1.1 0l-1.1 1.1 2.5 2.5 1.1-1.1z' fill='currentColor'/></svg>";
@@ -194,28 +195,50 @@ function bindDnDOnce() {
   if (dndBound) return;
   dndBound = true;
 
-  tableBody.addEventListener('dragstart', (e) => {
+  // Arm dragging only when the user presses the handle
+  tableBody.addEventListener('pointerdown', (e) => {
     const handle = e.target.closest('.drag-handle');
-    if (!handle) {
+    if (!handle) return;
+
+    const row = handle.closest('tr[data-id]');
+    if (!row) return;
+
+    dragArmed = true;
+    draggedRow = row;
+  });
+
+  // If they release without dragging, disarm
+  tableBody.addEventListener('pointerup', () => { dragArmed = false; });
+  tableBody.addEventListener('pointercancel', () => { dragArmed = false; });
+
+  tableBody.addEventListener('dragstart', (e) => {
+    const row = e.target.closest('tr[data-id]');
+    if (!row) return;
+
+    // Only allow drag if it was armed by pressing the handle
+    if (!dragArmed || row !== draggedRow) {
       e.preventDefault();
       return;
     }
-    draggedRow = e.target.closest('tr');
-    if (!draggedRow) return;
-    draggedRow.classList.add('dragging');
+
+    row.classList.add('dragging');
+
+    // Firefox requires setData to start dragging
+    try { e.dataTransfer.setData('text/plain', row.dataset.id || ''); } catch {}
     e.dataTransfer.effectAllowed = 'move';
   });
 
-  tableBody.addEventListener('dragend', async () => {
+  tableBody.addEventListener('dragend', () => {
     if (draggedRow) draggedRow.classList.remove('dragging');
     draggedRow = null;
+    dragArmed = false;
   });
 
   tableBody.addEventListener('dragover', (e) => {
     if (!draggedRow) return;
     e.preventDefault();
 
-    const overRow = e.target.closest('tr');
+    const overRow = e.target.closest('tr[data-id]');
     if (!overRow || overRow === draggedRow) return;
 
     const rect = overRow.getBoundingClientRect();
@@ -228,27 +251,33 @@ function bindDnDOnce() {
     if (!draggedRow) return;
     e.preventDefault();
 
-    // Build new order list from DOM row order
-    const ids = Array.from(tableBody.querySelectorAll('tr[data-id]')).map(tr => tr.dataset.id);
+    const ids = Array.from(tableBody.querySelectorAll('tr[data-id]'))
+      .map(tr => tr.dataset.id)
+      .filter(Boolean);
 
-    // Update UI order numbers immediately
+    // Update visible order numbers immediately
     ids.forEach((id, i) => {
       const row = tableBody.querySelector(`tr[data-id="${CSS.escape(id)}"]`);
-      row?.querySelector('.order-num') && (row.querySelector('.order-num').textContent = String(i + 1));
+      const el = row?.querySelector('.order-num');
+      if (el) el.textContent = String(i + 1);
     });
 
-    // Persist to server
     try {
       await apiPost('/admin/api/events/reorder', ids, { loadingLabel: 'Saving event order…' });
       toast('Event order saved', { type: 'success' });
-      await loadEvents(); // reload to reflect canonical order
+      await loadEvents();
     } catch (err) {
-      toast('Could not save order (see console)', { type: 'error' });
       console.error(err);
-      await loadEvents(); // revert to server order
+      toast('Could not save order (see console)', { type: 'error' });
+      await loadEvents();
+    } finally {
+      dragArmed = false;
+      if (draggedRow) draggedRow.classList.remove('dragging');
+      draggedRow = null;
     }
   });
 }
+
 
 function timelineToText(timeline) {
   if (!Array.isArray(timeline)) return '';
