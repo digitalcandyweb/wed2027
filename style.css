@@ -731,3 +731,109 @@ body.no-scroll {
     height: 240px;
   }
 }
+
+/* Small Event Card */
+.event-card.event-card--dynamic { max-width: 980px; margin-left:auto; margin-right:auto; }
+
+/* =========================================================
+   Dynamic events: centred text + media row beneath (photo + map)
+   ========================================================= */
+
+/* Force dynamic cards to be block layout (NOT side-column flex) */
+.event-card.event-card--dynamic {
+  display: block;
+  text-align: center;
+
+  /* lighter/smaller border */
+  border: 1px solid rgba(240, 236, 231, 0.55);
+  border-radius: 14px;
+  padding: 16px;
+
+  /* keep card itself centred on the page */
+  max-width: 980px;
+  margin: 20px auto;
+}
+
+/* Text */
+.event-card.event-card--dynamic .event-title {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.event-card.event-card--dynamic .event-meta {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: #8b7a6a;
+  font-weight: 700;
+}
+
+.event-card.event-card--dynamic .event-text {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b433d;
+}
+
+/* Media row UNDER the text, centred */
+.event-card.event-card--dynamic .event-media-row {
+  margin-top: 16px;
+  display: grid;
+  justify-items: center;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 18px;
+  flex-wrap: wrap; /* stacks nicely on smaller screens */
+}
+
+/* Each media column */
+.event-card.event-card--dynamic .event-media-col {
+  width: min(460px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centre photo/map + links */
+}
+
+/* Website under photo */
+.event-card.event-card--dynamic .event-website,
+.event-card.event-card--dynamic .event-maps {
+  margin-top: 10px;
+}
+
+.event-card.event-card--dynamic .event-website a,
+.event-card.event-card--dynamic .event-maps a {
+  font-weight: 700;
+  text-decoration: underline;
+  color: #2b2621;
+}
+
+/* Photo sizing */
+.event-card.event-card--dynamic .carousel {
+  width: 100%;
+  margin-top: 0;
+}
+
+.event-card.event-card--dynamic .carousel-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+/* Map sizing */
+.event-card.event-card--dynamic .map-embed iframe {
+  width: 100%;
+  height: 300px;
+  border: 0;
+  border-radius: 12px;
+  display: block;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .event-card.event-card--dynamic .carousel-image,
+  .event-card.event-card--dynamic .map-embed iframe {
+    height: 220px;
+  }
+}
