@@ -75,3 +75,67 @@
   text-align: right;
   white-space: nowrap;
 }
+
+/* =========================
+   Event modal form layout
+   ========================= */
+
+#event-modal .modal-content {
+  max-width: 760px; /* slightly wider for 2-column layout */
+}
+
+#event-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+
+/* Make labels stack input underneath cleanly */
+#event-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 500;
+}
+
+/* Full-width rows */
+#event-form textarea,
+#event-form select[multiple],
+#event-form .checkbox-row,
+#event-form .settings-hint,
+#event-form .modal-actions {
+  grid-column: 1 / -1;
+}
+
+/* Custom location wrapper should span full width */
+#event-location-custom-wrap {
+  grid-column: 1 / -1;
+}
+
+/* Textareas should feel deliberate, not cramped */
+#event-form textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+/* Vendors multi-select */
+#event-vendors {
+  min-height: 120px;
+}
+
+/* Modal action buttons aligned right */
+#event-form .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* =========================
+   Mobile fallback
+   ========================= */
+@media (max-width: 720px) {
+  #event-form {
+    grid-template-columns: 1fr;
+  }
+}
