@@ -145,8 +145,14 @@ function renderTable() {
 
   events.forEach((e, idx) => {
     const tr = document.createElement('tr');
+    tr.dataset.id = e.id;
+    tr.draggable = true;
+
     tr.innerHTML = `
-      <td>${e.order ?? (idx + 1)}</td>
+      <td>
+        <span class="drag-handle" title="Drag to reorder" aria-label="Drag to reorder" style="cursor:grab; user-select:none; margin-right:8px;">⠿</span>
+        <span class="order-num">${e.order ?? (idx + 1)}</span>
+      </td>
       <td>${escapeHtml(e.name ?? '')}</td>
       <td>${e.date ? formatDate(e.date) : '—'}</td>
       <td>${escapeHtml(locationNameForEvent(e))}</td>
@@ -158,8 +164,11 @@ function renderTable() {
         <button class="button delete-btn" data-action="del" data-id="${e.id}" aria-label="Delete">${ICON_BIN}</button>
       </td>
     `;
+
     tableBody.appendChild(tr);
   });
+
+  bindDnDOnce();
 }
 
 function openAdd() {
@@ -179,6 +188,66 @@ function openAdd() {
   locationSelect.value = '';
   onLocationChange();
   openModal(modal);
+}
+
+function bindDnDOnce() {
+  if (dndBound) return;
+  dndBound = true;
+
+  tableBody.addEventListener('dragstart', (e) => {
+    const handle = e.target.closest('.drag-handle');
+    if (!handle) {
+      e.preventDefault();
+      return;
+    }
+    draggedRow = e.target.closest('tr');
+    if (!draggedRow) return;
+    draggedRow.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+
+  tableBody.addEventListener('dragend', async () => {
+    if (draggedRow) draggedRow.classList.remove('dragging');
+    draggedRow = null;
+  });
+
+  tableBody.addEventListener('dragover', (e) => {
+    if (!draggedRow) return;
+    e.preventDefault();
+
+    const overRow = e.target.closest('tr');
+    if (!overRow || overRow === draggedRow) return;
+
+    const rect = overRow.getBoundingClientRect();
+    const before = (e.clientY - rect.top) < (rect.height / 2);
+
+    tableBody.insertBefore(draggedRow, before ? overRow : overRow.nextSibling);
+  });
+
+  tableBody.addEventListener('drop', async (e) => {
+    if (!draggedRow) return;
+    e.preventDefault();
+
+    // Build new order list from DOM row order
+    const ids = Array.from(tableBody.querySelectorAll('tr[data-id]')).map(tr => tr.dataset.id);
+
+    // Update UI order numbers immediately
+    ids.forEach((id, i) => {
+      const row = tableBody.querySelector(`tr[data-id="${CSS.escape(id)}"]`);
+      row?.querySelector('.order-num') && (row.querySelector('.order-num').textContent = String(i + 1));
+    });
+
+    // Persist to server
+    try {
+      await apiPost('/admin/api/events/reorder', ids, { loadingLabel: 'Saving event order…' });
+      toast('Event order saved', { type: 'success' });
+      await loadEvents(); // reload to reflect canonical order
+    } catch (err) {
+      toast('Could not save order (see console)', { type: 'error' });
+      console.error(err);
+      await loadEvents(); // revert to server order
+    }
+  });
 }
 
 function timelineToText(timeline) {
