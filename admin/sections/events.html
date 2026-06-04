@@ -1,3 +1,4 @@
+
 <button id="add-event-btn" class="button add-btn" title="Add event" aria-label="Add event">
   <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
     <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -23,7 +24,7 @@
 
 <!-- EVENT MODAL -->
 <div id="event-modal" class="modal hidden">
-  <div class="modal-content">
+  <div class="modal-content" style="max-width:720px;">
     <h3 id="event-modal-title">Add Event</h3>
     <form id="event-form">
       <label>Event Name<input type="text" name="name" class="input" required></label>
@@ -32,12 +33,21 @@
       <label>Location
         <select id="event-location-id" name="locationId" class="input"></select>
       </label>
-
       <div id="event-location-custom-wrap" style="display:none;">
         <label>Custom location name<input type="text" name="location" class="input" placeholder="e.g. Stirling, Perth"></label>
       </div>
 
       <label>Venue<input type="text" name="venue" class="input"></label>
+
+      <label>Description (public)
+        <textarea name="description" class="input" style="min-height:110px;" placeholder="Short public description for this event…"></textarea>
+      </label>
+
+      <label>Event photos (optional — one URL per line)
+        <textarea name="photos" class="input" style="min-height:90px;" placeholder="https://...
+https://..."></textarea>
+      </label>
+
       <label>Capacity (optional)<input type="number" name="capacity" class="input" min="0" placeholder="e.g. 80"></label>
 
       <label>Assign Vendors</label>
@@ -45,7 +55,9 @@
       <p class="settings-hint">Hold Ctrl / Cmd to select multiple vendors.</p>
 
       <label>Event Timeline (one per line, e.g. 14:00 - Ceremony)</label>
-      <textarea name="timeline" class="input" style="min-height:110px;" placeholder="14:00 - Guests arrive\n14:30 - Ceremony\n15:00 - Photos"></textarea>
+      <textarea name="timeline" class="input" style="min-height:110px;" placeholder="14:00 - Guests arrive
+14:30 - Ceremony
+15:00 - Photos"></textarea>
 
       <label class="checkbox-row"><input type="checkbox" name="visible" checked> Visible on site</label>
 

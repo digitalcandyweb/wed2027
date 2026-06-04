@@ -1,37 +1,116 @@
+
 (async function () {
   const container = document.getElementById("events-list");
   if (!container) return;
 
   try {
-    const res = await fetch("/api/events");
+    const res = await fetch("/api/events", { headers: { "Accept": "application/json" } });
     if (!res.ok) throw new Error("Failed to load events");
 
     const events = await res.json();
 
-    if (!events.length) {
-      container.innerHTML = "<p class='muted'>No events announced yet.</p>";
+    if (!Array.isArray(events) || !events.length) {
+      container.innerHTML = "<p class='section-intro'>No events announced yet.</p>";
       return;
     }
 
     container.innerHTML = "";
 
     for (const ev of events) {
-      const el = document.createElement("article");
-      el.className = "event-card";
+      const card = document.createElement("article");
+      card.className = "event-card";
 
-      el.innerHTML = `
-        <h3>${ev.name}</h3>
-        <p class="event-meta">
-          ${ev.date ? ev.date : ""}${ev.location ? " · " + ev.location : ""}
-        </p>
-        ${ev.venue ? `<p>${ev.venue}</p>` : ""}
+      const loc = ev.locationObj || null;
+      const dateStr = ev.date ? formatDate(ev.date) : "";
+      const metaParts = [];
+      if (dateStr) metaParts.push(dateStr);
+      if (ev.location) metaParts.push(ev.location);
+      if (ev.venue) metaParts.push(ev.venue);
+
+      const links = [];
+      const mapsUrl = loc?.mapsUrl || "";
+      const webUrl = loc?.website || "";
+      if (mapsUrl) links.push(`<a href="${escapeAttr(mapsUrl)}" target="_blank" rel="noreferrer">Google Maps</a>`);
+      if (webUrl) links.push(`<a href="${escapeAttr(webUrl)}" target="_blank" rel="noreferrer">Website</a>`);
+
+      const photos = Array.isArray(ev.photos) ? ev.photos : [];
+      const carouselHtml = photos.length ? renderCarousel(photos, ev.id || ev.name) : "";
+
+      const desc = (ev.description || "").trim();
+      const locDesc = (loc?.description || "").trim();
+
+      card.innerHTML = `
+        <div class="event-header">
+          <h3>${escapeHtml(ev.name || "Event")}</h3>
+          <p class="event-meta">${escapeHtml(metaParts.join(" · "))}</p>
+        </div>
+        ${carouselHtml}
+        ${desc ? `<p class="event-text">${escapeHtml(desc)}</p>` : ""}
+        ${(!desc && locDesc) ? `<p class="event-text">${escapeHtml(locDesc)}</p>` : ""}
+        ${links.length ? `<p class="event-links">${links.join(" · ")}</p>` : ""}
       `;
 
-      container.appendChild(el);
+      container.appendChild(card);
     }
+
+    // If ui.js is present, it attaches carousel listeners on DOMContentLoaded
+    // but our elements are injected after that. So we initialise carousels here.
+    initCarousels(container);
   } catch (err) {
     console.error(err);
-    container.innerHTML =
-      "<p class='muted'>Events are temporarily unavailable.</p>";
+    container.innerHTML = "<p class='section-intro'>Events are temporarily unavailable.</p>";
+  }
+
+  function formatDate(iso) {
+    try {
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return String(iso);
+      return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    } catch {
+      return String(iso);
+    }
+  }
+
+  function renderCarousel(urls, key) {
+    const safeKey = String(key).replace(/[^a-z0-9_-]/gi, "").slice(0, 24) || "ev";
+    const imgs = urls.map((u, i) => `<img src="${escapeAttr(u)}" alt="${escapeAttr('Event photo ' + (i + 1))}" class="carousel-image${i === 0 ? ' active' : ''}">`).join("");
+    const dots = urls.map((_, i) => `<button class="dot${i === 0 ? ' active' : ''}" aria-label="Go to image ${i + 1}"></button>`).join("");
+
+    return `
+      <div class="carousel" data-carousel data-carousel-key="${safeKey}">
+        <div class="carousel-track">${imgs}</div>
+        <button class="carousel-control prev" aria-label="Previous image">‹</button>
+        <button class="carousel-control next" aria-label="Next image">›</button>
+        <div class="carousel-dots">${dots}</div>
+      </div>
+    `;
+  }
+
+  function initCarousels(root) {
+    root.querySelectorAll('[data-carousel]').forEach(carousel => {
+      const images = carousel.querySelectorAll('.carousel-image');
+      const dots = carousel.querySelectorAll('.dot');
+      const prevBtn = carousel.querySelector('.prev');
+      const nextBtn = carousel.querySelector('.next');
+      let index = 0;
+
+      function showSlide(i) {
+        images.forEach((img, idx) => img.classList.toggle('active', idx === i));
+        dots.forEach((dot, idx) => dot.classList.toggle('active', idx === i));
+        index = i;
+      }
+
+      prevBtn?.addEventListener('click', () => showSlide((index - 1 + images.length) % images.length));
+      nextBtn?.addEventListener('click', () => showSlide((index + 1) % images.length));
+      dots.forEach((dot, idx) => dot.addEventListener('click', () => showSlide(idx)));
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function escapeAttr(s) {
+    return escapeHtml(s).replace(/\s+/g, ' ').trim();
   }
 })();
