@@ -214,8 +214,6 @@ export async function loadSection(section, { force = false } = {}) {
 (async () => {
   await loadRole();
   applyNavPermissions();
-
-  // If limited, land them straight on Budget (or Planner)
   if (currentRole === 'limited') {
     loadSection('budget');
     return;
