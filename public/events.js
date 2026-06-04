@@ -1,3 +1,5 @@
+// public/events.js
+// Renders dynamic event cards from GET /api/events
 
 (async function () {
   const container = document.getElementById("events-list");
@@ -6,11 +8,10 @@
   try {
     const res = await fetch("/api/events", { headers: { "Accept": "application/json" } });
     if (!res.ok) throw new Error("Failed to load events");
-
     const events = await res.json();
 
     if (!Array.isArray(events) || !events.length) {
-      container.innerHTML = "<p class='section-intro'>No events announced yet.</p>";
+      container.innerHTML = `<p class="muted">No events announced yet.</p>`;
       return;
     }
 
@@ -18,7 +19,7 @@
 
     for (const ev of events) {
       const card = document.createElement("article");
-      card.className = "event-card";
+      card.className = "event-card event-card--dynamic";
 
       const loc = ev.locationObj || null;
       const dateStr = ev.date ? formatDate(ev.date) : "";
@@ -27,112 +28,140 @@
       if (ev.location) metaParts.push(ev.location);
       if (ev.venue) metaParts.push(ev.venue);
 
-      const links = [];
-	  const mapsUrl = loc?.mapsUrl || "";
-	  const webUrl = loc?.website || "";
-	  const mapEmbed = (mapsUrl && isGoogleMapsEmbed(mapsUrl)) ? renderMapEmbed(mapsUrl, ev.name ?? 'Event location') : "";
-	  if (!mapEmbed && mapsUrl) {links.push(`<a href="${escapeAttr(mapsUrl)}" target="_blank" rel="noreferrer">Google Maps</a>`);
-	  }
-	  if (webUrl) {links.push(`<a href="${escapeAttr(webUrl)}" target="_blank" rel="noreferrer">Website</a>`);
-	  }
+      const mapsUrl = (loc?.mapsUrl || "");
+      const webUrl = (loc?.website || "");
 
+      // Photos (prefer event photos, fallback is already handled by API as ev.photos)
       const photos = Array.isArray(ev.photos) ? ev.photos : [];
-      const carouselHtml = photos.length ? renderCarousel(photos, ev.id || ev.name) : "";
+      const carouselHtml = photos.length ? renderCarousel(photos, ev.id || ev.name || "ev") : "";
 
-      const desc = (ev.description || "").trim();
-      const locDesc = (loc?.description || "").trim();
+      // Map embed (only if mapsUrl is a Google embed src)
+      const mapEmbed = (mapsUrl && isGoogleMapsEmbed(mapsUrl))
+        ? renderMapEmbed(mapsUrl, ev.name || "Event location")
+        : "";
+
+      // Links
+      const websiteLinkHtml = webUrl
+        ? `<div class="event-website"><a href="${escapeAttr(webUrl)}" target="_blank" rel="noreferrer">Website</a></div>`
+        : "";
+
+      // If no embed, provide a normal “Maps” link
+      const mapsLinkHtml = (!mapEmbed && mapsUrl)
+        ? `<div class="event-maps"><a href="${escapeAttr(mapsUrl)}" target="_blank" rel="noreferrer">Google Maps</a></div>`
+        : "";
+
+      const desc = String(ev.description || "").trim();
+      const locDesc = String(loc?.description || "").trim();
+      const bodyText = desc || locDesc;
 
       card.innerHTML = `
-        <div class="event-header">
-          <h3>${escapeHtml(ev.name || "Event")}</h3>
-          <p class="event-meta">${escapeHtml(metaParts.join(" · "))}</p>
+        <div class="event-media">
+          ${carouselHtml ? `<div class="event-photo">${carouselHtml}</div>` : ""}
+          ${websiteLinkHtml}
+          ${mapEmbed ? `<div class="map-embed">${mapEmbed}</div>` : ""}
+          ${mapsLinkHtml}
         </div>
-        ${carouselHtml}
-        ${desc ? `<p class="event-text">${escapeHtml(desc)}</p>` : ""}
-        ${(!desc && locDesc) ? ` ${escapeHtml(locDesc)} ` : ""}
-		${mapEmbed ? ` <div class="map-embed">${mapEmbed}</div> ` : ""}
-	    ${links.length ? ` <div class="event-links">${links.join(" · ")}</div> ` : ""}
+
+        <div class="event-body">
+          <h3 class="event-title">${escapeHtml(ev.name || "Event")}</h3>
+          ${metaParts.length ? `<p class="event-meta">${escapeHtml(metaParts.join(" · "))}</p>` : ""}
+          ${bodyText ? `<p class="event-text event-text--bold">${escapeHtml(bodyText)}</p>` : ""}
+        </div>
       `;
 
       container.appendChild(card);
     }
 
-    // If ui.js is present, it attaches carousel listeners on DOMContentLoaded
-    // but our elements are injected after that. So we initialise carousels here.
+    // Initialise carousels for injected DOM
     initCarousels(container);
+
   } catch (err) {
     console.error(err);
-    container.innerHTML = "<p class='section-intro'>Events are temporarily unavailable.</p>";
+    container.innerHTML = `<p class="muted">Events are temporarily unavailable.</p>`;
   }
 
   function formatDate(iso) {
     try {
       const d = new Date(iso);
       if (Number.isNaN(d.getTime())) return String(iso);
-      return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+      return d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
     } catch {
       return String(iso);
     }
   }
 
+  function isGoogleMapsEmbed(src) {
+    return typeof src === "string" && src.startsWith("https://www.google.com/maps/embed?");
+  }
+
+  function renderMapEmbed(src, title) {
+    const safeTitle = escapeAttr(title || "Map");
+    const safeSrc = escapeAttr(src);
+    return `<iframe
+      title="${safeTitle}"
+      src="${safeSrc}"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      allowfullscreen
+    ></iframe>`;
+  }
+
   function renderCarousel(urls, key) {
     const safeKey = String(key).replace(/[^a-z0-9_-]/gi, "").slice(0, 24) || "ev";
-    const imgs = urls.map((u, i) => `<img src="${escapeAttr(u)}" alt="${escapeAttr('Event photo ' + (i + 1))}" class="carousel-image${i === 0 ? ' active' : ''}">`).join("");
-    const dots = urls.map((_, i) => `<button class="dot${i === 0 ? ' active' : ''}" aria-label="Go to image ${i + 1}"></button>`).join("");
+    const imgs = urls.map((u, i) =>
+      `<img src="${escapeAttr(u)}" alt="${escapeAttr("Event photo " + (i + 1))}" class="carousel-image${i === 0 ? " active" : ""}">`
+    ).join("");
+
+    const dots = urls.map((_, i) =>
+      `<button class="dot${i === 0 ? " active" : ""}" aria-label="Go to image ${i + 1}"></button>`
+    ).join("");
 
     return `
-      <div class="carousel" data-carousel data-carousel-key="${safeKey}">
-        <div class="carousel-track">${imgs}</div>
+      <div class="carousel" data-carousel="${safeKey}">
+        <div class="carousel-track">
+          ${imgs}
+        </div>
         <button class="carousel-control prev" aria-label="Previous image">‹</button>
         <button class="carousel-control next" aria-label="Next image">›</button>
-        <div class="carousel-dots">${dots}</div>
+        <div class="carousel-dots">
+          ${dots}
+        </div>
       </div>
     `;
   }
 
   function initCarousels(root) {
-    root.querySelectorAll('[data-carousel]').forEach(carousel => {
-      const images = carousel.querySelectorAll('.carousel-image');
-      const dots = carousel.querySelectorAll('.dot');
-      const prevBtn = carousel.querySelector('.prev');
-      const nextBtn = carousel.querySelector('.next');
+    root.querySelectorAll("[data-carousel]").forEach((carousel) => {
+      const images = carousel.querySelectorAll(".carousel-image");
+      const dots = carousel.querySelectorAll(".dot");
+      const prevBtn = carousel.querySelector(".prev");
+      const nextBtn = carousel.querySelector(".next");
       let index = 0;
 
       function showSlide(i) {
-        images.forEach((img, idx) => img.classList.toggle('active', idx === i));
-        dots.forEach((dot, idx) => dot.classList.toggle('active', idx === i));
+        images.forEach((img, idx) => img.classList.toggle("active", idx === i));
+        dots.forEach((dot, idx) => dot.classList.toggle("active", idx === i));
         index = i;
       }
 
-      prevBtn?.addEventListener('click', () => showSlide((index - 1 + images.length) % images.length));
-      nextBtn?.addEventListener('click', () => showSlide((index + 1) % images.length));
-      dots.forEach((dot, idx) => dot.addEventListener('click', () => showSlide(idx)));
+      prevBtn?.addEventListener("click", () => showSlide((index - 1 + images.length) % images.length));
+      nextBtn?.addEventListener("click", () => showSlide((index + 1) % images.length));
+      dots.forEach((dot, idx) => dot.addEventListener("click", () => showSlide(idx)));
     });
   }
 
   function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    return String(s).replace(/[&<>\"']/g, (c) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      "\"": "&quot;",
+      "'": "&#39;"
+    }[c]));
   }
 
   function escapeAttr(s) {
-    return escapeHtml(s).replace(/\s+/g, ' ').trim();
+    return escapeHtml(s).replace(/\s+/g, " ").trim();
   }
-  function isGoogleMapsEmbed(src) {
-  return typeof src === 'string' && src.startsWith('https://www.google.com/maps/embed?');
-}
 
-  function renderMapEmbed(src, title) {
-  const safeTitle = escapeAttr(title || 'Map');
-  const safeSrc = escapeAttr(src);
-  return `<iframe
-    src="${safeSrc}"
-    width="600"
-    height="450"
-    style="border:0;"
-    allowfullscreen=""
-    loading="lazy"
-    referrerpolicy="no-referrer-when-downgrade"
-    title="${safeTitle}"
-    ></iframe>`;
-  } 
 })();

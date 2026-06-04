@@ -423,3 +423,92 @@ body.no-scroll {
     padding: 24px;
   }
 }
+
+/* =========================================================
+   Dynamic Events layout tweaks (photo + map smaller, links, bold text)
+   ========================================================= */
+
+.event-card.event-card--dynamic {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* Media column ~ quarter width */
+.event-card.event-card--dynamic .event-media {
+  flex: 0 0 25%;
+  max-width: 240px; /* “about a quarter” on typical screens */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Text column */
+.event-card.event-card--dynamic .event-body {
+  flex: 1;
+  font-weight: 600; /* make the text bold-ish overall */
+}
+
+.event-card.event-card--dynamic .event-title {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 700; /* bold */
+}
+
+.event-card.event-card--dynamic .event-meta {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: #8b7a6a;
+  font-weight: 700; /* bold */
+}
+
+.event-card.event-card--dynamic .event-text--bold {
+  font-weight: 700; /* bold description text */
+}
+
+/* Photo sizing: keep it small */
+.event-card.event-card--dynamic .carousel {
+  margin-top: 0;
+}
+
+.event-card.event-card--dynamic .carousel-image {
+  width: 100%;
+  height: 160px;         /* smaller */
+  object-fit: cover;     /* crop nicely */
+  border-radius: 12px;
+}
+
+/* Map sizing: keep it small */
+.event-card.event-card--dynamic .map-embed iframe {
+  width: 100%;
+  height: 160px;         /* smaller */
+  border: 0;
+  border-radius: 12px;
+}
+
+/* Website link under photo */
+.event-card.event-card--dynamic .event-website a,
+.event-card.event-card--dynamic .event-maps a {
+  display: inline-block;
+  font-weight: 700;
+  text-decoration: underline;
+  color: #2b2621;
+  font-size: 13px;
+}
+
+/* Mobile: stack, but keep media not huge */
+@media (max-width: 768px) {
+  .event-card.event-card--dynamic {
+    flex-direction: column;
+  }
+
+  .event-card.event-card--dynamic .event-media {
+    max-width: 100%;
+    flex-basis: auto;
+  }
+
+  .event-card.event-card--dynamic .carousel-image,
+  .event-card.event-card--dynamic .map-embed iframe {
+    height: 220px; /* still not enormous on mobile */
+  }
+}
