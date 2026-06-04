@@ -10,6 +10,9 @@ let locations = [];
 let tableBody, addBtn, modal, form, cancelBtn, modalTitle, vendorsSelect;
 let locationSelect, locationCustomWrap;
 let editingId = null;
+let unsubVendors = null;
+let unsubLocations = null;
+let unsubRsvps = null;
 
 const ICON_PENCIL = "<svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M3 14.5V17h2.5L15.6 6.9l-2.5-2.5L3 14.5z' fill='currentColor'/><path d='M16.7 5.8a.8.8 0 0 0 0-1.1l-1.4-1.4a.8.8 0 0 0-1.1 0l-1.1 1.1 2.5 2.5 1.1-1.1z' fill='currentColor'/></svg>";
 const ICON_COPY = "<svg viewBox='0 0 20 20' fill='none' aria-hidden='true'><path d='M7 3h9v11H7V3z' stroke='currentColor' stroke-width='2'/><path d='M4 6H3v11h9v-1' stroke='currentColor' stroke-width='2'/></svg>";
@@ -159,8 +162,15 @@ function renderTable() {
 function openAdd() {
   editingId = null;
   modalTitle && (modalTitle.textContent = 'Add Event');
+
   form.reset();
   form.visible.checked = true;
+
+  // Ensure these fields reset cleanly
+  if (form.description) form.description.value = '';
+  if (form.photos) form.photos.value = '';
+  if (form.timeline) form.timeline.value = '';
+
   populateVendorsSelect([]);
   populateLocationSelect('');
   locationSelect.value = '';
@@ -176,6 +186,17 @@ function timelineToText(timeline) {
     const label = item && item.label ? String(item.label) : '';
     return time ? `${time} - ${label}`.trim() : label;
   }).join('\n');
+}
+
+function parseUrlLines(text) {
+  return String(text ?? '')
+    .split(/\r?\n/)
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+function urlsToText(list) {
+  return Array.isArray(list) ? list.join('\n') : '';
 }
 
 function parseTimeline(text) {
@@ -198,9 +219,12 @@ function openEdit(id) {
   form.venue.value = e.venue ?? '';
   form.capacity.value = (e.capacity === 0 || e.capacity) ? String(e.capacity) : '';
   form.visible.checked = e.visible !== false;
-  form.timeline.value = timelineToText(e.timeline);
 
+  if (form.descriptionform.photos) form.photos.value = urlsToText(e.photoUrls);if (form.description) form.description.value = e.description ?? '';
+
+  form.timeline.value = timelineToText(e.timeline);
   populateVendorsSelect(e.vendorIds);
+
 
   // Locations
   populateLocationSelect(e.locationId || '');
@@ -219,17 +243,19 @@ async function saveEvent(ev) {
   const locName = locId ? (locations.find(x => x.id === locId)?.name || '') : form.location.value.trim();
 
   const body = {
-    id: editingId,
-    name: form.name.value.trim(),
-    date: form.date.value || null,
-    locationId: locId,
-    location: locName,
-    venue: form.venue.value.trim(),
-    visible: form.visible.checked,
-    capacity: form.capacity.value !== '' ? Number(form.capacity.value) : null,
-    vendorIds: selectedVendorIds(),
-    timeline: parseTimeline(form.timeline.value)
-  };
+	id: editingId,
+	name: form.name.value.trim(),
+	date: form.date.value ?? null,
+	locationId: locId,
+	location: locName,
+	venue: form.venue.value.trim(),
+	description: form.description ? form.description.value.trim() : '',
+	photoUrls: form.photos ? parseUrlLines(form.photos.value) : [],
+	visible: form.visible.checked,
+	capacity: form.capacity.value !== '' ? Number(form.capacity.value) : null,
+	vendorIds: selectedVendorIds(),
+	timeline: parseTimeline(form.timeline.value)
+};
 
   await apiPost('/admin/api/events/save', body, { loadingLabel: 'Saving event…' });
   toast('Event saved', { type: 'success' });
@@ -296,20 +322,23 @@ export async function initEvents() {
 
   await Promise.all([loadVendors(), loadLocations(), loadRsvps()]);
   await loadEvents();
+  
+  unsubVendors?.();
+  unsubLocations?.();
+  unsubRsvps?.();
 
-  bus.on('vendors:updated', (v) => {
-    vendors = Array.isArray(v) ? v : vendors;
-    populateVendorsSelect(selectedVendorIds());
-  });
+  unsubVendors = bus.on('vendors:updated', (v) => {
+	vendors = Array.isArray(v) ? v : vendors;
+	populateVendorsSelect(selectedVendorIds());
+});
 
-  bus.on('locations:updated', (l) => {
-    locations = Array.isArray(l) ? l : locations;
-    populateLocationSelect(locationSelect?.value);
-    renderTable();
-  });
+  unsubLocations = bus.on('locations:updated', (l) => {
+	locations = Array.isArray(l) ? l : locations;
+	populateLocationSelect(locationSelect?.value);
+	renderTable();
+});
 
-  bus.on('rsvp:updated', (list) => {
-    rsvps = Array.isArray(list) ? list : rsvps;
-    renderTable();
-  });
-}
+  unsubRsvps = bus.on('rsvp:updated', (list) => {
+	rsvps = Array.isArray(list) ? list : rsvps;
+	renderTable();
+});

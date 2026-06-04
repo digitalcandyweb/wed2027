@@ -76,8 +76,7 @@ function openEdit(id) {
   descEl.value = loc.description ?? '';
   mapsEl.value = loc.mapsUrl ?? '';
   webEl.value = loc.website ?? '';
-  photosEl.value = Array.isArray(loc.photoUrls) ? loc.photoUrls.join('
-') : (loc.photoUrls ?? '');
+  photosEl.value = Array.isArray(loc.photoUrls) ? loc.photoUrls.join('\n') : (loc.photoUrls ?? '');
   openModal(modal);
 }
 
@@ -89,8 +88,7 @@ async function save() {
     description: descEl.value.trim(),
     mapsUrl: mapsEl.value.trim(),
     website: webEl.value.trim(),
-    photoUrls: photosEl.value.split(/?
-/).map(s => s.trim()).filter(Boolean)
+    photoUrls: photosEl.value.split(/\r?\n/).map(s => s.trim()).filter(Boolean)
   };
 
   if (!body.name) {

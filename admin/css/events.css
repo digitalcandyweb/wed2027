@@ -24,26 +24,15 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
-/* Small buttons (if used anywhere) */
-.small-btn {
-  padding: 4px 8px;
-  font-size: 12px;
-  cursor: pointer;
-  border-radius: 6px;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-elevated);
-  color: var(--text-main);
-}
-
-.small-btn.danger {
-  background: var(--danger);
-  color: white;
+.actions-col {
+  text-align: right;
+  white-space: nowrap;
 }
 
 /* Add button */
 .button.add-btn {
   background: var(--accent);
-  color: white;
+  color: #fff;
   border: none;
   width: 32px;
   height: 32px;
@@ -59,87 +48,39 @@
   background: #1d4ed8;
 }
 
-.button:focus {
-  outline: none;
-  box-shadow: none;
-}
-
-/* Section header row (if used) */
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-/* Modal animation */
-.modal {
-  opacity: 0;
-  transform: scale(0.98);
-  transition: opacity 120ms ease, transform 120ms ease;
-}
-
-.modal:not(.hidden) {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.actions-col {
-  text-align: right;
-  white-space: nowrap;
+.button:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.65);
+  outline-offset: 2px;
 }
 
 /* =========================================================
-   Event modal: layout, scroll, and pinned header
+   Event modal: pinned header + scroll container
    ========================================================= */
 
-/* Make sure the modal shell never produces scrollbars */
 #event-modal {
   overflow: hidden;
 }
 
-/*
-  We want:
-  - modal-content to be the scroll container
-  - pinned header inside it (sticky)
-  - no horizontal scrolling
-*/
+/* Modal content is the scroll container */
 #event-modal .modal-content {
-  /* size */
   max-width: 760px;
   max-height: calc(100vh - 96px);
-
-  /* scrolling */
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-gutter: stable;
-
-  /* IMPORTANT: remove default padding so pinned header can span full width */
-  padding: 0;
+  padding: 0; /* allow sticky header to span full width */
 }
 
-/* Pin the modal title while scrolling */
 #event-modal #event-modal-title {
   position: sticky;
   top: 0;
   z-index: 5;
-
-  /* match your dark/glass admin look */
   background: var(--bg-elevated);
   border-bottom: 1px solid var(--border-subtle);
-
-  /* spacing */
   margin: 0;
   padding: 16px 16px 12px;
-
-  /* typography */
   font-size: 16px;
   font-weight: 700;
-}
-
-/* The form gets padding since modal-content padding is now 0 */
-#event-form {
-  padding: 16px;
 }
 
 /* =========================================================
@@ -147,27 +88,20 @@
    ========================================================= */
 
 #event-form {
+  padding: 16px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-
-  /* vertical rhythm */
   row-gap: 18px;
   column-gap: 20px;
-
   width: 100%;
   box-sizing: border-box;
 }
 
-/* CRITICAL: prevent grid children from forcing horizontal scrollbar */
+/* Prevent grid children from forcing horizontal scroll */
 #event-form > * {
   min-width: 0;
 }
 
-#event-form * {
-  box-sizing: border-box;
-}
-
-/* Labels stack input underneath cleanly */
 #event-form label {
   display: flex;
   flex-direction: column;
@@ -175,36 +109,32 @@
   font-weight: 500;
 }
 
-/* Full-width rows (span both columns) */
-#event-form textarea,
-#event-form select[multiple],
-#event-form .checkbox-row,
-#event-form .settings-hint,
-#event-form .modal-actions,
-#event-location-custom-wrap {
-  grid-column: 1 / -1;
-}
-
-/* Ensure controls never exceed column width */
 #event-form input,
 #event-form textarea,
 #event-form select {
   width: 100%;
   max-width: 100%;
+  box-sizing: border-box;
 }
 
-/* Textareas should feel deliberate */
 #event-form textarea {
   resize: vertical;
   min-height: 110px;
 }
 
-/* Vendors multi-select */
+/* Full-width rows */
+#event-location-custom-wrap,
+#event-form select[multiple],
+#event-form .checkbox-row,
+#event-form .settings-hint,
+#event-form .modal-actions {
+  grid-column: 1 / -1;
+}
+
 #event-vendors {
   min-height: 120px;
 }
 
-/* Modal action buttons aligned right */
 #event-form .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -212,120 +142,18 @@
   margin-top: 6px;
 }
 
-/* Mobile fallback */
+/* Mobile */
 @media (max-width: 720px) {
   #event-form {
     grid-template-columns: 1fr;
   }
-
   #event-modal .modal-content {
     max-height: calc(100vh - 72px);
   }
 }
 
-/* =========================================================
-   Modern dark scrollbars (WebKit only)
-   ========================================================= */
-
-#event-modal .modal-content::-webkit-scrollbar {
-  width: 10px;
-}
-
-#event-modal .modal-content::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 10px;
-}
-
-#event-modal .modal-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.25),
-    rgba(255, 255, 255, 0.15)
-  );
-  border-radius: 10px;
-  border: 2px solid transparent;
-  background-clip: content-box;
-}
-
-#event-modal .modal-content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.35),
-    rgba(255, 255, 255, 0.25)
-  );
-}
-/* Force labels to behave as grid items */
-#event-form > label {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Explicit two-column placement */
-#event-form > label:nth-child(1),
-#event-form > label:nth-child(2) {
-  grid-column: span 1;
-}
-
-/* =========================================================
-   Events modal – layout, scroll, inline fields
-   ========================================================= */
-
-#event-modal { overflow: hidden; }
-
-#event-modal .modal-content {
-  max-width: 760px;
-  max-height: calc(100vh - 96px);
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-gutter: stable;
-  padding: 0;
-}
-
-#event-modal #event-modal-title {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: var(--bg-elevated);
-  border-bottom: 1px solid var(--border-subtle);
-  padding: 16px 16px 12px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-#event-form {
-  padding: 16px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px 20px;
-}
-
-#event-form > * { min-width: 0; }
-
-#event-form label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.location-group {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px 20px;
-}
-
-.location-group > * { min-width: 0; }
-
-#event-form textarea,
-#event-form .modal-actions {
-  grid-column: 1 / -1;
-}
-
+/* Optional: nicer scrollbars (WebKit) */
 #event-modal .modal-content::-webkit-scrollbar { width: 10px; }
-#event-modal .modal-content::-webkit-scrollbar-track {
-  background: rgba(255,255,255,.04);
-}
-#event-modal .modal-content::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,.25);
-  border-radius: 10px;
-}
+#event-modal .modal-content::-webkit-scrollbar-track { background: rgba(255,255,255,.04); border-radius: 10px; }
+#event-modal .modal-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,.22); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
+#event-modal .modal-content::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.32); }

@@ -27,37 +27,52 @@
 
 <!-- LOCATION MODAL -->
 <div id="location-modal" class="modal hidden">
-  <div class="modal-content" style="max-width:680px;">
+  <div class="modal-content">
     <h3 id="location-modal-title">Add Location</h3>
-    <input type="hidden" id="location-id" />
 
-    <label>Name</label>
-    <input id="location-name" class="input" placeholder="Waltham Forest Town Hall" />
+    <form id="location-form">
+      <input type="hidden" id="location-id" />
 
-    <label>Area / City (optional)</label>
-    <input id="location-area" class="input" placeholder="Walthamstow / Perth / etc." />
+      <label>
+        Name
+        <input id="location-name" class="input" placeholder="Waltham Forest Town Hall" />
+      </label>
 
-    <label>Description (shown on public site if event has no custom description)</label>
-    <textarea id="location-description" class="input" style="min-height:110px;" placeholder="A short description of the venue / area..."></textarea>
+      <label>
+        Area / City (optional)
+        <input id="location-area" class="input" placeholder="Walthamstow / Perth / etc." />
+      </label>
 
-    <label>Google Maps URL</label>
-    <input id="location-maps" class="input" placeholder="https://maps.google.com/..." />
+      <label>
+        Description (shown on public site if event has no custom description)
+        <textarea id="location-description" class="input" placeholder="A short description of the venue / area..."></textarea>
+      </label>
 
-    <label>Website URL</label>
-    <input id="location-website" class="input" placeholder="https://..." />
+      <label>
+        Google Maps URL
+        <input id="location-maps" class="input" placeholder="https://maps.google.com/..." />
+      </label>
 
-    <label>Photo URLs (one per line)</label>
-    <textarea id="location-photos" class="input" style="min-height:110px;" placeholder="https://...
-https://..."></textarea>
+      <label>
+        Website URL
+        <input id="location-website" class="input" placeholder="https://..." />
+      </label>
 
-    <div class="modal-actions">
-      <button id="location-save" class="button save-btn" title="Save" aria-label="Save">
-        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 13.5L4 10l1.4-1.4L7.5 10.7l7.1-7.1L16 5l-8.5 8.5z" fill="currentColor"/></svg>
-      </button>
-      <button id="location-cancel" type="button" class="button cancel-btn" title="Cancel" aria-label="Cancel">
-        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-    </div>
+      <label>
+        Photo URLs (one per line)
+        <textarea id="location-photos" class="input" placeholder="https://...\nhttps://..."></textarea>
+      </label>
+
+      <div class="modal-actions">
+        <button id="location-save" type="button" class="button save-btn" title="Save" aria-label="Save">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 13.5L4 10l1.4-1.4L7.5 10.7l7.1-7.1L16 5l-8.5 8.5z" fill="currentColor"/></svg>
+        </button>
+
+        <button id="location-cancel" type="button" class="button cancel-btn" title="Cancel" aria-label="Cancel">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 

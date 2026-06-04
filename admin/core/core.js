@@ -18,6 +18,8 @@ import { initMobileNav } from "./mobile-nav.js";
 initUI();
 initMobileNav();
 
+const sectionHtmlCache = new Map();
+let currentSection = null;
 
 // THEME TOGGLE
 (function () {
@@ -88,13 +90,21 @@ fetch("/admin/api/health")
   .catch(() => {});
 
 // MODULE LOADER
-export async function loadSection(section) {
+export async function loadSection(section, { force = false } = {}) {
   const container = document.getElementById("content");
-  if (!container) return;
+  if (!container || !section) return;
+
+  if (!force && section === currentSection) return;
+  currentSection = section;
 
   try {
-    const htmlRes = await fetch(`./sections/${section}.html`);
-    const html = await htmlRes.text();
+    let html = sectionHtmlCache.get(section);
+    if (!html) {
+      const htmlRes = await fetch(`./sections/${section}.html`, { cache: 'force-cache' });
+      html = await htmlRes.text();
+      sectionHtmlCache.set(section, html);
+    }
+
     container.innerHTML = html;
 
     if (section === "dashboard") initDashboard();
