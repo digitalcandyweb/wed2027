@@ -837,3 +837,17 @@ body.no-scroll {
     height: 220px;
   }
 }
+
+/* Centre the dynamic events section heading and align section width */
+.events-section {
+  padding: 32px 20px 40px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.events-section h2 {
+  text-align: center;
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
