@@ -33,9 +33,9 @@ function render() {
 
   locations.forEach(loc => {
     const web = loc.website ? `<a href="${escapeAttr(loc.website)}" target="_blank" rel="noreferrer">Website</a>` : '—';
-    const maps = loc.mapsUrl ? `<a href="${escapeAttr(loc.mapsUrl)}" target="_blank" rel="noreferrer">Maps</a>` : '—';
-    const photosCount = Array.isArray(loc.photoUrls) ? loc.photoUrls.length : (typeof loc.photoUrls === 'string' ? loc.photoUrls.split(/?
-/).filter(Boolean).length : 0);
+	const maps = loc.mapsUrl ? `<a href="${escapeAttr(loc.mapsUrl)}" target="_blank" rel="noreferrer">Maps</a>` : '—';
+    const photosCount = Array.isArray(loc.photoUrls) ? loc.photoUrls.length : (typeof loc.photoUrls === 'string' 
+	? loc.photoUrls.split(/\r?\n/).map(s => s.trim()).filter(Boolean).length : 0);
 
     const tr = document.createElement('tr');
     tr.innerHTML = `

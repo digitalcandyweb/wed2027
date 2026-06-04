@@ -156,5 +156,13 @@ tr.empty td.empty {
 /* Optional: nicer scrollbars (WebKit) */
 #location-modal .modal-content::-webkit-scrollbar { width: 10px; }
 #location-modal .modal-content::-webkit-scrollbar-track { background: rgba(255,255,255,.04); border-radius: 10px; }
-#location-modal .modal-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,.22); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
-#location-modal .modal-content::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.32); }
+#location-modal .modal-content::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.22);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+#location-modal .modal-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,.32);
+}

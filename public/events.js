@@ -28,10 +28,13 @@
       if (ev.venue) metaParts.push(ev.venue);
 
       const links = [];
-      const mapsUrl = loc?.mapsUrl || "";
-      const webUrl = loc?.website || "";
-      if (mapsUrl) links.push(`<a href="${escapeAttr(mapsUrl)}" target="_blank" rel="noreferrer">Google Maps</a>`);
-      if (webUrl) links.push(`<a href="${escapeAttr(webUrl)}" target="_blank" rel="noreferrer">Website</a>`);
+	  const mapsUrl = loc?.mapsUrl || "";
+	  const webUrl = loc?.website || "";
+	  const mapEmbed = (mapsUrl && isGoogleMapsEmbed(mapsUrl)) ? renderMapEmbed(mapsUrl, ev.name ?? 'Event location') : "";
+	  if (!mapEmbed && mapsUrl) {links.push(`<a href="${escapeAttr(mapsUrl)}" target="_blank" rel="noreferrer">Google Maps</a>`);
+	  }
+	  if (webUrl) {links.push(`<a href="${escapeAttr(webUrl)}" target="_blank" rel="noreferrer">Website</a>`);
+	  }
 
       const photos = Array.isArray(ev.photos) ? ev.photos : [];
       const carouselHtml = photos.length ? renderCarousel(photos, ev.id || ev.name) : "";
@@ -46,8 +49,9 @@
         </div>
         ${carouselHtml}
         ${desc ? `<p class="event-text">${escapeHtml(desc)}</p>` : ""}
-        ${(!desc && locDesc) ? `<p class="event-text">${escapeHtml(locDesc)}</p>` : ""}
-        ${links.length ? `<p class="event-links">${links.join(" · ")}</p>` : ""}
+        ${(!desc && locDesc) ? ` ${escapeHtml(locDesc)} ` : ""}
+		${mapEmbed ? ` <div class="map-embed">${mapEmbed}</div> ` : ""}
+	    ${links.length ? ` <div class="event-links">${links.join(" · ")}</div> ` : ""}
       `;
 
       container.appendChild(card);
@@ -113,4 +117,22 @@
   function escapeAttr(s) {
     return escapeHtml(s).replace(/\s+/g, ' ').trim();
   }
+  function isGoogleMapsEmbed(src) {
+  return typeof src === 'string' && src.startsWith('https://www.google.com/maps/embed?');
+}
+
+  function renderMapEmbed(src, title) {
+  const safeTitle = escapeAttr(title || 'Map');
+  const safeSrc = escapeAttr(src);
+  return `<iframe
+    src="${safeSrc}"
+    width="600"
+    height="450"
+    style="border:0;"
+    allowfullscreen=""
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+    title="${safeTitle}"
+    ></iframe>`;
+  } 
 })();

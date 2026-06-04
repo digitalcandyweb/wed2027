@@ -220,10 +220,10 @@ function openEdit(id) {
   form.capacity.value = (e.capacity === 0 || e.capacity) ? String(e.capacity) : '';
   form.visible.checked = e.visible !== false;
 
-  if (form.descriptionform.photos) form.photos.value = urlsToText(e.photoUrls);if (form.description) form.description.value = e.description ?? '';
+	if (form.description) form.description.value = e.description ?? '';
+	if (form.photos) form.photos.value = urlsToText(e.photoUrls);
 
   form.timeline.value = timelineToText(e.timeline);
-  populateVendorsSelect(e.vendorIds);
 
 
   // Locations

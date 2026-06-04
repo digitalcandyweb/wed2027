@@ -10,6 +10,7 @@ import { initEdit } from "../js/edit.js";
 import { initWedding } from "../js/wedding.js";
 import { initVendors } from "../js/vendors.js";
 import { initContacts } from "../js/contacts.js";
+import { initLocations } from "../js/locations.js";
 
 // Shared UI + mobile nav
 import { initUI } from "./ui.js";
@@ -109,8 +110,9 @@ export async function loadSection(section, { force = false } = {}) {
 
     if (section === "dashboard") initDashboard();
     if (section === "rsvp") initRSVP();
-    if (section === "events") initEvents();
-    if (section === "wedding") initWedding();
+	if (section === "events") initEvents();
+	if (section === "locations") initLocations();
+	if (section === "wedding") initWedding();
     if (section === "vendors") initVendors();
     if (section === "contacts") initContacts();
     if (section === "budget") initBudget();
@@ -142,7 +144,8 @@ export async function loadSection(section, { force = false } = {}) {
     budget: { title: "Budget & Cost Tracker", subtitle: "Track all wedding-related expenses.", chip: "Money & commitments", showSummary: false },
     planner: { title: "Planner & Timeline", subtitle: "Organise tasks, due dates and timelines.", chip: "Tasks & milestones", showSummary: false },
     settings: { title: "Site Settings", subtitle: "Configure site-wide options and event blocks.", chip: "Configuration", showSummary: false },
-    edit: { title: "Edit Website Content", subtitle: "Update hero text, event details, travel info and more.", chip: "Copy & layout", showSummary: false }
+    locations: { title: "Locations", subtitle: "Reusable venues (maps, website, photos, description) for events.", chip: "Locations", showSummary: false },
+	edit: { title: "Edit Website Content", subtitle: "Update hero text, event details, travel info and more.", chip: "Copy & layout", showSummary: false }
   };
 
   navItems.forEach(item => {
