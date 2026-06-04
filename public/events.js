@@ -8,8 +8,8 @@
   try {
     const res = await fetch("/api/events", { headers: { Accept: "application/json" } });
     if (!res.ok) throw new Error("Failed to load events");
-    const events = await res.json();
 
+    const events = await res.json();
     if (!Array.isArray(events) || !events.length) {
       container.innerHTML = `<p class="muted">No events announced yet.</p>`;
       return;
@@ -29,50 +29,42 @@
       if (ev.location) metaParts.push(ev.location);
       if (ev.venue) metaParts.push(ev.venue);
 
-      const photos = Array.isArray(ev.photos) ? ev.photos : [];
-      const carouselHtml = photos.length ? renderCarousel(photos, ev.id || ev.name || "ev") : "";
-
       const mapsUrl = loc?.mapsUrl || "";
       const webUrl = loc?.website || "";
 
-      // Prefer iframe embed if mapsUrl is an embed src
-      const mapEmbedHtml = isGoogleMapsEmbed(mapsUrl) ? renderMapEmbed(mapsUrl, ev.name || "Map") : "";
+      // Media
+      const photos = Array.isArray(ev.photos) ? ev.photos : [];
+      const carouselHtml = photos.length ? renderCarousel(photos, ev.id || ev.name || "ev") : "";
 
-      // Fallback links
-      const websiteLinkHtml = webUrl
-        ? `<div class="event-website">" target="_blank" rel="noreferrer">Website</a></div>`
+      const mapEmbed = (mapsUrl && isGoogleMapsEmbed(mapsUrl))
+        ? renderMapEmbed(mapsUrl, ev.name || "Event location")
         : "";
 
-      const mapsLinkHtml = (!mapEmbedHtml && mapsUrl)
-        ? `<div class="event-maps">" target="_blank" rel="noreferrer">Google Maps</a></div>`
+      // Links: Website UNDER photo, maps under map (or link if not embed)
+      const websiteLinkHtml = webUrl
+        ? `<div class="event-website"><a href="${escapeAttr(webUrl)}" target="_blank" rel="noreferrer">Website</a></div>`
+        : "";
+
+      const mapsLinkHtml = (!mapEmbed && mapsUrl)
+        ? `<div class="event-maps"><a href="${escapeAttr(mapsUrl)}" target="_blank" rel="noreferrer">Google Maps</a></div>`
         : "";
 
       const desc = String(ev.description || "").trim();
       const locDesc = String(loc?.description || "").trim();
       const bodyText = desc || locDesc;
 
-      // IMPORTANT: text first, media row underneath
       card.innerHTML = `
+        <div class="event-media">
+          ${carouselHtml ? `<div class="event-photo">${carouselHtml}</div>` : ""}
+          ${websiteLinkHtml}
+          ${mapEmbed ? `<div class="map-embed">${mapEmbed}</div>` : ""}
+          ${mapsLinkHtml}
+        </div>
+
         <div class="event-body">
           <h3 class="event-title">${escapeHtml(ev.name || "Event")}</h3>
           ${metaParts.length ? `<p class="event-meta">${escapeHtml(metaParts.join(" · "))}</p>` : ""}
           ${bodyText ? `<p class="event-text">${escapeHtml(bodyText)}</p>` : ""}
-        </div>
-
-        <div class="event-media-row">
-          ${carouselHtml ? `
-            <div class="event-media-col event-photo-col">
-              <div class="event-photo">${carouselHtml}</div>
-              ${websiteLinkHtml}
-            </div>
-          ` : ""}
-
-          ${(mapEmbedHtml || mapsLinkHtml) ? `
-            <div class="event-media-col event-map-col">
-              ${mapEmbedHtml ? `<div class="map-embed">${mapEmbedHtml}</div>` : ""}
-              ${mapsLinkHtml}
-            </div>
-          ` : ""}
         </div>
       `;
 
@@ -80,6 +72,7 @@
     }
 
     initCarousels(container);
+
   } catch (err) {
     console.error(err);
     container.innerHTML = `<p class="muted">Events are temporarily unavailable.</p>`;
@@ -102,18 +95,18 @@
   function renderMapEmbed(src, title) {
     const safeTitle = escapeAttr(title || "Map");
     const safeSrc = escapeAttr(src);
-    return `<iframe title="${safeTitle}" src="${safeSrc}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>`;
+    return `<iframe title="${safeTitle}" src="${safeSrc}" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
   }
 
   function renderCarousel(urls, key) {
     const safeKey = String(key).replace(/[^a-z0-9_-]/gi, "").slice(0, 24) || "ev";
-    const imgs = urls
-      .map((u, i) => `<img src="${escapeAttr(u)}" alt="${escapeAttr("Event photo " + (i + 1))}" class="carousel-image${i === 0 ? " active" : ""}">`)
-      .join("");
+    const imgs = urls.map((u, i) =>
+      `<img src="${escapeAttr(u)}" alt="${escapeAttr("Event photo " + (i + 1))}" class="carousel-image${i === 0 ? " active" : ""}">`
+    ).join("");
 
-    const dots = urls
-      .map((_, i) => `<button class="dot${i === 0 ? " active" : ""}" aria-label="Go to image ${i + 1}"></button>`)
-      .join("");
+    const dots = urls.map((_, i) =>
+      `<button class="dot${i === 0 ? " active" : ""}" aria-label="Go to image ${i + 1}"></button>`
+    ).join("");
 
     return `
       <div class="carousel" data-carousel="${safeKey}">
