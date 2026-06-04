@@ -41,7 +41,7 @@
     </div>
   </section>
 
-  <!-- Events section (static for now) -->
+  <!-- Events section (static for now)
   <section class="section" id="events">
     <h2>Our Events</h2>
 
@@ -83,6 +83,16 @@
       <p class="event-text">A sunny Perth gathering with family and friends from near and far. More information coming soon.</p>
     </article>
   </section>
+  -->
+  
+<!-- Dynamic Events Loader -->
+<section id="events" class="events-section">
+  <h2>Our Events</h2>
+  <div id="events-list">
+    <p class="muted">Loading events…</p>
+  </div>
+</section>
+
 
   <!-- RSVP section -->
   <section class="section" id="rsvp">
@@ -134,103 +144,12 @@
   <!-- Footer -->
   <footer class="footer">
     <img src="cb-logo-gold.png" alt="C+B Monogram" class="logo footer-logo">
-    <p>© 2027 Claire & Brad Wedding · digitalcandy.win</p>
+    <p>© 2026 Claire & Brad Wedding · digitalcandy.win</p>
   </footer>
 
-  <script>
-    // Burger menu logic
-    const burgerBtn = document.getElementById('burgerBtn');
-    const closeMenuBtn = document.getElementById('closeMenuBtn');
-    const sideMenu = document.getElementById('sideMenu');
-    const overlay = document.getElementById('overlay');
-    const menuLinks = document.querySelectorAll('.menu-link');
 
-    function openMenu() {
-      sideMenu.classList.add('open');
-      overlay.classList.add('visible');
-      document.body.classList.add('no-scroll');
-    }
-    function closeMenu() {
-      sideMenu.classList.remove('open');
-      overlay.classList.remove('visible');
-      document.body.classList.remove('no-scroll');
-    }
-
-    burgerBtn.addEventListener('click', openMenu);
-    closeMenuBtn.addEventListener('click', closeMenu);
-    overlay.addEventListener('click', closeMenu);
-    menuLinks.forEach(link => link.addEventListener('click', closeMenu));
-
-    // Carousel logic (single carousel for now)
-    document.querySelectorAll('[data-carousel]').forEach(carousel => {
-      const images = carousel.querySelectorAll('.carousel-image');
-      const dots = carousel.querySelectorAll('.dot');
-      const prevBtn = carousel.querySelector('.prev');
-      const nextBtn = carousel.querySelector('.next');
-      let index = 0;
-
-      function showSlide(i) {
-        images.forEach((img, idx) => img.classList.toggle('active', idx === i));
-        dots.forEach((dot, idx) => dot.classList.toggle('active', idx === i));
-        index = i;
-      }
-
-      prevBtn?.addEventListener('click', () => showSlide((index - 1 + images.length) % images.length));
-      nextBtn?.addEventListener('click', () => showSlide((index + 1) % images.length));
-      dots.forEach((dot, idx) => dot.addEventListener('click', () => showSlide(idx)));
-    });
-
-    // Populate RSVP events from Worker public endpoint
-    async function hydrateRsvpEvents() {
-      const select = document.getElementById('event');
-      try {
-        const res = await fetch('/api/events', { headers: { 'Accept': 'application/json' } });
-        if (!res.ok) throw new Error('Events fetch failed: ' + res.status);
-        const data = await res.json();
-        const events = Array.isArray(data) ? data : (data.events || []);
-
-        select.innerHTML = '<option value="">Please select…</option>';
-        for (const ev of events) {
-          const opt = document.createElement('option');
-          opt.value = ev.id;
-          const dateText = ev.date ? ` – ${ev.date}` : '';
-          opt.textContent = `${ev.name || ev.id}${dateText}`;
-          select.appendChild(opt);
-        }
-      } catch (e) {
-        select.innerHTML = '<option value="">Unable to load events</option>';
-        console.error(e);
-      }
-    }
-
-    hydrateRsvpEvents();
-
-    // AJAX submit (easier testing)
-    document.getElementById('rsvpForm')?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const form = e.currentTarget;
-      const status = document.getElementById('rsvpStatus');
-      status.style.display = 'block';
-      status.textContent = 'Submitting…';
-
-      try {
-        const body = new URLSearchParams(new FormData(form));
-        const res = await fetch('/rsvp-submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
-          body
-        });
-        const out = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(out?.error || `Submit failed (${res.status})`);
-        status.textContent = 'Thank you! Your RSVP has been recorded.';
-        form.reset();
-        // Re-hydrate events because reset clears select
-        await hydrateRsvpEvents();
-      } catch (err) {
-        status.textContent = 'Sorry — we could not submit your RSVP. Please try again.';
-        console.error(err);
-      }
-    });
-  </script>
+<script src="/public/ui.js" defer></script>
+<script src="/public/events.js" defer></script>
+<script src="/public/rsvp.js" defer></script>
 </body>
 </html>
