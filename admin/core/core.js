@@ -22,6 +22,31 @@ initMobileNav();
 const sectionHtmlCache = new Map();
 let currentSection = null;
 
+let currentRole = 'admin';
+
+async function loadRole() {
+  try {
+    const res = await fetch('/admin/api/me', { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) return;
+    const me = await res.json();
+    currentRole = me?.role || 'none';
+  } catch {}
+}
+
+function isSectionAllowed(section) {
+  if (currentRole === 'admin') return true;
+  if (currentRole === 'limited') return (section === 'budget' || section === 'planner');
+  return false;
+}
+
+function applyNavPermissions() {
+  document.querySelectorAll('.nav-item').forEach(item => {
+    const section = item.getAttribute('data-section');
+    if (!section) return;
+    if (!isSectionAllowed(section)) item.style.display = 'none';
+  });
+}
+
 // THEME TOGGLE
 (function () {
   const root = document.documentElement;
