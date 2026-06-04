@@ -46,3 +46,15 @@
   justify-content: flex-end;
   gap: 10px;
 }
+/* Modal shell never scrolls */
+#event-modal,
+#event-modal .modal {
+  overflow: hidden;
+}
+
+/* Only content scrolls */
+#event-modal .modal-content {
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}

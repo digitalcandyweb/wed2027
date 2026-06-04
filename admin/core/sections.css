@@ -182,3 +182,38 @@ tr.empty td.empty {
     rgba(255, 255, 255, 0.25)
   );
 }
+
+/* =========================================================
+   Locations modal – pinned header + scroll
+   ========================================================= */
+
+#location-modal { overflow: hidden; }
+
+#location-modal .modal-content {
+  max-width: 640px;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 0;
+}
+
+#location-modal #location-modal-title {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 16px 16px 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+#location-form {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+#location-form > * { min-width: 0; }

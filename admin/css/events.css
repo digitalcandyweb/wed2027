@@ -254,3 +254,78 @@
     rgba(255, 255, 255, 0.25)
   );
 }
+/* Force labels to behave as grid items */
+#event-form > label {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Explicit two-column placement */
+#event-form > label:nth-child(1),
+#event-form > label:nth-child(2) {
+  grid-column: span 1;
+}
+
+/* =========================================================
+   Events modal – layout, scroll, inline fields
+   ========================================================= */
+
+#event-modal { overflow: hidden; }
+
+#event-modal .modal-content {
+  max-width: 760px;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 0;
+}
+
+#event-modal #event-modal-title {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 16px 16px 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+#event-form {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 20px;
+}
+
+#event-form > * { min-width: 0; }
+
+#event-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.location-group {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+
+.location-group > * { min-width: 0; }
+
+#event-form textarea,
+#event-form .modal-actions {
+  grid-column: 1 / -1;
+}
+
+#event-modal .modal-content::-webkit-scrollbar { width: 10px; }
+#event-modal .modal-content::-webkit-scrollbar-track {
+  background: rgba(255,255,255,.04);
+}
+#event-modal .modal-content::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.25);
+  border-radius: 10px;
+}
