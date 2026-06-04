@@ -166,8 +166,14 @@ function initAccordion() {
 }
 
 function setVal(id, val) {
-  const el = document.getElementById('set-rbac-enabled').checked = (rbac.enabled !== false);;
-  if (el) el.value = val ?? '';
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  if (el.type === 'checkbox') {
+    el.checked = Boolean(val);
+    return;
+  }
+  el.value = val ?? '';
 }
 
 function getVal(id) {

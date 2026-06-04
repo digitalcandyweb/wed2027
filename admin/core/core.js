@@ -120,11 +120,11 @@ export async function loadSection(section, { force = false } = {}) {
   const container = document.getElementById("content");
   if (!container || !section) return;
 
-  // ✅ Guard FIRST
   if (!isSectionAllowed(section)) {
     container.innerHTML = `<p style="color:var(--danger);">You do not have access to this section.</p>`;
     return;
   }
+
   if (!force && section === currentSection) return;
   currentSection = section;
 
@@ -137,7 +137,7 @@ export async function loadSection(section, { force = false } = {}) {
     }
 
     container.innerHTML = html;
-
+	
     if (section === "dashboard") initDashboard();
     if (section === "rsvp") initRSVP();
 	if (section === "events") initEvents();
@@ -154,6 +154,7 @@ export async function loadSection(section, { force = false } = {}) {
     console.error(err);
   }
 }
+
 
 
 // NAVIGATION + TITLE UPDATES
