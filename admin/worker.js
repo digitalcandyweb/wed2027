@@ -1,7 +1,7 @@
 /**
  * wed2027 Cloudflare Worker
  * Phase 2 (Locations + rich events)
- * Version: 1.1.0
+ * Version: 1.1.1
  *
  * KV bindings supported (we accept either singular or plural binding names):
  * - events_kv
@@ -15,14 +15,30 @@
  * - locations_kv
  */
 
-const WORKER_VERSION = "1.1.0";
+const WORKER_VERSION = "1.1.1";
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    try {
+    // ADMIN RBAC GATEWAY
+if (path.startsWith('/admin/api/')) {
+  const ident = getCallerIdentity(request);
+  if (!ident.email) return json({ error: 'Unauthorised' }, 401);
+
+  const role = await roleForEmail(ident.email, env);
+
+  // IMPORTANT: allow /admin/api/me for both admin & limited
+  if (path === '/admin/api/me' && request.method === 'GET') {
+    return json({ email: ident.email, role });
+  }
+
+  if (!allowRouteForRole({ role, path, method: request.method })) {
+    return json({ error: 'Forbidden' }, 403);
+  }
+}
+
       // ------------------------------
       // HEALTH
       // ------------------------------
@@ -175,22 +191,34 @@ export default {
         await kvPut(env.events_kv, "events", events);
         return json({ ok: true });
       }
+      
+// ------------------------------
+// ADMIN: Events reorder
+// ------------------------------
+if (path === "/admin/api/events/reorder" && request.method === "POST") {
+  const newOrder = await readJson(request);
 
-      if (path === "/admin/api/events/reorder" && request.method === "POST") {
-        const newOrder = await readJson(request);
-        let events = await kvGet(env.events_kv, "events", []);
-        events = Array.isArray(events) ? events : [];
-        if (Array.isArray(newOrder)) {
-          events.forEach(e => {
-            const pos = newOrder.indexOf(e.id);
-            if (pos >= 0) e.order = pos + 1;
-          });
-        }
-        events.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-        await kvPut(env.events_kv, "events", events);
-        return json({ ok: true });
-      }
+  let events = await kvGet(env.events_kv, "events", []);
+  events = Array.isArray(events) ? events : [];
 
+  if (Array.isArray(newOrder)) {
+    // Assign order based on new array position (1-based)
+    const posById = new Map(newOrder.map((id, i) => [String(id), i + 1]));
+
+    events.forEach(e => {
+      const p = posById.get(String(e.id));
+      if (p) e.order = p;
+    });
+
+    // Ensure stable sort in KV
+    events.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+    await kvPut(env.events_kv, "events", events);
+    return json({ ok: true });
+  }
+
+  return json({ error: "Invalid reorder payload (expected array of ids)" }, 400);
+}
       // ------------------------------
       // ADMIN: Locations (standalone)
       // ------------------------------
@@ -492,6 +520,94 @@ export default {
   }
 };
 
+function getAccessEmail(request) {
+  // Header name is case-insensitive; Cloudflare uses Cf-Access-Authenticated-User-Email
+  const h = request.headers;
+  return (
+    h.get('Cf-Access-Authenticated-User-Email') ||
+    h.get('cf-access-authenticated-user-email') ||
+    null
+  );
+}
+
+function decodeJwtPayloadEmail(token) {
+  // Fallback only: decode JWT payload without signature verification
+  // Use ONLY if you already gate /admin via Cloudflare Access.
+  try {
+    const parts = String(token).split('.');
+    if (parts.length < 2) return null;
+    const b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const json = atob(b64.padEnd(Math.ceil(b64.length / 4) * 4, '='));
+    const payload = JSON.parse(json);
+    return payload?.email || null; // Access JWT commonly includes `email` claim
+  } catch {
+    return null;
+  }
+}
+
+function getCallerIdentity(request) {
+  const email = getAccessEmail(request);
+  if (email) return { email, source: 'header' };
+
+  const jwt = request.headers.get('Cf-Access-Jwt-Assertion') || request.headers.get('cf-access-jwt-assertion');
+  if (jwt) {
+    const e = decodeJwtPayloadEmail(jwt);
+    if (e) return { email: e, source: 'jwt' };
+  }
+
+  return { email: null, source: 'none' };
+}
+
+//RBAC
+let cachedSettings = null;
+let cachedAt = 0;
+
+async function getSettings(env) {
+  const now = Date.now();
+  if (cachedSettings && (now - cachedAt) < 30_000) return cachedSettings; // 30s cache
+  const settings = await kvGet(env.settings_kv, "settings", defaultSettings());
+  cachedSettings = settings || defaultSettings();
+  cachedAt = now;
+  return cachedSettings;
+}
+
+async function roleForEmail(email, env) {
+  const norm = String(email || '').trim().toLowerCase();
+
+  const settings = await getSettings(env);
+  const rbac = settings?.adminAccess || {};
+  const enabled = (rbac.enabled !== false);
+
+  // If RBAC disabled, treat everyone who can reach /admin as admin (optional)
+  if (!enabled) return 'admin';
+
+  const admins = Array.isArray(rbac.adminEmails) ? rbac.adminEmails.map(x => String(x).toLowerCase()) : [];
+  const limited = Array.isArray(rbac.limitedEmails) ? rbac.limitedEmails.map(x => String(x).toLowerCase()) : [];
+
+  if (admins.includes(norm)) return 'admin';
+  if (limited.includes(norm)) return 'limited';
+  return 'none';
+}
+
+function allowRouteForRole({ role, path, method }) {
+  if (role === 'admin') return true;
+
+  if (role === 'limited') {
+    if (path === '/admin/api/me' && method === 'GET') return true;
+    if (path === '/admin/api/health' && method === 'GET') return true;
+
+    if (path.startsWith('/admin/api/budget')) return true;
+    if (path.startsWith('/admin/api/planner')) return true;
+
+    // Needed for planner linked-event dropdown:
+    if (path === '/admin/api/events' && method === 'GET') return true;
+
+    return false;
+  }
+
+  return false;
+}
+
 function getLocationsNs(env) {
   return env.locations_kv || env.location_kv || null;
 }
@@ -506,7 +622,12 @@ function defaultSettings() {
     travelOverview: "", travelAirports: "", travelTransport: "",
     accomOverview: "", accomHotels: "",
     faq: "", custom1: "", custom2: "",
-    eventBlocks: {}
+    eventBlocks: {},
+    adminAccess: {
+      enabled: true,
+      adminEmails: [],
+      limitedEmails: []
+    }
   };
 }
 
