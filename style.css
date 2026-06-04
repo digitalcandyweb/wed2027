@@ -600,3 +600,46 @@ body.no-scroll {
     height: 220px;
   }
 }
+/* =========================================================
+   Fix: centre media (photo + map) inside dynamic event cards
+   ========================================================= */
+
+.event-card.event-card--dynamic .event-media {
+  /* ensure the whole media stack is centred */
+  margin-left: auto;
+  margin-right: auto;
+
+  /* if event-media is grid or flex, centre its children */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* constrain the visual width so it can be centred */
+.event-card.event-card--dynamic .event-photo,
+.event-card.event-card--dynamic .map-embed,
+.event-card.event-card--dynamic .event-website,
+.event-card.event-card--dynamic .event-maps {
+  width: min(620px, 100%);
+}
+
+/* make carousel itself centred and not left-anchored */
+.event-card.event-card--dynamic .carousel {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ensure images behave like centred blocks */
+.event-card.event-card--dynamic .carousel-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* make iframe a centred block (some browsers otherwise left-anchor) */
+.event-card.event-card--dynamic .map-embed iframe {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
