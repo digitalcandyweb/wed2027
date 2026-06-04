@@ -342,3 +342,4 @@ export async function initEvents() {
 	rsvps = Array.isArray(list) ? list : rsvps;
 	renderTable();
 });
+}
