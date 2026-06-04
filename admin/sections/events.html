@@ -1,89 +1,73 @@
 
-<section class="section">
-  <div class="section-header">
-    <h2>Events</h2>
-    <button class="button add-btn">+</button>
-  </div>
+<button id="add-event-btn" class="button add-btn" title="Add event" aria-label="Add event">
+  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+</button>
 
-  <div class="events-table-wrapper">
-    <table class="events-table">
-      <thead>
-        <tr>
-          <th>Order</th>
-          <th>Name</th>
-          <th>Date</th>
-          <th>Location</th>
-          <th class="actions-col">Actions</th>
-        </tr>
-      </thead>
-      <tbody id="events-table-body">
-        <!-- rows injected by JS -->
-      </tbody>
-    </table>
-  </div>
-</section>
+<div class="events-table-wrapper">
+  <table class="events-table">
+    <thead>
+      <tr>
+        <th>Order</th>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Location</th>
+        <th>Visible</th>
+        <th>Attendance</th>
+        <th style="text-align:right;">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="events-table-body"></tbody>
+  </table>
+</div>
 
-<!-- Event Modal -->
+<!-- EVENT MODAL -->
 <div id="event-modal" class="modal hidden">
-  <div class="modal-content">
-    <h2 id="event-modal-title">Edit Event</h2>
-
+  <div class="modal-content" style="max-width:720px;">
+    <h3 id="event-modal-title">Add Event</h3>
     <form id="event-form">
-      <label>
-        Event Name
-        <input type="text" name="name">
+      <label>Event Name<input type="text" name="name" class="input" required></label>
+      <label>Date<input type="date" name="date" class="input" required></label>
+
+      <label>Location
+        <select id="event-location-id" name="locationId" class="input"></select>
       </label>
-
-      <label>
-        Date
-        <input type="date" name="date">
-      </label>
-
-      <div class="location-group">
-        <label>
-          Location
-          <select name="location"></select>
-        </label>
-
-        <label>
-          Custom location name
-          <input type="text" name="custom_location">
-        </label>
-
-        <label>
-          Venue
-          <input type="text" name="venue">
-        </label>
+      <div id="event-location-custom-wrap" style="display:none;">
+        <label>Custom location name<input type="text" name="location" class="input" placeholder="e.g. Stirling, Perth"></label>
       </div>
 
-      <label>
-        Description (public)
-        <textarea name="description"></textarea>
+      <label>Venue<input type="text" name="venue" class="input"></label>
+
+      <label>Description (public)
+        <textarea name="description" class="input" style="min-height:110px;" placeholder="Short public description for this event…"></textarea>
       </label>
 
-      <label>
-        Event photos (one URL per line)
-        <textarea name="photos"></textarea>
+      <label>Event photos (optional — one URL per line)
+        <textarea name="photos" class="input" style="min-height:90px;" placeholder="https://...
+https://..."></textarea>
       </label>
 
-      <label>
-        Capacity (optional)
-        <input type="number" name="capacity">
-      </label>
+      <label>Capacity (optional)<input type="number" name="capacity" class="input" min="0" placeholder="e.g. 80"></label>
 
-      <label>
-        Assign Vendors
-        <select name="vendors" multiple></select>
-      </label>
+      <label>Assign Vendors</label>
+      <select id="event-vendors" class="input" multiple style="min-height:110px;"></select>
+      <p class="settings-hint">Hold Ctrl / Cmd to select multiple vendors.</p>
 
-      <label>
-        Event Timeline (one per line)
-        <textarea name="timeline"></textarea>
-      </label>
+      <label>Event Timeline (one per line, e.g. 14:00 - Ceremony)</label>
+      <textarea name="timeline" class="input" style="min-height:110px;" placeholder="14:00 - Guests arrive
+14:30 - Ceremony
+15:00 - Photos"></textarea>
+
+      <label class="checkbox-row"><input type="checkbox" name="visible" checked> Visible on site</label>
 
       <div class="modal-actions">
-        <button type="button" class="button">Cancel</button>
-        <button type="submit" class="button">Save</button>
+        <button type="submit" class="button save-btn" title="Save" aria-label="Save">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 13.5L4 10l1.4-1.4L7.5 10.7l7.1-7.1L16 5l-8.5 8.5z" fill="currentColor"/></svg>
+        </button>
+        <button id="event-cancel" type="button" class="button cancel-btn" title="Cancel" aria-label="Cancel">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
       </div>
     </form>
   </div>
