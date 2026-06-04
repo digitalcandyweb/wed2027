@@ -1,3 +1,9 @@
+/* =========================================================
+   Events module styling
+   File: admin/css/events.css
+   ========================================================= */
+
+/* Table wrapper */
 .events-table-wrapper {
   border-radius: 10px;
   overflow: hidden;
@@ -18,6 +24,7 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
+/* Small buttons (if used anywhere) */
 .small-btn {
   padding: 4px 8px;
   font-size: 12px;
@@ -33,8 +40,9 @@
   color: white;
 }
 
+/* Add button */
 .button.add-btn {
-  background: var(--accent); /* blue */
+  background: var(--accent);
   color: white;
   border: none;
   width: 32px;
@@ -55,12 +63,16 @@
   outline: none;
   box-shadow: none;
 }
+
+/* Section header row (if used) */
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 }
+
+/* Modal animation */
 .modal {
   opacity: 0;
   transform: scale(0.98);
@@ -71,26 +83,91 @@
   opacity: 1;
   transform: scale(1);
 }
+
 .actions-col {
   text-align: right;
   white-space: nowrap;
 }
 
-/* =========================
-   Event modal form layout
-   ========================= */
+/* =========================================================
+   Event modal: layout, scroll, and pinned header
+   ========================================================= */
 
-#event-modal .modal-content {
-  max-width: 760px; /* slightly wider for 2-column layout */
+/* Make sure the modal shell never produces scrollbars */
+#event-modal {
+  overflow: hidden;
 }
+
+/*
+  We want:
+  - modal-content to be the scroll container
+  - pinned header inside it (sticky)
+  - no horizontal scrolling
+*/
+#event-modal .modal-content {
+  /* size */
+  max-width: 760px;
+  max-height: calc(100vh - 96px);
+
+  /* scrolling */
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+
+  /* IMPORTANT: remove default padding so pinned header can span full width */
+  padding: 0;
+}
+
+/* Pin the modal title while scrolling */
+#event-modal #event-modal-title {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+
+  /* match your dark/glass admin look */
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+
+  /* spacing */
+  margin: 0;
+  padding: 16px 16px 12px;
+
+  /* typography */
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* The form gets padding since modal-content padding is now 0 */
+#event-form {
+  padding: 16px;
+}
+
+/* =========================================================
+   Event form grid
+   ========================================================= */
 
 #event-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px 20px;
+
+  /* vertical rhythm */
+  row-gap: 18px;
+  column-gap: 20px;
+
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Make labels stack input underneath cleanly */
+/* CRITICAL: prevent grid children from forcing horizontal scrollbar */
+#event-form > * {
+  min-width: 0;
+}
+
+#event-form * {
+  box-sizing: border-box;
+}
+
+/* Labels stack input underneath cleanly */
 #event-form label {
   display: flex;
   flex-direction: column;
@@ -98,21 +175,25 @@
   font-weight: 500;
 }
 
-/* Full-width rows */
+/* Full-width rows (span both columns) */
 #event-form textarea,
 #event-form select[multiple],
 #event-form .checkbox-row,
 #event-form .settings-hint,
-#event-form .modal-actions {
-  grid-column: 1 / -1;
-}
-
-/* Custom location wrapper should span full width */
+#event-form .modal-actions,
 #event-location-custom-wrap {
   grid-column: 1 / -1;
 }
 
-/* Textareas should feel deliberate, not cramped */
+/* Ensure controls never exceed column width */
+#event-form input,
+#event-form textarea,
+#event-form select {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Textareas should feel deliberate */
 #event-form textarea {
   resize: vertical;
   min-height: 110px;
@@ -128,14 +209,48 @@
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 6px;
 }
 
-/* =========================
-   Mobile fallback
-   ========================= */
+/* Mobile fallback */
 @media (max-width: 720px) {
   #event-form {
     grid-template-columns: 1fr;
   }
+
+  #event-modal .modal-content {
+    max-height: calc(100vh - 72px);
+  }
+}
+
+/* =========================================================
+   Modern dark scrollbars (WebKit only)
+   ========================================================= */
+
+#event-modal .modal-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+#event-modal .modal-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+}
+
+#event-modal .modal-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.25),
+    rgba(255, 255, 255, 0.15)
+  );
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+#event-modal .modal-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.35),
+    rgba(255, 255, 255, 0.25)
+  );
 }

@@ -6,3 +6,95 @@
   font-size: 14px;
   line-height: 1.5;
 }
+
+
+/* =========================================================
+   LOCATION MODAL — layout parity with Event modal
+   ========================================================= */
+
+#location-modal {
+  overflow: hidden;
+}
+
+#location-modal .modal-content {
+  max-width: 640px;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 0;
+}
+
+/* Pinned header */
+#location-modal #location-modal-title {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 16px 16px 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Form layout */
+#location-form {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 18px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Prevent grid overflow */
+#location-form > * {
+  min-width: 0;
+}
+
+#location-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 500;
+}
+
+#location-form input,
+#location-form textarea {
+  width: 100%;
+  max-width: 100%;
+}
+
+#location-form textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+#location-form .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* Scrollbars */
+#location-modal .modal-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+#location-modal .modal-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+}
+
+#location-modal .modal-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.25),
+    rgba(255, 255, 255, 0.15)
+  );
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+``
