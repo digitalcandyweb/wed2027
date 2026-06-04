@@ -69,3 +69,11 @@
     padding: 8px 8px;
   }
 }
+
+/* Empty table state (shared across admin sections) */
+tr.empty td.empty {
+  text-align: centre;
+  padding: 24px;
+  color: var(--text-muted);
+  font-style: italic;
+}

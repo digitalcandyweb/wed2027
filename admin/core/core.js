@@ -1,6 +1,5 @@
-// ===============================
+
 // IMPORT MODULE INIT FUNCTIONS
-// ===============================
 import { initDashboard } from "../js/dashboard.js";
 import { initRSVP } from "../js/rsvp.js";
 import { initEvents } from "../js/events.js";
@@ -19,9 +18,8 @@ import { initMobileNav } from "./mobile-nav.js";
 initUI();
 initMobileNav();
 
-// ===============================
+
 // THEME TOGGLE
-// ===============================
 (function () {
   const root = document.documentElement;
   const toggle = document.getElementById("theme-toggle");
@@ -49,9 +47,8 @@ initMobileNav();
   });
 })();
 
-// ===============================
+
 // USER MENU
-// ===============================
 (function () {
   const toggle = document.getElementById("user-menu-toggle");
   const menu = document.getElementById("user-menu");
@@ -70,9 +67,8 @@ initMobileNav();
   });
 })();
 
-// ===============================
+
 // SIDEBAR COLLAPSE (desktop)
-// ===============================
 (function () {
   const sidebar = document.querySelector(".sidebar");
   const toggle = document.getElementById("sidebar-toggle");
@@ -82,9 +78,16 @@ initMobileNav();
   });
 })();
 
-// ===============================
+// HEALTH CHECK
+fetch("/admin/api/health")
+  .then(r => r.ok ? r.json() : null)
+  .then(d => {
+    const el = document.getElementById("worker-version");
+    if (el && d?.version) el.textContent = `v${d.version}`;
+  })
+  .catch(() => {});
+
 // MODULE LOADER
-// ===============================
 export async function loadSection(section) {
   const container = document.getElementById("content");
   if (!container) return;
@@ -110,9 +113,8 @@ export async function loadSection(section) {
   }
 }
 
-// ===============================
+
 // NAVIGATION + TITLE UPDATES
-// ===============================
 (function () {
   const navItems = document.querySelectorAll(".nav-item");
   const contentTitle = document.getElementById("content-title");
@@ -162,3 +164,4 @@ export async function loadSection(section) {
 
   loadSection("dashboard");
 })();
+

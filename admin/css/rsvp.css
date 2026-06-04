@@ -50,3 +50,44 @@
 }
 
 .actions-col { text-align: right; white-space: nowrap; }
+
+/* RSVP summary (top-right) — stacked, small text, coloured dots */
+.rsvp-summary {
+  display: flex;
+  flex-direction: column;   /* above / below */
+  align-items: flex-end;    /* right align */
+  gap: 4px;
+}
+
+.rsvp-summary .summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;          /* smaller writing */
+  line-height: 1.1;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Dot */
+.rsvp-summary .summary::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+/* Green dot + emphasise count */
+.rsvp-summary .summary.attending::before { background: #16a34a; }
+.rsvp-summary .summary.attending #summary-attending {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+/* Red dot + emphasise count */
+.rsvp-summary .summary.not-attending::before { background: #dc2626; }
+.rsvp-summary .summary.not-attending #summary-not-attending {
+  color: #dc2626;
+  font-weight: 700;
+}
