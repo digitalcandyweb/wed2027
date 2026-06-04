@@ -221,5 +221,5 @@ export async function loadSection(section, { force = false } = {}) {
   }
   loadSection("dashboard");
 })();
-})();
+
 
