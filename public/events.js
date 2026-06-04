@@ -6,10 +6,10 @@
   if (!container) return;
 
   try {
-    const res = await fetch("/api/events", { headers: { "Accept": "application/json" } });
+    const res = await fetch("/api/events", { headers: { Accept: "application/json" } });
     if (!res.ok) throw new Error("Failed to load events");
-    const events = await res.json();
 
+    const events = await res.json();
     if (!Array.isArray(events) || !events.length) {
       container.innerHTML = `<p class="muted">No events announced yet.</p>`;
       return;
@@ -22,30 +22,29 @@
       card.className = "event-card event-card--dynamic";
 
       const loc = ev.locationObj || null;
+
       const dateStr = ev.date ? formatDate(ev.date) : "";
       const metaParts = [];
       if (dateStr) metaParts.push(dateStr);
       if (ev.location) metaParts.push(ev.location);
       if (ev.venue) metaParts.push(ev.venue);
 
-      const mapsUrl = (loc?.mapsUrl || "");
-      const webUrl = (loc?.website || "");
+      const mapsUrl = loc?.mapsUrl || "";
+      const webUrl = loc?.website || "";
 
-      // Photos (prefer event photos, fallback is already handled by API as ev.photos)
+      // Media
       const photos = Array.isArray(ev.photos) ? ev.photos : [];
       const carouselHtml = photos.length ? renderCarousel(photos, ev.id || ev.name || "ev") : "";
 
-      // Map embed (only if mapsUrl is a Google embed src)
       const mapEmbed = (mapsUrl && isGoogleMapsEmbed(mapsUrl))
         ? renderMapEmbed(mapsUrl, ev.name || "Event location")
         : "";
 
-      // Links
+      // Links: Website UNDER photo, maps under map (or link if not embed)
       const websiteLinkHtml = webUrl
         ? `<div class="event-website"><a href="${escapeAttr(webUrl)}" target="_blank" rel="noreferrer">Website</a></div>`
         : "";
 
-      // If no embed, provide a normal “Maps” link
       const mapsLinkHtml = (!mapEmbed && mapsUrl)
         ? `<div class="event-maps"><a href="${escapeAttr(mapsUrl)}" target="_blank" rel="noreferrer">Google Maps</a></div>`
         : "";
@@ -65,14 +64,13 @@
         <div class="event-body">
           <h3 class="event-title">${escapeHtml(ev.name || "Event")}</h3>
           ${metaParts.length ? `<p class="event-meta">${escapeHtml(metaParts.join(" · "))}</p>` : ""}
-          ${bodyText ? `<p class="event-text event-text--bold">${escapeHtml(bodyText)}</p>` : ""}
+          ${bodyText ? `<p class="event-text">${escapeHtml(bodyText)}</p>` : ""}
         </div>
       `;
 
       container.appendChild(card);
     }
 
-    // Initialise carousels for injected DOM
     initCarousels(container);
 
   } catch (err) {
@@ -97,13 +95,7 @@
   function renderMapEmbed(src, title) {
     const safeTitle = escapeAttr(title || "Map");
     const safeSrc = escapeAttr(src);
-    return `<iframe
-      title="${safeTitle}"
-      src="${safeSrc}"
-      loading="lazy"
-      referrerpolicy="no-referrer-when-downgrade"
-      allowfullscreen
-    ></iframe>`;
+    return `<iframe title="${safeTitle}" src="${safeSrc}" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
   }
 
   function renderCarousel(urls, key) {
@@ -118,14 +110,10 @@
 
     return `
       <div class="carousel" data-carousel="${safeKey}">
-        <div class="carousel-track">
-          ${imgs}
-        </div>
+        <div class="carousel-track">${imgs}</div>
         <button class="carousel-control prev" aria-label="Previous image">‹</button>
         <button class="carousel-control next" aria-label="Next image">›</button>
-        <div class="carousel-dots">
-          ${dots}
-        </div>
+        <div class="carousel-dots">${dots}</div>
       </div>
     `;
   }
@@ -163,5 +151,4 @@
   function escapeAttr(s) {
     return escapeHtml(s).replace(/\s+/g, " ").trim();
   }
-
 })();
