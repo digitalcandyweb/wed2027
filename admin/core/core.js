@@ -203,13 +203,14 @@ export async function loadSection(section, { force = false } = {}) {
 		}
     });
 
-  item.addEventListener('keydown', (e) => {
-	if (e.key === 'Enter' || e.key === ' ') {
+	item.addEventListener('keydown', (e) => {
+	  if (e.key === 'Enter' || e.key === ' ') {
     e.preventDefault();
 	item.click();
   }
   });
-  });
+});
+});
 
 (async () => {
   await loadRole();
