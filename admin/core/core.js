@@ -196,11 +196,6 @@ export async function loadSection(section, { force = false } = {}) {
       }
 
       loadSection(section);
-		if (!isSectionAllowed(section)) {
-		 const container = document.getElementById("content");
-		if (container) container.innerHTML = `<p style="color:var(--danger);">You do not have access to this section.</p>`;
-		 return;
-		}
     });
 
 	item.addEventListener('keydown', (e) => {
