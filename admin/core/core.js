@@ -155,11 +155,9 @@ export async function loadSection(section, { force = false } = {}) {
   }
 }
 
-
-
 // NAVIGATION + TITLE UPDATES
 (function () {
-  const navItems = document.querySelectorAll(".nav-item");
+  const navItems = Array.from(document.querySelectorAll(".nav-item"));
   const contentTitle = document.getElementById("content-title");
   const contentSubtitle = document.getElementById("content-subtitle");
   const topbarChip = document.getElementById("topbar-chip-text");
@@ -169,52 +167,66 @@ export async function loadSection(section, { force = false } = {}) {
     dashboard: { title: "Dashboard overview", subtitle: "High-level view of attendance and events.", chip: "Dashboard", showSummary: false },
     rsvp: { title: "RSVP Manager", subtitle: "View, filter and export guest responses for all events.", chip: "Guests & responses", showSummary: true },
     events: { title: "Events", subtitle: "Manage event timelines, capacity, and vendor assignments.", chip: "Event manager", showSummary: false },
+    locations: { title: "Locations", subtitle: "Reusable venues (maps, website, photos, description) for events.", chip: "Locations", showSummary: false },
     wedding: { title: "Wedding Settings", subtitle: "Couple details, key dates and contact info.", chip: "Wedding", showSummary: false },
     vendors: { title: "Vendors", subtitle: "Manage suppliers and assign them to events.", chip: "Vendors", showSummary: false },
     contacts: { title: "Contacts", subtitle: "Contact list for family, friends, and suppliers.", chip: "Contacts", showSummary: false },
-    budget: { title: "Budget & Cost Tracker", subtitle: "Track all wedding-related expenses.", chip: "Money & commitments", showSummary: false },
-    planner: { title: "Planner & Timeline", subtitle: "Organise tasks, due dates and timelines.", chip: "Tasks & milestones", showSummary: false },
+    edit: { title: "Edit Website Content", subtitle: "Update hero text, event details, travel info and more.", chip: "Copy & layout", showSummary: false },
     settings: { title: "Site Settings", subtitle: "Configure site-wide options and event blocks.", chip: "Configuration", showSummary: false },
-    locations: { title: "Locations", subtitle: "Reusable venues (maps, website, photos, description) for events.", chip: "Locations", showSummary: false },
-	edit: { title: "Edit Website Content", subtitle: "Update hero text, event details, travel info and more.", chip: "Copy & layout", showSummary: false }
+    budget: { title: "Budget & Cost Tracker", subtitle: "Track all wedding-related expenses.", chip: "Money & commitments", showSummary: false },
+    planner: { title: "Planner & Timeline", subtitle: "Organise tasks, due dates and timelines.", chip: "Tasks & milestones", showSummary: false }
   };
 
+  function activate(section) {
+    if (!section) return;
+
+    // If your loadSection() already guards permissions, this is enough:
+    navItems.forEach(i => i.classList.remove("active"));
+    const activeItem = navItems.find(i => (i.getAttribute("data-section") || "").trim() === section);
+    if (activeItem) activeItem.classList.add("active");
+
+    const m = meta[section];
+    if (m) {
+      if (contentTitle) contentTitle.textContent = m.title;
+      if (contentSubtitle) contentSubtitle.textContent = m.subtitle;
+      if (topbarChip) topbarChip.textContent = m.chip;
+      if (rsvpSummary) rsvpSummary.style.display = m.showSummary ? "flex" : "none";
+    }
+
+    // Load the section
+    loadSection(section);
+  }
+
+  // Bind events
   navItems.forEach(item => {
-    item.setAttribute('tabindex', '0');
+    item.setAttribute("tabindex", "0");
 
     item.addEventListener("click", () => {
-      const section = item.getAttribute("data-section");
-      navItems.forEach(i => i.classList.remove("active"));
-      item.classList.add("active");
-
-      const m = meta[section];
-      if (m) {
-        if (contentTitle) contentTitle.textContent = m.title;
-        if (contentSubtitle) contentSubtitle.textContent = m.subtitle;
-        if (topbarChip) topbarChip.textContent = m.chip;
-        if (rsvpSummary) rsvpSummary.style.display = m.showSummary ? "flex" : "none";
+      const section = (item.getAttribute("data-section") || "").trim();
+      if (!section) {
+        console.warn("Nav item missing data-section:", item);
+        return;
       }
-
-      loadSection(section);
+      activate(section);
     });
 
-	item.addEventListener('keydown', (e) => {
-	  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-	item.click();
-  }
+    item.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        item.click();
+      }
+    });
   });
-});
-});
 
-(async () => {
-  await loadRole();
-  applyNavPermissions();
-  if (currentRole === 'limited') {
-    loadSection('budget');
-    return;
-  }
-  loadSection("dashboard");
+  // Boot: role + initial section
+  (async () => {
+    await loadRole();
+    applyNavPermissions();
+
+    const start = (currentRole === "limited") ? "budget" : "dashboard";
+    activate(start);
+  })();
 })();
+
 
 
