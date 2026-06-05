@@ -108,7 +108,7 @@ function applyNavPermissions() {
 
 // HEALTH CHECK
 fetch("/admin/api/health")
-  .then(r => r.ok ? r.json() : null)
+  .then(r => (r.ok ? r.json() : null))
   .then(d => {
     const el = document.getElementById("worker-version");
     if (el && d?.version) el.textContent = `v${d.version}`;
