@@ -1,18 +1,16 @@
 <div class="planner-controls">
-  <button id="add-task-btn" class="button add-btn" title="Add task" aria-label="Add task" type="button">
+  <button id="add-task-btn" class="button add-btn" title="Add task" aria-label="Add task">
     <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
       <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     </svg>
   </button>
-
-  <select id="planner-status-filter" class="input" aria-label="Filter by status">
+  <select id="planner-status-filter" class="input">
     <option value="">All statuses</option>
     <option value="todo">To do</option>
     <option value="in_progress">In progress</option>
     <option value="done">Done</option>
   </select>
-
-  <select id="planner-assigned-filter" class="input" aria-label="Filter by assigned">
+  <select id="planner-assigned-filter" class="input">
     <option value="">Assigned to</option>
     <option value="brad">Brad</option>
     <option value="claire">Claire</option>
@@ -20,13 +18,7 @@
   </select>
 </div>
 
-<!-- Mobile card list -->
-<div class="planner-cards" id="planner-cards" aria-live="polite">
-  <div class="planner-loading">Loading tasks…</div>
-</div>
-
-<!-- Desktop table -->
-<div class="planner-table-wrapper" aria-hidden="false">
+<div class="planner-table-wrapper">
   <table class="planner-table">
     <thead>
       <tr>
@@ -36,33 +28,13 @@
         <th>Priority</th>
         <th>Status</th>
         <th>Event</th>
-        <th class="actions-col">Actions</th>
+        <th style="text-align:right;">Actions</th>
       </tr>
     </thead>
     <tbody id="planner-table-body">
       <tr><td colspan="7" class="planner-loading">Loading tasks…</td></tr>
     </tbody>
   </table>
-</div>
-
-<!-- VIEW MODAL (read-only) -->
-<div id="planner-view-modal" class="modal hidden">
-  <div class="modal-content">
-    <h3>Task</h3>
-    <div class="view-grid">
-      <div class="view-row"><div class="view-label">Title</div><div class="view-value" data-view="title"></div></div>
-      <div class="view-row"><div class="view-label">Description</div><div class="view-value" data-view="description"></div></div>
-      <div class="view-row"><div class="view-label">Due</div><div class="view-value" data-view="due"></div></div>
-      <div class="view-row"><div class="view-label">Assigned</div><div class="view-value" data-view="assigned"></div></div>
-      <div class="view-row"><div class="view-label">Priority</div><div class="view-value" data-view="priority"></div></div>
-      <div class="view-row"><div class="view-label">Status</div><div class="view-value" data-view="status"></div></div>
-      <div class="view-row"><div class="view-label">Linked event</div><div class="view-value" data-view="event"></div></div>
-      <div class="view-row"><div class="view-label">Notes</div><div class="view-value" data-view="notes"></div></div>
-    </div>
-    <div class="modal-actions">
-      <button id="close-task-view-btn" type="button" class="button cancel-btn" aria-label="Close">Close</button>
-    </div>
-  </div>
 </div>
 
 <!-- ADD / EDIT TASK MODAL -->
@@ -108,12 +80,12 @@
     <textarea id="task-notes" class="input"></textarea>
 
     <div class="modal-actions">
-      <button id="save-task-btn" class="button save-btn" type="button" title="Save" aria-label="Save">
+      <button id="save-task-btn" class="button save-btn" title="Save" aria-label="Save">
         <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path d="M7.5 13.5L4 10l1.4-1.4L7.5 10.7l7.1-7.1L16 5l-8.5 8.5z" fill="currentColor"/>
         </svg>
       </button>
-      <button id="cancel-task-btn" class="button cancel-btn" type="button" title="Cancel" aria-label="Cancel">
+      <button id="cancel-task-btn" class="button cancel-btn" title="Cancel" aria-label="Cancel">
         <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
@@ -128,13 +100,13 @@
     <h3>Delete Task?</h3>
     <p>This cannot be undone.</p>
     <div class="modal-actions">
-      <button id="confirm-delete-task-btn" class="button delete-btn" type="button" title="Delete" aria-label="Delete">
+      <button id="confirm-delete-task-btn" class="button delete-btn" title="Delete" aria-label="Delete">
         <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path d="M6 7h1v9H6V7zm3 0h1v9H9V7zm3 0h1v9h-1V7z" fill="currentColor"/>
           <path d="M3 5h14v1H3V5zm2-2h8v1H5V3zm2 3h6v11H7V6z" fill="currentColor"/>
         </svg>
       </button>
-      <button id="cancel-delete-task-btn" class="button cancel-btn" type="button" title="Cancel" aria-label="Cancel">
+      <button id="cancel-delete-task-btn" class="button cancel-btn" title="Cancel" aria-label="Cancel">
         <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>

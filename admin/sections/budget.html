@@ -1,67 +1,32 @@
-<div class="budget-header">
-  <button id="add-expense-btn" class="button add-btn" title="Add expense" aria-label="Add expense" type="button">
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-  </button>
+<button id="add-expense-btn" class="button add-btn" title="Add expense" aria-label="Add expense">
+  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+</button>
 
-  <div class="budget-summary" aria-label="Budget summary">
-    <div class="budget-summary-item">
-      <div class="label">Total</div>
-      <div class="value" id="budget-total">£0.00</div>
-    </div>
-    <div class="budget-summary-item">
-      <div class="label">Paid</div>
-      <div class="value paid" id="budget-paid">£0.00</div>
-    </div>
-    <div class="budget-summary-item">
-      <div class="label">Unpaid</div>
-      <div class="value unpaid" id="budget-unpaid">£0.00</div>
-    </div>
-  </div>
-</div>
+<span class="pill" style="align-self:flex-start;">Sorted by order</span>
 
-<!-- Mobile cards -->
-<div class="budget-cards" id="budget-cards" aria-live="polite">
-  <div class="budget-empty">Loading…</div>
-</div>
-
-<!-- Desktop table -->
 <div class="budget-table-wrapper">
   <table class="budget-table">
     <thead>
       <tr>
+        <th>Order</th>
         <th>Category</th>
         <th>Description</th>
         <th>Amount</th>
         <th>Paid</th>
         <th>Date</th>
         <th>Notes</th>
-        <th class="actions-col">Actions</th>
+        <th style="text-align:right;">Actions</th>
       </tr>
     </thead>
-    <tbody id="budget-table-body">
-      <tr class="empty"><td colspan="7" class="empty">No entries yet — add your first.</td></tr>
-    </tbody>
+	<tbody id="budget-table-body">
+	  <tr class="empty">
+		<td colspan="6" class="empty">
+		No entries yet — add your first.
+		</td>
+	  </tr>
   </table>
-</div>
-
-<!-- VIEW MODAL (read-only) -->
-<div id="budget-view-modal" class="modal hidden">
-  <div class="modal-content">
-    <h3>Expense</h3>
-    <div class="view-grid">
-      <div class="view-row"><div class="view-label">Amount</div><div class="view-value" data-view="amount"></div></div>
-      <div class="view-row"><div class="view-label">Category</div><div class="view-value" data-view="category"></div></div>
-      <div class="view-row"><div class="view-label">Description</div><div class="view-value" data-view="description"></div></div>
-      <div class="view-row"><div class="view-label">Date</div><div class="view-value" data-view="date"></div></div>
-      <div class="view-row"><div class="view-label">Paid</div><div class="view-value" data-view="paid"></div></div>
-      <div class="view-row"><div class="view-label">Notes</div><div class="view-value" data-view="notes"></div></div>
-    </div>
-    <div class="modal-actions">
-      <button id="close-expense-view-btn" type="button" class="button cancel-btn" aria-label="Close">Close</button>
-    </div>
-  </div>
 </div>
 
 <!-- ADD / EDIT MODAL -->
@@ -93,7 +58,6 @@
           <path d="M7.5 13.5L4 10l1.4-1.4L7.5 10.7l7.1-7.1L16 5l-8.5 8.5z" fill="currentColor"/>
         </svg>
       </button>
-
       <button id="cancel-expense-btn" type="button" class="button cancel-btn" title="Cancel" aria-label="Cancel">
         <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -115,7 +79,6 @@
           <path d="M3 5h14v1H3V5zm2-2h8v1H5V3zm2 3h6v11H7V6z" fill="currentColor"/>
         </svg>
       </button>
-
       <button id="cancel-delete-expense-btn" class="button cancel-btn" type="button" title="Cancel" aria-label="Cancel">
         <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
