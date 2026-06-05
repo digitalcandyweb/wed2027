@@ -1,7 +1,9 @@
+// LIVE DEPLOYED WORKER — Personal/wed2027/admin/worker.js
+
 /**
  * wed2027 Cloudflare Worker
  * Phase 2 (Locations + rich events)
- * Version: 1.1.1
+ * Version: 1.1.4
  *
  * KV bindings supported (we accept either singular or plural binding names):
  * - events_kv
@@ -15,40 +17,36 @@
  * - locations_kv
  */
 
-const WORKER_VERSION = "1.1.1";
+const WORKER_VERSION = "1.1.4";
+const OWNER_EMAIL = "brad.candy@gmail.com".toLowerCase();
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // ADMIN RBAC GATEWAY
-if (path.startsWith('/admin/api/')) {
-  const ident = getCallerIdentity(request);
-  if (!ident.email) return json({ error: 'Unauthorised' }, 401);
-
-  const role = await roleForEmail(ident.email, env);
-
-  // IMPORTANT: allow /admin/api/me for both admin & limited
-  if (path === '/admin/api/me' && request.method === 'GET') {
-    return json({ email: ident.email, role });
-  }
-
-  if (!allowRouteForRole({ role, path, method: request.method })) {
-    return json({ error: 'Forbidden' }, 403);
-  }
-}
-
-      // ------------------------------
+    try{
       // HEALTH
-      // ------------------------------
       if (path === "/admin/api/health" && request.method === "GET") {
         return json({ status: "ok", version: WORKER_VERSION, time: new Date().toISOString() });
+      }      
+      // ADMIN RBAC GATEWAY
+      if (path.startsWith('/admin/api/')) {
+      const ident = getCallerIdentity(request);
+      if (!ident.email) return json({ error: 'Unauthorised' }, 401);
+      const role = await roleForEmail(ident.email, env);
+
+      // IMPORTANT: allow /admin/api/me for both admin & limited
+      if (path === '/admin/api/me' && request.method === 'GET') {
+       return json({ email: ident.email, role });
       }
 
-      // ------------------------------
+      if (!allowRouteForRole({ role, path, method: request.method })) {
+       return json({ error: 'Forbidden' }, 403);
+      }
+    }
+
       // PUBLIC: Events (rich)
-      // ------------------------------
       if (path === "/api/events" && request.method === "GET") {
         const events = await kvGet(env.events_kv, "events", []);
         const locationsNs = getLocationsNs(env);
@@ -95,9 +93,7 @@ if (path.startsWith('/admin/api/')) {
         return json(out, 200, true);
       }
 
-      // ------------------------------
       // PUBLIC: RSVP submit (form or AJAX)
-      // ------------------------------
       if (path === "/rsvp-submit" && request.method === "POST") {
         const ct = request.headers.get("content-type") || "";
         const accept = request.headers.get("accept") || "";
@@ -197,28 +193,21 @@ if (path.startsWith('/admin/api/')) {
 // ------------------------------
 if (path === "/admin/api/events/reorder" && request.method === "POST") {
   const newOrder = await readJson(request);
-
   let events = await kvGet(env.events_kv, "events", []);
   events = Array.isArray(events) ? events : [];
-
   if (Array.isArray(newOrder)) {
-    // Assign order based on new array position (1-based)
     const posById = new Map(newOrder.map((id, i) => [String(id), i + 1]));
-
     events.forEach(e => {
       const p = posById.get(String(e.id));
       if (p) e.order = p;
     });
-
-    // Ensure stable sort in KV
     events.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-
     await kvPut(env.events_kv, "events", events);
     return json({ ok: true });
   }
-
   return json({ error: "Invalid reorder payload (expected array of ids)" }, 400);
 }
+
       // ------------------------------
       // ADMIN: Locations (standalone)
       // ------------------------------
@@ -512,7 +501,6 @@ if (path === "/admin/api/events/reorder" && request.method === "POST") {
         await kvPut(ns, "wedding", defaultWedding());
         return json({ ok: true });
       }
-
       return json({ error: "Not Found" }, 404);
     } catch (err) {
       return json({ error: err?.message || "Server error" }, 500);
@@ -521,25 +509,20 @@ if (path === "/admin/api/events/reorder" && request.method === "POST") {
 };
 
 function getAccessEmail(request) {
-  // Header name is case-insensitive; Cloudflare uses Cf-Access-Authenticated-User-Email
   const h = request.headers;
-  return (
-    h.get('Cf-Access-Authenticated-User-Email') ||
-    h.get('cf-access-authenticated-user-email') ||
-    null
-  );
+  return h.get('Cf-Access-Authenticated-User-Email')
+    || h.get('cf-access-authenticated-user-email')
+    || null;
 }
 
 function decodeJwtPayloadEmail(token) {
-  // Fallback only: decode JWT payload without signature verification
-  // Use ONLY if you already gate /admin via Cloudflare Access.
   try {
     const parts = String(token).split('.');
     if (parts.length < 2) return null;
     const b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-    const json = atob(b64.padEnd(Math.ceil(b64.length / 4) * 4, '='));
-    const payload = JSON.parse(json);
-    return payload?.email || null; // Access JWT commonly includes `email` claim
+    const jsonStr = atob(b64.padEnd(Math.ceil(b64.length / 4) * 4, '='));
+    const payload = JSON.parse(jsonStr);
+    return payload?.email || null;
   } catch {
     return null;
   }
@@ -549,12 +532,13 @@ function getCallerIdentity(request) {
   const email = getAccessEmail(request);
   if (email) return { email, source: 'header' };
 
-  const jwt = request.headers.get('Cf-Access-Jwt-Assertion') || request.headers.get('cf-access-jwt-assertion');
+  const jwt = request.headers.get('Cf-Access-Jwt-Assertion')
+    || request.headers.get('cf-access-jwt-assertion');
+
   if (jwt) {
     const e = decodeJwtPayloadEmail(jwt);
     if (e) return { email: e, source: 'jwt' };
   }
-
   return { email: null, source: 'none' };
 }
 
@@ -573,17 +557,14 @@ async function getSettings(env) {
 
 async function roleForEmail(email, env) {
   const norm = String(email || '').trim().toLowerCase();
-
+  if (norm === OWNER_EMAIL) return 'admin';
   const settings = await getSettings(env);
   const rbac = settings?.adminAccess || {};
   const enabled = (rbac.enabled !== false);
-
-  // If RBAC disabled, treat everyone who can reach /admin as admin (optional)
   if (!enabled) return 'admin';
-
   const admins = Array.isArray(rbac.adminEmails) ? rbac.adminEmails.map(x => String(x).toLowerCase()) : [];
   const limited = Array.isArray(rbac.limitedEmails) ? rbac.limitedEmails.map(x => String(x).toLowerCase()) : [];
-
+  if (admins.length === 0 && limited.length === 0) return 'admin';
   if (admins.includes(norm)) return 'admin';
   if (limited.includes(norm)) return 'limited';
   return 'none';
@@ -595,16 +576,11 @@ function allowRouteForRole({ role, path, method }) {
   if (role === 'limited') {
     if (path === '/admin/api/me' && method === 'GET') return true;
     if (path === '/admin/api/health' && method === 'GET') return true;
-
     if (path.startsWith('/admin/api/budget')) return true;
     if (path.startsWith('/admin/api/planner')) return true;
-
-    // Needed for planner linked-event dropdown:
     if (path === '/admin/api/events' && method === 'GET') return true;
-
     return false;
   }
-
   return false;
 }
 
@@ -623,11 +599,7 @@ function defaultSettings() {
     accomOverview: "", accomHotels: "",
     faq: "", custom1: "", custom2: "",
     eventBlocks: {},
-    adminAccess: {
-      enabled: true,
-      adminEmails: [],
-      limitedEmails: []
-    }
+    adminAccess: { enabled: true, adminEmails: [], limitedEmails: [] }
   };
 }
 

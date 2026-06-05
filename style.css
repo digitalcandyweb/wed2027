@@ -1,4 +1,13 @@
 /* Base */
+:root {
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  --text-main: #2b2621;
+  --text-muted: #8b7a6a;
+  --border-subtle: #f0ece7;
+}
 
 *,
 *::before,
